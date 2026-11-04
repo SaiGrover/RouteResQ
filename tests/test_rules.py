@@ -176,3 +176,11 @@ def test_levels_are_from_fixed_vocabulary():
     allowed = {"confirmed", "likely", "possible", "insufficient_evidence"}
     assert all(f.level in allowed for f in r.findings)
     assert all(e.level in allowed for e in r.explanations)
+
+
+def test_shorter_hop_limit_is_not_a_route_change():
+    prev = make_run(tr_hops=[("192.168.1.1", [1]), ("10.0.0.1", [5]), (None, [None]), ("93.184.216.34", [9])], run_id="p")
+    cur = make_run(tr_hops=[("192.168.1.1", [1]), ("10.0.0.1", [5])], tr_reached=False, run_id="c")  # max hops 2
+    r = analyze_run(cur, previous=prev, th=TH)
+    assert "R-ROUTE-02" not in fired(r)
+    assert "hop limit" in next(t for t in r.rule_trace if t.rule_id == "R-ROUTE-02").reason

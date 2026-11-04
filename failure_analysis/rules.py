@@ -160,6 +160,16 @@ def route_signature(tr: TracerouteResult | None) -> list[str]:
     return [h.address for h in tr.hops if h.address] if tr else []
 
 
+def route_differences(old: TracerouteResult | None, new: TracerouteResult | None) -> list[tuple[int, str, str]]:
+    """TTLs that answered in both runs but from different addresses. Comparing per TTL means a
+    different hop limit, or hops that stayed silent in one run, is never mistaken for a route change."""
+    if not old or not new:
+        return []
+    a = {h.ttl: h.address for h in old.hops if h.address}
+    b = {h.ttl: h.address for h in new.hops if h.address}
+    return [(t, a[t], b[t]) for t in sorted(set(a) & set(b)) if a[t] != b[t]]
+
+
 # ------------------------------------------------------------------------ analysis
 def analyze_run(
     run: DiagnosticRun,
@@ -357,12 +367,14 @@ def analyze_run(
             f"({f.tr.max_hops}) is too small. This is not evidence of a routing failure."
         )
     if previous and previous.traceroute and run.traceroute and f.tr_usable:
-        old, new = route_signature(previous.traceroute), route_signature(run.traceroute)
-        changed = bool(old) and bool(new) and old != new
-        if rule("R-ROUTE-02", "Responding hop sequence differs from the previous run", changed,
-                f"previous {old} vs current {new}" if changed else "same responding hops (or not comparable)"):
+        diffs = route_differences(previous.traceroute, run.traceroute)
+        changed = bool(diffs)
+        if rule("R-ROUTE-02", "A hop answered from a different address than in the previous run", changed,
+                "; ".join(f"TTL {t}: {a} -> {b}" for t, a, b in diffs) if changed else
+                "every TTL that answered in both runs answered from the same address (a different hop limit or "
+                "silent hops alone are not a route change)"):
             findings.append(Finding("R-ROUTE-02", ROUTING, CONFIRMED, "Route changed since the previous run",
-                                    [f"previous: {' > '.join(old)}", f"current: {' > '.join(new)}"]))
+                                    [f"TTL {t}: {a} (previous) -> {b} (current)" for t, a, b in diffs]))
     else:
         rule("R-ROUTE-02", "Responding hop sequence differs from the previous run", False,
              "no previous traceroute to compare")

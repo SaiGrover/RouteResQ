@@ -1,63 +1,94 @@
-import shutil
-
+import pandas as pd
 import streamlit as st
 
-from diagnostics.commands import IS_WINDOWS
-from ui.components import cached_backend_status
+from failure_analysis.rules import CATEGORIES
+from ui import charts, data
+from ui import theme as T
+from ui.components import card, card_title, chart, e, empty, eyebrow, fmt, page_header, pill, tiles
 
-st.title("RouteResQ")
-st.caption("Network failure detection, root-cause analysis and recovery observation")
+page_header("Command centre", "Network failure intelligence",
+            "One place to see what RouteResQ has measured on the live network, what the NS2 experiments showed "
+            "about failure and recovery, and what is still unexplained. Every number below is read from stored "
+            "results produced by the backend.", T.SLATE)
 
-st.markdown(
-    "RouteResQ asks four questions about a network problem: **what failed**, **why it failed**, "
-    "**what happened next**, and **how performance changed**. It answers them from evidence "
-    "only, in five steps:"
-)
+recs = data.diag_records()
+sims = data.latest_all()
+fails = data.latest_comm("failure_demo")
+cmp_ = data.latest_comm("tcp_vs_udp")
 
-with st.container(horizontal=True, gap="medium"):
-    for icon, title, body in [
-        (":material/search:", "Detect", "Ping, DNS, traceroute and TCP checks against authorised destinations."),
-        (":material/psychology:", "Diagnose", "Deterministic rules turn the evidence into findings and possible causes."),
-        (":material/insights:", "Analyse impact", "NS2 traces give loss, delay and throughput before, during and after a failure."),
-        (":material/healing:", "Observe recovery", "Rerouting and recovery are reported only when the trace shows them."),
-        (":material/description:", "Report", "JSON, CSV and Markdown reports with what can and cannot be concluded."),
-    ]:
-        with st.container(border=True, width=220):
-            st.markdown(f"**{icon} {title}**")
-            st.caption(body)
+last = recs[-1] if recs else None
+problem_runs = [r for r in recs if r.get("analysis") and any(c != "Healthy / Reachable" for c in r["analysis"]["classifications"])]
+b1, b2, c = sims.get("link_failure_dv"), sims.get("link_failure_static"), sims.get("congestion")
 
-st.subheader("Modules")
-c1, c2, c3 = st.columns(3)
-with c1.container(border=True, height="stretch"):
-    st.markdown("**:material/troubleshoot: Diagnostics & root cause**")
-    st.badge("Live network", color="green")
-    st.write("Runs real ping/traceroute/DNS/TCP checks, classifies symptoms and explains the likely causes. "
-             "Keeps a history and baselines so changes can be detected.")
-    st.page_link("app_pages/diagnostics_page.py", label="Open diagnostics", icon=":material/arrow_forward:")
-with c2.container(border=True, height="stretch"):
-    st.markdown("**:material/hub: NS2 failure simulation**")
-    st.badge("Simulated", color="violet")
-    st.write("A 6-node wired topology in real NS2: healthy baseline, link failure under DV and static "
-             "routing, and congestion. The cause is known because it is injected on purpose.")
-    st.page_link("app_pages/simulation_page.py", label="Open simulation", icon=":material/arrow_forward:")
-with c3.container(border=True, height="stretch"):
-    st.markdown("**:material/swap_horiz: TCP / UDP / TLS**")
-    st.badge("Loopback sockets", color="blue")
-    st.write("TCP and UDP client/server, a TCP vs UDP experiment, TLS-encrypted transfer with SHA-256 "
-             "integrity checks, and controlled communication failures.")
-    st.page_link("app_pages/communication_page.py", label="Open communication", icon=":material/arrow_forward:")
+tiles([
+    ("Last live check", e(last["run"]["target"]) if last else "none", (", ".join(last["analysis"]["classifications"]) if last and last.get("analysis") else "run a diagnostic"), T.SIGNAL),
+    ("Live checks recorded", f"{len(recs)}", f"{len(problem_runs)} with a detected problem", T.AMBER if problem_runs else T.GREEN),
+    ("NS2 scenarios analysed", f"{len(sims)}<small>/4</small>", "real ns-2.35 traces", T.SAND),
+    ("DV reroute (B1)", (fmt(b1["findings"]["recovery"]["time_to_recovery_s"] * 1000, "", 1) + "<small>ms</small>")
+     if b1 and b1["findings"]["recovery"].get("time_to_recovery_s") is not None else "n/a",
+     "first delivery on the alternative path", T.STEEL),
+    ("Static-route outage (B2)", (fmt(max((g["duration_s"] for g in b2["delivery_gaps"]), default=0.0), "", 2) + "<small>s</small>") if b2 else "n/a",
+     "no packets reached n5", T.CLAY),
+    ("Transport failures recovered", f"{sum(r['resumed'] for r in fails['records'])}<small>/{len(fails['records'])}</small>" if fails else "n/a",
+     "after restoring the condition", T.GREEN),
+])
 
-st.subheader("Environment")
-ns2 = cached_backend_status()
-tools = ["ping", "tracert" if IS_WINDOWS else "traceroute"]
-rows = [{"Component": f"`{t}` command", "Status": "available" if shutil.which(t) else "missing",
-         "Detail": shutil.which(t) or "install it to enable this diagnostic"} for t in tools]
-rows.append({"Component": "NS2 simulator", "Status": "available" if ns2["available"] else "missing",
-             "Detail": f"{ns2['kind']}: {ns2['detail']} (ns2 {ns2['version']})" if ns2["available"] else ns2["detail"]})
-st.dataframe(rows, hide_index=True, alt="Availability of the external tools RouteResQ uses")
+left, right = st.columns([1.55, 1], gap="medium")
+with left:
+    eyebrow("Failure lifecycle at a glance", "NS2 · flow 1 throughput in every scenario", T.CLAY)
+    if sims:
+        chart(charts.overlay_throughput(list(sims.values()), h=330),
+              what="Throughput received at n5 in 100 ms bins for each stored scenario. The shaded band is the "
+                   "3-6 s window in which the link failure or the extra load is applied.",
+              why="Scenario B2 (static routing) drops to zero for the whole failure, B1 (distance-vector) barely "
+                  "moves because traffic is rerouted, and C loses throughput to the competing flow.")
+    else:
+        empty("No NS2 results yet", "Open <b>NS2 simulation</b> and run the scenarios.")
+with right:
+    eyebrow("Recovery verdicts", "from trace evidence", T.GREEN)
+    for sid, sc in data.scenarios().items():
+        r = sims.get(sid)
+        with card("verdict"):
+            col = T.SCENARIO_COLOR[sid]
+            outcome = r["findings"]["recovery"]["outcome"] if r else "not run yet"
+            st.html(f'<div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem">'
+                    f'<div><div class="rr-ctitle">{e(sc.label)} · {e(sc.name.split(" - ", 1)[-1])}</div>'
+                    f'<div class="rr-csub">{e(outcome)}</div></div>'
+                    f'{pill(sc.routing, col)}</div>')
 
-st.info(
-    "Simulated results (NS2) and live measurements are always shown separately and labelled. A failure "
-    "observed on the live network is never assumed to have the same cause as a simulated one.",
-    icon=":material/info:",
-)
+eyebrow("Live network", "most recent diagnostic runs", T.SIGNAL)
+if recs:
+    rows = []
+    for r in reversed(recs[-8:]):
+        p = r["run"].get("ping") or {}
+        rows.append({"time (UTC)": r["run"]["timestamp"].replace("T", " ")[:19], "destination": r["run"]["target"],
+                     "replies": f"{p.get('received', 0)}/{p.get('sent', 0)}", "loss %": p.get("loss_pct"),
+                     "avg RTT ms": p.get("avg_ms"), "classification": ", ".join((r.get("analysis") or {}).get("classifications", []))})
+    c1, c2 = st.columns([1.6, 1], gap="medium")
+    with c1, card("recent"):
+        card_title("Recent checks", "live measurements from this server")
+        st.dataframe(pd.DataFrame(rows), hide_index=True, alt="Recent live diagnostic runs",
+                     column_config={"loss %": st.column_config.ProgressColumn("loss %", min_value=0, max_value=100, format="%.0f%%")})
+    with c2, card("cats"):
+        card_title("Detected conditions", "how often each classification occurred")
+        counts = {k: 0 for k in CATEGORIES}
+        for r in recs:
+            for k in (r.get("analysis") or {}).get("classifications", []):
+                counts[k] = counts.get(k, 0) + 1
+        st.html("".join(
+            f'<div style="display:flex;justify-content:space-between;align-items:center;margin:.28rem 0">'
+            f'{pill(k, T.CATEGORY_COLOR[k])}<span style="font-family:JetBrains Mono;color:{T.MUT};font-size:.8rem">{v}</span></div>'
+            for k, v in counts.items() if v))
+else:
+    empty("No live checks yet", "Open <b>Diagnostics</b> to measure a destination, or start the <b>Guided demo</b>.")
+
+eyebrow("Where to go next", "", T.SLATE)
+q = st.columns(4, gap="small")
+links = [("app_pages/demo_page.py", "Run the guided demo", ":material/play_circle:", "Every module, end to end, with real measurements."),
+         ("app_pages/detect_page.py", "Diagnose a destination", ":material/troubleshoot:", "Ping, traceroute, DNS and TCP checks."),
+         ("app_pages/recovery_page.py", "Compare failure scenarios", ":material/healing:", "Before, during and after each injected fault."),
+         ("app_pages/transport_page.py", "Test TCP, UDP and TLS", ":material/lock:", "Transfers, integrity checks, failure drills.")]
+for col, (pth, label, icon, sub) in zip(q, links):
+    with col, card("link"):
+        st.page_link(pth, label=label, icon=icon)
+        st.caption(sub)

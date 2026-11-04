@@ -6,7 +6,7 @@ from pathlib import Path
 from common.paths import DIAG_RESULTS_DIR
 from common.storage import append_jsonl, read_json, read_jsonl, write_csv, write_json
 from diagnostics.models import DiagnosticRun, run_from_dict
-from failure_analysis.rules import AnalysisReport, route_signature
+from failure_analysis.rules import AnalysisReport, route_differences, route_signature
 
 
 class DiagnosticHistory:
@@ -125,7 +125,7 @@ def compare_runs(old: DiagnosticRun, new: DiagnosticRun) -> dict:
         "metrics": rows,
         "path_earlier": old_path,
         "path_current": new_path,
-        "path_changed": bool(old_path and new_path and old_path != new_path),
+        "path_changed": bool(route_differences(old.traceroute, new.traceroute)),
         "status_earlier": "reachable" if op and op.received else "unreachable",
         "status_current": "reachable" if np_ and np_.received else "unreachable",
     }

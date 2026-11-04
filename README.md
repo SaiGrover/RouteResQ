@@ -24,9 +24,11 @@ Simulated results and live measurements are always labelled and kept apart. A fa
 ## 1. Architecture
 
 ```
-streamlit_app.py            UI entry point (st.navigation); the pages only display backend results
-app_pages/                  overview, diagnostics, communication, simulation, comparison, results
-ui/                         small presentation helpers (badges, cached NS2 status)
+streamlit_app.py            UI entry point: brand bar + workflow rail (the navigation), then the page
+app_pages/                  overview, detect, diagnose, impact (NS2), recovery, transport, report, demo
+ui/                         presentation only - theme.py (design tokens + stylesheet), components.py
+                            (tiles, cards, evidence ladder, timeline, method flow), charts.py (one Plotly
+                            chart system), shell.py (brand bar, workflow rail), data.py (cached readers)
 
 diagnostics/                live measurements
   commands.py               allow-listed subprocess runner, OS-specific command builders
@@ -103,7 +105,47 @@ The Overview page shows which back end was detected. The test suite skips NS2 te
 * **Windows:** `ping`, `tracert`, `route` and `ipconfig` are built in.
 * **Linux:** `ping` (iputils), `ip` (iproute2) and `traceroute` (`sudo apt install traceroute`). If `traceroute` is missing, `tracepath` is used instead.
 
-## 3. Running
+## 3. The interface
+
+RouteResQ is laid out as a network-operations console with a locked graphite dark theme. The workflow is the navigation: a rail of connected nodes sits under the brand bar:
+
+**Overview → 01 Detect → 02 Diagnose → 03 Analyse impact → 04 Observe recovery** · **Lab: TCP/UDP/TLS** · **05 Report**
+
+Each node shows a live headline read from stored results, for example "DV reroute in 43.6 ms" or "6/6 failures recovered". The current stage is lit in its own accent colour. A **Guided demo** button in the brand bar starts the walkthrough.
+
+The design adapts the strongest patterns of the team's Data Vortex Round 4 dashboard to network analysis:
+
+* **Same structure on every page:** a KPI tile strip, then charts in one card shape, then a *Method* section. The method section is a step flowchart beside an artefact panel whose file sizes are read from disk on each page load.
+* **Interpretation under every chart:** each chart has an *Interpretation* note saying what it shows and why it matters.
+* **One semantic palette.** Each colour has a single meaning everywhere:
+
+  | Colour | Meaning |
+  |---|---|
+  | cyan | live measurement, TCP |
+  | amber | latency, congestion, UDP |
+  | clay | failure, loss |
+  | green | healthy, recovered |
+  | blue | rerouting |
+  | sand | simulation, alternative path |
+
+  Each NS2 scenario also keeps a fixed colour on every chart.
+* **One type scale:** Space Grotesk (headings, values), Inter (text) and JetBrains Mono (addresses, timings).
+* **Clear source labels:** every page is labelled *Live measurement*, *NS2 simulation* or *Real sockets – loopback*.
+
+| Page | Highlights |
+|---|---|
+| Overview | KPIs across all modules, throughput of every scenario on one chart, recovery verdicts, recent live checks |
+| Diagnostics | run form, per-probe RTT chart with thresholds, per-hop traceroute chart, hop table, network configuration, raw output, history trend, run-to-run comparison, baselines |
+| Root cause | reasoning ladder (symptoms → measurements → explanations → evidence limits), candidate causes with evidence for and against plus next checks, findings with evidence levels, rule map and full rule trace, re-analysis against any earlier run |
+| NS2 simulation | interactive topology showing the paths delivered packets actually took in each phase (from the trace), scenario configuration, throughput / delay / packet-fate / queue / DV-message charts, downloads |
+| Failure & recovery | recovery verdict, the five questions answered, before/during/after topology triptych, timeline of configured and observed events, phase comparison, cross-scenario comparison |
+| TCP · UDP · TLS | connection-state chain built only from stages the client actually completed, TCP vs UDP charts, TLS handshake / certificate / SHA-256 details, failure drills (fault → error → restore → resumed) |
+| Reports | generated reports, full experiment history, file browser with ZIP export, log viewer |
+| Guided demo | six steps that run the real backend: probe 8.8.8.8, `nonexistent.invalid` and `192.0.2.1`; diagnose them; run the four NS2 scenarios; show recovery; run TCP/UDP, TLS and the failure drills; produce a downloadable summary. **Run the full demo** does everything in about a minute. If NS2 is unavailable, it uses stored runs and says so. |
+
+Charts are Plotly and built only from backend results; nothing is drawn from made-up data.
+
+## 4. Running
 
 ```bash
 streamlit run streamlit_app.py
@@ -141,7 +183,7 @@ Active probes (ping, traceroute, TCP connect) are only sent to destinations in [
 
 Add a destination only if you are allowed to test it. The Diagnostics page asks you to confirm this. Targets are validated, so option injection such as `-n …` or shell syntax is rejected, and commands are never run through a shell.
 
-## 4. Module 1: diagnostics and root-cause analysis
+## 5. Module 1: diagnostics and root-cause analysis
 
 ### Measurements
 
@@ -210,7 +252,7 @@ Possible explanations: the destination is down, a downstream path is inaccessibl
 
 Every run is appended to `results/diagnostics/history.jsonl`. You can mark any healthy run as the **baseline** for its destination (`baselines.json`). Later runs are judged against the baseline (factor + absolute margin) as well as the fixed thresholds. The UI and `compare_runs()` compare two runs: status, RTT, loss and traceroute path changes. History can be exported to CSV.
 
-## 5. Module 2: NS2 simulation
+## 6. Module 2: NS2 simulation
 
 ### Topology ([simulation/tcl/routeresq.tcl](simulation/tcl/routeresq.tcl))
 
@@ -280,7 +322,7 @@ From [reports/scenario_comparison.md](reports/scenario_comparison.md). The per-s
 
 The 33.6 ms baseline delay can be checked by hand: propagation is 2 + 10 + 10 + 2 ms, and transmission is 0.8 + 4 + 4 + 0.8 ms for a 1000-byte packet.
 
-## 6. Module 3: TCP, UDP and TLS
+## 7. Module 3: TCP, UDP and TLS
 
 ### TCP
 
@@ -319,10 +361,10 @@ The same amount of data is sent over both protocols on loopback. The explanation
 
 Each demonstration then restores the condition and records whether communication resumed. See [reports/communication.md](reports/communication.md).
 
-## 7. Testing
+## 8. Testing
 
 ```bash
-pytest                                  # everything (134 tests)
+pytest                                  # everything (141 tests)
 pytest -m "not ns2 and not network"     # mocked / offline only
 pytest -m ns2                           # real NS2 runs
 pytest -m network                       # real ping/traceroute/DNS (loopback + RFC-reserved targets only)
@@ -339,9 +381,9 @@ pytest -m ui                            # Streamlit AppTest smoke tests
 | `test_ns2_integration.py` | **real NS2** | script execution, the expected behaviour of all four scenarios, timeline events, comparison, reports |
 | `test_communication.py` | **real sockets** | framing with partial reads, TCP/UDP/TLS transfers, integrity, certificate rejection, every failure demonstration |
 | `test_live_network.py` | **real commands** | loopback health, reserved-name DNS failure, documentation-address unreachability, refused port |
-| `test_streamlit_ui.py` | UI | every page renders, scenario switching, authorisation guard |
+| `test_streamlit_ui.py` | UI | every page and view through the real entry point, scenario/phase switching, real TCP send, authorisation guard, the guided demo's transport step |
 
-## 8. Methodology notes and limitations
+## 9. Methodology notes and limitations
 
 * **Live diagnostics only show what devices choose to answer.** Routers rate-limit or drop ICMP, firewalls block traceroute probes, and NAT (including Docker's) hides hops. RouteResQ therefore reports causes as *possible* unless the evidence singles one out. With only 4 probes, loss has 25-point resolution, so use more probes for loss studies.
 * **Windows** reports sub-millisecond RTTs as `<1ms`, which RouteResQ records as 0 ms. Command output is parsed in English; other OS languages are not supported.
@@ -351,7 +393,7 @@ pytest -m ui                            # Streamlit AppTest smoke tests
 * **Communication experiments on loopback** have no propagation delay and almost no loss. Throughput depends on the host, so use two lab PCs for path effects.
 * **The lab PKI is for local demonstration only.** Its private keys are generated into `results/certs/` and are not committed.
 
-## 9. Scope
+## 10. Scope
 
 Included: the three components above, integrated in Streamlit.
 

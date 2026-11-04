@@ -1,11 +1,23 @@
+# RouteResQ - graphite network-operations theme, locked so it renders identically everywhere.
 [theme]
-base = "light"
-primaryColor = "#0F766E"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F3F6F6"
-textColor = "#14211F"
-font = "sans-serif"
-codeFont = "monospace"
+base = "dark"
+primaryColor = "#4fb3c8"
+backgroundColor = "#0a0f14"
+secondaryBackgroundColor = "#111922"
+textColor = "#e6edf3"
+borderColor = "#1f2b37"
+showWidgetBorder = true
+baseRadius = "10px"
+buttonRadius = "10px"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+headingFontWeights = [700, 600, 600, 600, 600, 600]
+chartCategoricalColors = ["#4fb3c8", "#e0a957", "#58bd8c", "#e06b5d", "#6f9fe0", "#8a9bb0", "#c8a978"]
+dataframeHeaderBackgroundColor = "#0e151c"
+dataframeBorderColor = "#1f2b37"
+linkColor = "#4fb3c8"
+codeBackgroundColor = "#0e151c"
 
 [server]
 headless = true
