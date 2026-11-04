@@ -1,0 +1,12 @@
+{
+  "_comment": "Thresholds used by the rule-based root-cause engine (failure_analysis/rules.py).",
+  "high_rtt_ms": 150.0,
+  "high_jitter_ms": 30.0,
+  "loss_threshold_pct": 5.0,
+  "min_rtt_samples": 3,
+  "baseline_rtt_factor": 1.5,
+  "baseline_rtt_min_increase_ms": 20.0,
+  "baseline_loss_increase_pct": 10.0,
+  "baseline_jitter_factor": 2.0,
+  "throughput_drop_pct": 30.0
+}

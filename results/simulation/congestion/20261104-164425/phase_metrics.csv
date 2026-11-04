@@ -1,0 +1,7 @@
+flow,phase,window_start,window_end,sent,delivered,lost,in_flight,loss_pct,delivery_ratio_pct,avg_delay_ms,min_delay_ms,max_delay_ms,jitter_ms,throughput_kbps,received_bytes,reordered,fate_delivered,fate_dropped_queue,fate_dropped_link_down,fate_lost_at_node,fate_lost_on_link,fate_in_flight
+1,before,1.0,3.0,250,250,0,0,0.0,100.0,33.6,33.6,33.6,0.0,984.0,246000,0,250,0,0,0,0,0
+1,during,3.0,6.0,375,259,116,0,30.93,69.07,102.75,37.6,109.648,0.326,682.67,256000,0,259,116,0,0,0,0
+1,after,6.0,9.0,375,374,1,0,0.27,99.73,35.239,33.6,101.648,0.182,1005.33,377000,0,374,1,0,0,0,0
+2,before,1.0,3.0,0,0,0,0,,,,,,,0.0,0,0,0,0,0,0,0,0
+2,during,3.0,6.0,563,510,53,0,9.41,90.59,103.725,33.6,109.648,2.012,1306.67,490000,0,510,53,0,0,0,0
+2,after,6.0,9.0,0,0,0,0,,,,,,,53.33,20000,0,0,0,0,0,0,0

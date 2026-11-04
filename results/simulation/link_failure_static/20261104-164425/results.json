@@ -1,0 +1,4759 @@
+{
+  "scenario": {
+    "id": "link_failure_static",
+    "label": "B2",
+    "name": "Scenario B2 - link n1-n2 failure, static routing",
+    "category": "link_failure",
+    "description": "Identical failure to B1 (link n1-n2 down from t = 3.0 s to t = 6.0 s), but routes are computed once at start-up (rtProto Static). This shows what happens when routing does not react to the failure.",
+    "known_cause": "Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. Static routing is the second controlled condition.",
+    "params": {
+      "routing": "Static",
+      "stop": 10.0,
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "rate": "1Mb",
+      "pkt_size": 1000,
+      "queue_limit": 20,
+      "fail_link": "1-2",
+      "fail_at": 3.0,
+      "restore_at": 6.0
+    },
+    "effective_params": {
+      "stop": 10.0,
+      "routing": "Static",
+      "access_bw": "10Mb",
+      "access_delay": "2ms",
+      "core_bw": "2Mb",
+      "core_delay": "10ms",
+      "alt_delay": "15ms",
+      "queue_limit": 20,
+      "alt_cost": 3,
+      "pkt_size": 1000,
+      "rate": "1Mb",
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "fail_link": "1-2",
+      "fail_at": 3.0,
+      "restore_at": 6.0,
+      "cross_rate": 0,
+      "cross_start": -1,
+      "cross_stop": -1,
+      "dv_advert": 2
+    },
+    "phases": {
+      "before": [
+        1.0,
+        3.0
+      ],
+      "during": [
+        3.0,
+        6.0
+      ],
+      "after": [
+        6.0,
+        9.0
+      ]
+    },
+    "phase_note": ""
+  },
+  "run": {
+    "scenario_id": "link_failure_static",
+    "run_dir": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\link_failure_static\\20261104-164425",
+    "trace_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\link_failure_static\\20261104-164425\\out.tr",
+    "events_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\link_failure_static\\20261104-164425\\events.log",
+    "backend": "docker",
+    "ns_version": "2.35+dfsg-3.1",
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-v",
+      "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\link_failure_static\\20261104-164425:/work",
+      "-w",
+      "/work",
+      "routeresq-ns2:2.35",
+      "routeresq.tcl",
+      "trace=out.tr",
+      "events=events.log",
+      "routing=Static",
+      "stop=10.0",
+      "traffic_start=1.0",
+      "traffic_stop=9.0",
+      "rate=1Mb",
+      "pkt_size=1000",
+      "queue_limit=20",
+      "fail_link=1-2",
+      "fail_at=3.0",
+      "restore_at=6.0"
+    ],
+    "started_at": "2026-11-04T11:14:25+00:00",
+    "wall_seconds": 0.536,
+    "returncode": 0,
+    "extra": {}
+  },
+  "trace_quality": {
+    "total_lines": 8633,
+    "packet_events": 8625,
+    "malformed_lines": 0,
+    "malformed_examples": [],
+    "trace_end_time": 9.0336,
+    "link_events": [
+      {
+        "time": 3.0,
+        "state": "down",
+        "a": 2,
+        "b": 1
+      },
+      {
+        "time": 3.0,
+        "state": "down",
+        "a": 1,
+        "b": 2
+      },
+      {
+        "time": 6.0,
+        "state": "up",
+        "a": 2,
+        "b": 1
+      },
+      {
+        "time": 6.0,
+        "state": "up",
+        "a": 1,
+        "b": 2
+      }
+    ]
+  },
+  "flows": {
+    "1": {
+      "fid": 1,
+      "src": 0,
+      "dst": 5,
+      "rate_bps": 1000000.0,
+      "start": 1.0,
+      "stop": 9.0,
+      "role": "monitored",
+      "summary": {
+        "window_start": 1.0,
+        "window_end": 9.034,
+        "sent": 1001,
+        "delivered": 624,
+        "lost": 377,
+        "in_flight": 0,
+        "loss_pct": 37.66,
+        "delivery_ratio_pct": 62.34,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 621.39,
+        "received_bytes": 624000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 624,
+          "dropped_queue": 0,
+          "dropped_link_down": 2,
+          "lost_at_node": 375,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "phases": {
+    "1": {
+      "before": {
+        "window_start": 1.0,
+        "window_end": 3.0,
+        "sent": 250,
+        "delivered": 248,
+        "lost": 2,
+        "in_flight": 0,
+        "loss_pct": 0.8,
+        "delivery_ratio_pct": 99.2,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 984.0,
+        "received_bytes": 246000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 248,
+          "dropped_queue": 0,
+          "dropped_link_down": 2,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "during": {
+        "window_start": 3.0,
+        "window_end": 6.0,
+        "sent": 375,
+        "delivered": 0,
+        "lost": 375,
+        "in_flight": 0,
+        "loss_pct": 100.0,
+        "delivery_ratio_pct": 0.0,
+        "avg_delay_ms": null,
+        "min_delay_ms": null,
+        "max_delay_ms": null,
+        "jitter_ms": null,
+        "throughput_kbps": 5.33,
+        "received_bytes": 2000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 0,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 375,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "after": {
+        "window_start": 6.0,
+        "window_end": 9.0,
+        "sent": 375,
+        "delivered": 375,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 989.33,
+        "received_bytes": 371000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 375,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "path_usage": {
+    "before": {
+      "0-1-2-4-5": 248
+    },
+    "during": {},
+    "after": {
+      "0-1-2-4-5": 375
+    }
+  },
+  "route_changes": [],
+  "delivery_gaps": [
+    {
+      "start": 3.0096,
+      "end": 6.0336,
+      "duration_s": 3.024
+    }
+  ],
+  "queue_stats": {
+    "0->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 1.0,
+      "samples": 2002
+    },
+    "1->2": {
+      "max_queue_pkts": 1,
+      "time_of_max": 1.0028,
+      "samples": 1252
+    },
+    "2->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 1.0168,
+      "samples": 1248
+    },
+    "4->5": {
+      "max_queue_pkts": 1,
+      "time_of_max": 1.0308,
+      "samples": 1248
+    }
+  },
+  "bottleneck_link": "0->1",
+  "drops_by_location": {
+    "1->2": {
+      "dropped_link_down": 2
+    },
+    "node 1": {
+      "lost_at_node": 375
+    }
+  },
+  "routing_control": {
+    "total_messages": 0,
+    "bin_size": 0.5,
+    "series": [
+      {
+        "t": 0.0,
+        "messages": 0
+      },
+      {
+        "t": 0.5,
+        "messages": 0
+      },
+      {
+        "t": 1.0,
+        "messages": 0
+      },
+      {
+        "t": 1.5,
+        "messages": 0
+      },
+      {
+        "t": 2.0,
+        "messages": 0
+      },
+      {
+        "t": 2.5,
+        "messages": 0
+      },
+      {
+        "t": 3.0,
+        "messages": 0
+      },
+      {
+        "t": 3.5,
+        "messages": 0
+      },
+      {
+        "t": 4.0,
+        "messages": 0
+      },
+      {
+        "t": 4.5,
+        "messages": 0
+      },
+      {
+        "t": 5.0,
+        "messages": 0
+      },
+      {
+        "t": 5.5,
+        "messages": 0
+      },
+      {
+        "t": 6.0,
+        "messages": 0
+      },
+      {
+        "t": 6.5,
+        "messages": 0
+      },
+      {
+        "t": 7.0,
+        "messages": 0
+      },
+      {
+        "t": 7.5,
+        "messages": 0
+      },
+      {
+        "t": 8.0,
+        "messages": 0
+      },
+      {
+        "t": 8.5,
+        "messages": 0
+      },
+      {
+        "t": 9.0,
+        "messages": 0
+      }
+    ]
+  },
+  "timeline": [
+    {
+      "time": 0.0,
+      "source": "configured",
+      "event": "SIM_START",
+      "description": "Simulation starts (routing=Static)."
+    },
+    {
+      "time": 1.0,
+      "source": "configured",
+      "event": "TRAFFIC_START",
+      "description": "Monitored CBR traffic starts (flow 1, n0 -> n5)."
+    },
+    {
+      "time": 1.0336,
+      "source": "trace",
+      "event": "FIRST_DELIVERY",
+      "description": "First monitored packet delivered (seq 0, path 0-1-2-4-5, delay 33.6 ms)."
+    },
+    {
+      "time": 3.0,
+      "source": "configured",
+      "event": "LINK_DOWN",
+      "description": "Configured failure: link 1-2 is taken down (rtmodel-at down)."
+    },
+    {
+      "time": 3.0,
+      "source": "trace",
+      "event": "LINK_DOWN_TRACED",
+      "description": "Trace records link 1-2 down (NS2 'v link-down' event)."
+    },
+    {
+      "time": 3.0,
+      "source": "trace",
+      "event": "FIRST_LOSS_AFTER_FAILURE",
+      "description": "First monitored packet lost after the failure (seq 248): d event on link 1->2 at t=3.0000s while link 1-2 was down."
+    },
+    {
+      "time": 3.0096,
+      "source": "trace",
+      "event": "DELIVERY_GAP_START",
+      "description": "Delivery gap begins: no packets reach n5 for 3.024 s."
+    },
+    {
+      "time": 6.0,
+      "source": "configured",
+      "event": "LINK_UP",
+      "description": "Configured restoration: link 1-2 is brought back up (rtmodel-at up)."
+    },
+    {
+      "time": 6.0,
+      "source": "trace",
+      "event": "LINK_UP_TRACED",
+      "description": "Trace records link 1-2 up (NS2 'v link-up' event)."
+    },
+    {
+      "time": 6.0,
+      "source": "trace",
+      "event": "LOSS_TOTAL_DURING_FAILURE",
+      "description": "377 monitored packet(s) were lost between the failure and t=6.00s."
+    },
+    {
+      "time": 6.0336,
+      "source": "trace",
+      "event": "DELIVERY_RESUMED",
+      "description": "Delivery resumes at the destination after a 3.024 s gap."
+    },
+    {
+      "time": 9.0,
+      "source": "configured",
+      "event": "TRAFFIC_STOP",
+      "description": "Monitored CBR traffic stops."
+    },
+    {
+      "time": 9.0336,
+      "source": "trace",
+      "event": "LAST_DELIVERY",
+      "description": "Last monitored packet delivered (seq 1000)."
+    },
+    {
+      "time": 10.0,
+      "source": "configured",
+      "event": "SIM_END",
+      "description": "Simulation ends."
+    }
+  ],
+  "timeseries": [
+    {
+      "t": 0.0,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.1,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.2,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.3,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.4,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.5,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.6,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.7,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.8,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.9,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 1.0,
+      "throughput_kbps": 720.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 2,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.0,
+      "throughput_kbps": 160.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.1,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.2,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.3,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.4,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.5,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.6,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.7,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.8,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.9,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.0,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.1,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.2,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.3,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.4,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.5,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.6,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.7,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.8,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.9,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.0,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.1,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.2,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.3,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.4,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.5,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.6,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.7,
+      "throughput_kbps": 0.0,
+      "sent": 13,
+      "lost": 13,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.8,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.9,
+      "throughput_kbps": 0.0,
+      "sent": 12,
+      "lost": 12,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.0,
+      "throughput_kbps": 720.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.0,
+      "throughput_kbps": 400.0,
+      "sent": 1,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    }
+  ],
+  "findings": {
+    "failure_type": "link failure",
+    "known_cause": "Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. Static routing is the second controlled condition.",
+    "failure_time": 3.0,
+    "restore_time": 6.0,
+    "affected_link": "n1-n2",
+    "what_failed": "Link n1-n2 failed at t=3 s. Confirmed by the trace: link-down event at t=3 s.",
+    "why": "Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. Static routing is the second controlled condition.",
+    "observed_impact": [
+      "377 monitored packet(s) were lost from the failure until t=6s (dropped_link_down: 2, lost_at_node: 375).",
+      "Of 375 packets sent while the link was down, 0 were delivered.",
+      "Delivery gap at the destination from t=3.010s to t=6.034s (3.024 s)."
+    ],
+    "packets_lost_due_to_failure": 377,
+    "loss_fates": {
+      "dropped_link_down": 2,
+      "lost_at_node": 375
+    },
+    "routing_behavior": "No route change was observed for delivered packets after the failure. Static routing computes routes once; no routing-protocol messages exist in this run.",
+    "route_changes": 0,
+    "destination_reachable_during_failure": false,
+    "communication_stopped": true,
+    "recovery": {
+      "outcome": "interrupted - delivery resumed only after the link was restored",
+      "time_to_recovery_s": 3.0336,
+      "evidence": [
+        "No packet sent during the failure was delivered; first delivery after restoration at t=6.0336s (0.0336 s after link-up, 3.034 s after the failure).",
+        "After-phase throughput is 100.5% of the before-phase value with 0.00% loss and 33.60 ms average delay.",
+        "Trace records link 1-2 up again at t=6s."
+      ]
+    },
+    "explanation": "Link 1-2 failed at t=3 s. With static routing the forwarding table still pointed at link 1-2, so node 1 received the packets but could not forward them. NS2 discarded them without writing 'd' events; their loss was detected because they were never seen again after arriving at node 1. Delivery resumed only when the link came back. No packet sent during the failure was delivered, so no delay can be measured for that phase.",
+    "can_conclude": [
+      "Which packets were lost and where (from the trace).",
+      "Whether and when the forwarding path changed (from per-packet paths)."
+    ],
+    "cannot_conclude": [
+      "Results describe NS2's model of DV/static routing on this topology; real routing protocols (e.g. RIP with hold-down timers) can converge much more slowly.",
+      "NS2 2.35 does not write 'd' events for some of these losses; their location is inferred from the last traced event of each packet."
+    ],
+    "performance_degradation": {
+      "throughput_kbps": {
+        "before": 984.0,
+        "during": 5.33,
+        "after": 989.33,
+        "during_vs_before_pct": -99.5,
+        "after_vs_before_pct": 0.5
+      },
+      "avg_delay_ms": {
+        "before": 33.6,
+        "during": null,
+        "after": 33.6,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": 0.0
+      },
+      "max_delay_ms": {
+        "before": 33.6,
+        "during": null,
+        "after": 33.6,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": 0.0
+      },
+      "jitter_ms": {
+        "before": 0.0,
+        "during": null,
+        "after": 0.0,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": null
+      },
+      "loss_pct": {
+        "before": 0.8,
+        "during": 100.0,
+        "after": 0.0,
+        "during_vs_before_pct": 12400.0,
+        "after_vs_before_pct": -100.0
+      },
+      "delivery_ratio_pct": {
+        "before": 99.2,
+        "during": 0.0,
+        "after": 100.0,
+        "during_vs_before_pct": -100.0,
+        "after_vs_before_pct": 0.8
+      }
+    }
+  },
+  "lost_packets": [
+    {
+      "fid": 1,
+      "seq": 248,
+      "pkt_id": 248,
+      "sent": 2.984,
+      "fate": "dropped_link_down",
+      "detail": "d event on link 1->2 at t=3.0000s while link 1-2 was down",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 249,
+      "pkt_id": 249,
+      "sent": 2.992,
+      "fate": "dropped_link_down",
+      "detail": "d event on link 1->2 at t=3.0000s while link 1-2 was down",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 250,
+      "pkt_id": 250,
+      "sent": 3.0,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 251,
+      "pkt_id": 251,
+      "sent": 3.008,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 252,
+      "pkt_id": 252,
+      "sent": 3.016,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 253,
+      "pkt_id": 253,
+      "sent": 3.024,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 254,
+      "pkt_id": 254,
+      "sent": 3.032,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 255,
+      "pkt_id": 255,
+      "sent": 3.04,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 256,
+      "pkt_id": 256,
+      "sent": 3.048,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 257,
+      "pkt_id": 257,
+      "sent": 3.056,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 258,
+      "pkt_id": 258,
+      "sent": 3.064,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 259,
+      "pkt_id": 259,
+      "sent": 3.072,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 260,
+      "pkt_id": 260,
+      "sent": 3.08,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 261,
+      "pkt_id": 261,
+      "sent": 3.088,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 262,
+      "pkt_id": 262,
+      "sent": 3.096,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.0988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 263,
+      "pkt_id": 263,
+      "sent": 3.104,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 264,
+      "pkt_id": 264,
+      "sent": 3.112,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 265,
+      "pkt_id": 265,
+      "sent": 3.12,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 266,
+      "pkt_id": 266,
+      "sent": 3.128,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 267,
+      "pkt_id": 267,
+      "sent": 3.136,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 268,
+      "pkt_id": 268,
+      "sent": 3.144,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 269,
+      "pkt_id": 269,
+      "sent": 3.152,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 270,
+      "pkt_id": 270,
+      "sent": 3.16,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 271,
+      "pkt_id": 271,
+      "sent": 3.168,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 272,
+      "pkt_id": 272,
+      "sent": 3.176,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 273,
+      "pkt_id": 273,
+      "sent": 3.184,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 274,
+      "pkt_id": 274,
+      "sent": 3.192,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.1948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 275,
+      "pkt_id": 275,
+      "sent": 3.2,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 276,
+      "pkt_id": 276,
+      "sent": 3.208,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 277,
+      "pkt_id": 277,
+      "sent": 3.216,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 278,
+      "pkt_id": 278,
+      "sent": 3.224,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 279,
+      "pkt_id": 279,
+      "sent": 3.232,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 280,
+      "pkt_id": 280,
+      "sent": 3.24,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 281,
+      "pkt_id": 281,
+      "sent": 3.248,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 282,
+      "pkt_id": 282,
+      "sent": 3.256,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 283,
+      "pkt_id": 283,
+      "sent": 3.264,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 284,
+      "pkt_id": 284,
+      "sent": 3.272,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 285,
+      "pkt_id": 285,
+      "sent": 3.28,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 286,
+      "pkt_id": 286,
+      "sent": 3.288,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 287,
+      "pkt_id": 287,
+      "sent": 3.296,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.2988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 288,
+      "pkt_id": 288,
+      "sent": 3.304,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 289,
+      "pkt_id": 289,
+      "sent": 3.312,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 290,
+      "pkt_id": 290,
+      "sent": 3.32,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 291,
+      "pkt_id": 291,
+      "sent": 3.328,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 292,
+      "pkt_id": 292,
+      "sent": 3.336,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 293,
+      "pkt_id": 293,
+      "sent": 3.344,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 294,
+      "pkt_id": 294,
+      "sent": 3.352,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 295,
+      "pkt_id": 295,
+      "sent": 3.36,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 296,
+      "pkt_id": 296,
+      "sent": 3.368,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 297,
+      "pkt_id": 297,
+      "sent": 3.376,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 298,
+      "pkt_id": 298,
+      "sent": 3.384,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 299,
+      "pkt_id": 299,
+      "sent": 3.392,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.3948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 300,
+      "pkt_id": 300,
+      "sent": 3.4,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 301,
+      "pkt_id": 301,
+      "sent": 3.408,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 302,
+      "pkt_id": 302,
+      "sent": 3.416,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 303,
+      "pkt_id": 303,
+      "sent": 3.424,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 304,
+      "pkt_id": 304,
+      "sent": 3.432,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 305,
+      "pkt_id": 305,
+      "sent": 3.44,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 306,
+      "pkt_id": 306,
+      "sent": 3.448,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 307,
+      "pkt_id": 307,
+      "sent": 3.456,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 308,
+      "pkt_id": 308,
+      "sent": 3.464,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 309,
+      "pkt_id": 309,
+      "sent": 3.472,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 310,
+      "pkt_id": 310,
+      "sent": 3.48,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 311,
+      "pkt_id": 311,
+      "sent": 3.488,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 312,
+      "pkt_id": 312,
+      "sent": 3.496,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.4988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 313,
+      "pkt_id": 313,
+      "sent": 3.504,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 314,
+      "pkt_id": 314,
+      "sent": 3.512,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 315,
+      "pkt_id": 315,
+      "sent": 3.52,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 316,
+      "pkt_id": 316,
+      "sent": 3.528,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 317,
+      "pkt_id": 317,
+      "sent": 3.536,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 318,
+      "pkt_id": 318,
+      "sent": 3.544,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 319,
+      "pkt_id": 319,
+      "sent": 3.552,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 320,
+      "pkt_id": 320,
+      "sent": 3.56,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 321,
+      "pkt_id": 321,
+      "sent": 3.568,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 322,
+      "pkt_id": 322,
+      "sent": 3.576,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 323,
+      "pkt_id": 323,
+      "sent": 3.584,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 324,
+      "pkt_id": 324,
+      "sent": 3.592,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.5948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 325,
+      "pkt_id": 325,
+      "sent": 3.6,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 326,
+      "pkt_id": 326,
+      "sent": 3.608,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 327,
+      "pkt_id": 327,
+      "sent": 3.616,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 328,
+      "pkt_id": 328,
+      "sent": 3.624,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 329,
+      "pkt_id": 329,
+      "sent": 3.632,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 330,
+      "pkt_id": 330,
+      "sent": 3.64,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 331,
+      "pkt_id": 331,
+      "sent": 3.648,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 332,
+      "pkt_id": 332,
+      "sent": 3.656,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 333,
+      "pkt_id": 333,
+      "sent": 3.664,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 334,
+      "pkt_id": 334,
+      "sent": 3.672,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 335,
+      "pkt_id": 335,
+      "sent": 3.68,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 336,
+      "pkt_id": 336,
+      "sent": 3.688,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 337,
+      "pkt_id": 337,
+      "sent": 3.696,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.6988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 338,
+      "pkt_id": 338,
+      "sent": 3.704,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 339,
+      "pkt_id": 339,
+      "sent": 3.712,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 340,
+      "pkt_id": 340,
+      "sent": 3.72,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 341,
+      "pkt_id": 341,
+      "sent": 3.728,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 342,
+      "pkt_id": 342,
+      "sent": 3.736,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 343,
+      "pkt_id": 343,
+      "sent": 3.744,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 344,
+      "pkt_id": 344,
+      "sent": 3.752,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 345,
+      "pkt_id": 345,
+      "sent": 3.76,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 346,
+      "pkt_id": 346,
+      "sent": 3.768,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 347,
+      "pkt_id": 347,
+      "sent": 3.776,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 348,
+      "pkt_id": 348,
+      "sent": 3.784,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 349,
+      "pkt_id": 349,
+      "sent": 3.792,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.7948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 350,
+      "pkt_id": 350,
+      "sent": 3.8,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 351,
+      "pkt_id": 351,
+      "sent": 3.808,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 352,
+      "pkt_id": 352,
+      "sent": 3.816,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 353,
+      "pkt_id": 353,
+      "sent": 3.824,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 354,
+      "pkt_id": 354,
+      "sent": 3.832,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 355,
+      "pkt_id": 355,
+      "sent": 3.84,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 356,
+      "pkt_id": 356,
+      "sent": 3.848,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 357,
+      "pkt_id": 357,
+      "sent": 3.856,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 358,
+      "pkt_id": 358,
+      "sent": 3.864,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 359,
+      "pkt_id": 359,
+      "sent": 3.872,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 360,
+      "pkt_id": 360,
+      "sent": 3.88,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 361,
+      "pkt_id": 361,
+      "sent": 3.888,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 362,
+      "pkt_id": 362,
+      "sent": 3.896,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.8988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 363,
+      "pkt_id": 363,
+      "sent": 3.904,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 364,
+      "pkt_id": 364,
+      "sent": 3.912,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 365,
+      "pkt_id": 365,
+      "sent": 3.92,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 366,
+      "pkt_id": 366,
+      "sent": 3.928,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 367,
+      "pkt_id": 367,
+      "sent": 3.936,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 368,
+      "pkt_id": 368,
+      "sent": 3.944,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 369,
+      "pkt_id": 369,
+      "sent": 3.952,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 370,
+      "pkt_id": 370,
+      "sent": 3.96,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 371,
+      "pkt_id": 371,
+      "sent": 3.968,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 372,
+      "pkt_id": 372,
+      "sent": 3.976,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 373,
+      "pkt_id": 373,
+      "sent": 3.984,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 374,
+      "pkt_id": 374,
+      "sent": 3.992,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=3.9948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 375,
+      "pkt_id": 375,
+      "sent": 4.0,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 376,
+      "pkt_id": 376,
+      "sent": 4.008,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 377,
+      "pkt_id": 377,
+      "sent": 4.016,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 378,
+      "pkt_id": 378,
+      "sent": 4.024,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 379,
+      "pkt_id": 379,
+      "sent": 4.032,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 380,
+      "pkt_id": 380,
+      "sent": 4.04,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 381,
+      "pkt_id": 381,
+      "sent": 4.048,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 382,
+      "pkt_id": 382,
+      "sent": 4.056,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 383,
+      "pkt_id": 383,
+      "sent": 4.064,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 384,
+      "pkt_id": 384,
+      "sent": 4.072,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 385,
+      "pkt_id": 385,
+      "sent": 4.08,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 386,
+      "pkt_id": 386,
+      "sent": 4.088,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 387,
+      "pkt_id": 387,
+      "sent": 4.096,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.0988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 388,
+      "pkt_id": 388,
+      "sent": 4.104,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 389,
+      "pkt_id": 389,
+      "sent": 4.112,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 390,
+      "pkt_id": 390,
+      "sent": 4.12,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 391,
+      "pkt_id": 391,
+      "sent": 4.128,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 392,
+      "pkt_id": 392,
+      "sent": 4.136,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 393,
+      "pkt_id": 393,
+      "sent": 4.144,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 394,
+      "pkt_id": 394,
+      "sent": 4.152,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 395,
+      "pkt_id": 395,
+      "sent": 4.16,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 396,
+      "pkt_id": 396,
+      "sent": 4.168,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 397,
+      "pkt_id": 397,
+      "sent": 4.176,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 398,
+      "pkt_id": 398,
+      "sent": 4.184,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 399,
+      "pkt_id": 399,
+      "sent": 4.192,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.1948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 400,
+      "pkt_id": 400,
+      "sent": 4.2,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 401,
+      "pkt_id": 401,
+      "sent": 4.208,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 402,
+      "pkt_id": 402,
+      "sent": 4.216,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 403,
+      "pkt_id": 403,
+      "sent": 4.224,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 404,
+      "pkt_id": 404,
+      "sent": 4.232,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 405,
+      "pkt_id": 405,
+      "sent": 4.24,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 406,
+      "pkt_id": 406,
+      "sent": 4.248,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 407,
+      "pkt_id": 407,
+      "sent": 4.256,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 408,
+      "pkt_id": 408,
+      "sent": 4.264,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 409,
+      "pkt_id": 409,
+      "sent": 4.272,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 410,
+      "pkt_id": 410,
+      "sent": 4.28,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 411,
+      "pkt_id": 411,
+      "sent": 4.288,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 412,
+      "pkt_id": 412,
+      "sent": 4.296,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.2988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 413,
+      "pkt_id": 413,
+      "sent": 4.304,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 414,
+      "pkt_id": 414,
+      "sent": 4.312,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 415,
+      "pkt_id": 415,
+      "sent": 4.32,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 416,
+      "pkt_id": 416,
+      "sent": 4.328,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 417,
+      "pkt_id": 417,
+      "sent": 4.336,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 418,
+      "pkt_id": 418,
+      "sent": 4.344,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 419,
+      "pkt_id": 419,
+      "sent": 4.352,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 420,
+      "pkt_id": 420,
+      "sent": 4.36,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 421,
+      "pkt_id": 421,
+      "sent": 4.368,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 422,
+      "pkt_id": 422,
+      "sent": 4.376,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 423,
+      "pkt_id": 423,
+      "sent": 4.384,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 424,
+      "pkt_id": 424,
+      "sent": 4.392,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.3948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 425,
+      "pkt_id": 425,
+      "sent": 4.4,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 426,
+      "pkt_id": 426,
+      "sent": 4.408,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 427,
+      "pkt_id": 427,
+      "sent": 4.416,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 428,
+      "pkt_id": 428,
+      "sent": 4.424,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 429,
+      "pkt_id": 429,
+      "sent": 4.432,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 430,
+      "pkt_id": 430,
+      "sent": 4.44,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 431,
+      "pkt_id": 431,
+      "sent": 4.448,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 432,
+      "pkt_id": 432,
+      "sent": 4.456,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 433,
+      "pkt_id": 433,
+      "sent": 4.464,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 434,
+      "pkt_id": 434,
+      "sent": 4.472,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 435,
+      "pkt_id": 435,
+      "sent": 4.48,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 436,
+      "pkt_id": 436,
+      "sent": 4.488,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 437,
+      "pkt_id": 437,
+      "sent": 4.496,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.4988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 438,
+      "pkt_id": 438,
+      "sent": 4.504,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 439,
+      "pkt_id": 439,
+      "sent": 4.512,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 440,
+      "pkt_id": 440,
+      "sent": 4.52,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 441,
+      "pkt_id": 441,
+      "sent": 4.528,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 442,
+      "pkt_id": 442,
+      "sent": 4.536,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 443,
+      "pkt_id": 443,
+      "sent": 4.544,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 444,
+      "pkt_id": 444,
+      "sent": 4.552,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 445,
+      "pkt_id": 445,
+      "sent": 4.56,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 446,
+      "pkt_id": 446,
+      "sent": 4.568,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 447,
+      "pkt_id": 447,
+      "sent": 4.576,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 448,
+      "pkt_id": 448,
+      "sent": 4.584,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 449,
+      "pkt_id": 449,
+      "sent": 4.592,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.5948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 450,
+      "pkt_id": 450,
+      "sent": 4.6,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 451,
+      "pkt_id": 451,
+      "sent": 4.608,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 452,
+      "pkt_id": 452,
+      "sent": 4.616,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 453,
+      "pkt_id": 453,
+      "sent": 4.624,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 454,
+      "pkt_id": 454,
+      "sent": 4.632,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 455,
+      "pkt_id": 455,
+      "sent": 4.64,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 456,
+      "pkt_id": 456,
+      "sent": 4.648,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 457,
+      "pkt_id": 457,
+      "sent": 4.656,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 458,
+      "pkt_id": 458,
+      "sent": 4.664,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 459,
+      "pkt_id": 459,
+      "sent": 4.672,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 460,
+      "pkt_id": 460,
+      "sent": 4.68,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 461,
+      "pkt_id": 461,
+      "sent": 4.688,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 462,
+      "pkt_id": 462,
+      "sent": 4.696,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.6988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 463,
+      "pkt_id": 463,
+      "sent": 4.704,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 464,
+      "pkt_id": 464,
+      "sent": 4.712,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 465,
+      "pkt_id": 465,
+      "sent": 4.72,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 466,
+      "pkt_id": 466,
+      "sent": 4.728,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 467,
+      "pkt_id": 467,
+      "sent": 4.736,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 468,
+      "pkt_id": 468,
+      "sent": 4.744,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 469,
+      "pkt_id": 469,
+      "sent": 4.752,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 470,
+      "pkt_id": 470,
+      "sent": 4.76,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 471,
+      "pkt_id": 471,
+      "sent": 4.768,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 472,
+      "pkt_id": 472,
+      "sent": 4.776,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 473,
+      "pkt_id": 473,
+      "sent": 4.784,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 474,
+      "pkt_id": 474,
+      "sent": 4.792,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.7948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 475,
+      "pkt_id": 475,
+      "sent": 4.8,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 476,
+      "pkt_id": 476,
+      "sent": 4.808,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 477,
+      "pkt_id": 477,
+      "sent": 4.816,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 478,
+      "pkt_id": 478,
+      "sent": 4.824,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 479,
+      "pkt_id": 479,
+      "sent": 4.832,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 480,
+      "pkt_id": 480,
+      "sent": 4.84,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 481,
+      "pkt_id": 481,
+      "sent": 4.848,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 482,
+      "pkt_id": 482,
+      "sent": 4.856,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 483,
+      "pkt_id": 483,
+      "sent": 4.864,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 484,
+      "pkt_id": 484,
+      "sent": 4.872,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 485,
+      "pkt_id": 485,
+      "sent": 4.88,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 486,
+      "pkt_id": 486,
+      "sent": 4.888,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 487,
+      "pkt_id": 487,
+      "sent": 4.896,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.8988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 488,
+      "pkt_id": 488,
+      "sent": 4.904,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 489,
+      "pkt_id": 489,
+      "sent": 4.912,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 490,
+      "pkt_id": 490,
+      "sent": 4.92,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 491,
+      "pkt_id": 491,
+      "sent": 4.928,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 492,
+      "pkt_id": 492,
+      "sent": 4.936,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 493,
+      "pkt_id": 493,
+      "sent": 4.944,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 494,
+      "pkt_id": 494,
+      "sent": 4.952,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 495,
+      "pkt_id": 495,
+      "sent": 4.96,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 496,
+      "pkt_id": 496,
+      "sent": 4.968,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 497,
+      "pkt_id": 497,
+      "sent": 4.976,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 498,
+      "pkt_id": 498,
+      "sent": 4.984,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 499,
+      "pkt_id": 499,
+      "sent": 4.992,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=4.9948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 500,
+      "pkt_id": 500,
+      "sent": 5.0,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 501,
+      "pkt_id": 501,
+      "sent": 5.008,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 502,
+      "pkt_id": 502,
+      "sent": 5.016,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 503,
+      "pkt_id": 503,
+      "sent": 5.024,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 504,
+      "pkt_id": 504,
+      "sent": 5.032,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 505,
+      "pkt_id": 505,
+      "sent": 5.04,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 506,
+      "pkt_id": 506,
+      "sent": 5.048,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 507,
+      "pkt_id": 507,
+      "sent": 5.056,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 508,
+      "pkt_id": 508,
+      "sent": 5.064,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 509,
+      "pkt_id": 509,
+      "sent": 5.072,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 510,
+      "pkt_id": 510,
+      "sent": 5.08,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 511,
+      "pkt_id": 511,
+      "sent": 5.088,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 512,
+      "pkt_id": 512,
+      "sent": 5.096,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.0988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 513,
+      "pkt_id": 513,
+      "sent": 5.104,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 514,
+      "pkt_id": 514,
+      "sent": 5.112,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 515,
+      "pkt_id": 515,
+      "sent": 5.12,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 516,
+      "pkt_id": 516,
+      "sent": 5.128,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 517,
+      "pkt_id": 517,
+      "sent": 5.136,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 518,
+      "pkt_id": 518,
+      "sent": 5.144,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 519,
+      "pkt_id": 519,
+      "sent": 5.152,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 520,
+      "pkt_id": 520,
+      "sent": 5.16,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 521,
+      "pkt_id": 521,
+      "sent": 5.168,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 522,
+      "pkt_id": 522,
+      "sent": 5.176,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 523,
+      "pkt_id": 523,
+      "sent": 5.184,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 524,
+      "pkt_id": 524,
+      "sent": 5.192,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.1948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 525,
+      "pkt_id": 525,
+      "sent": 5.2,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 526,
+      "pkt_id": 526,
+      "sent": 5.208,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 527,
+      "pkt_id": 527,
+      "sent": 5.216,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 528,
+      "pkt_id": 528,
+      "sent": 5.224,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 529,
+      "pkt_id": 529,
+      "sent": 5.232,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 530,
+      "pkt_id": 530,
+      "sent": 5.24,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 531,
+      "pkt_id": 531,
+      "sent": 5.248,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 532,
+      "pkt_id": 532,
+      "sent": 5.256,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 533,
+      "pkt_id": 533,
+      "sent": 5.264,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 534,
+      "pkt_id": 534,
+      "sent": 5.272,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 535,
+      "pkt_id": 535,
+      "sent": 5.28,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 536,
+      "pkt_id": 536,
+      "sent": 5.288,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 537,
+      "pkt_id": 537,
+      "sent": 5.296,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.2988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 538,
+      "pkt_id": 538,
+      "sent": 5.304,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 539,
+      "pkt_id": 539,
+      "sent": 5.312,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 540,
+      "pkt_id": 540,
+      "sent": 5.32,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 541,
+      "pkt_id": 541,
+      "sent": 5.328,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 542,
+      "pkt_id": 542,
+      "sent": 5.336,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 543,
+      "pkt_id": 543,
+      "sent": 5.344,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 544,
+      "pkt_id": 544,
+      "sent": 5.352,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 545,
+      "pkt_id": 545,
+      "sent": 5.36,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 546,
+      "pkt_id": 546,
+      "sent": 5.368,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 547,
+      "pkt_id": 547,
+      "sent": 5.376,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 548,
+      "pkt_id": 548,
+      "sent": 5.384,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 549,
+      "pkt_id": 549,
+      "sent": 5.392,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.3948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 550,
+      "pkt_id": 550,
+      "sent": 5.4,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 551,
+      "pkt_id": 551,
+      "sent": 5.408,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 552,
+      "pkt_id": 552,
+      "sent": 5.416,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 553,
+      "pkt_id": 553,
+      "sent": 5.424,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 554,
+      "pkt_id": 554,
+      "sent": 5.432,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 555,
+      "pkt_id": 555,
+      "sent": 5.44,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 556,
+      "pkt_id": 556,
+      "sent": 5.448,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 557,
+      "pkt_id": 557,
+      "sent": 5.456,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 558,
+      "pkt_id": 558,
+      "sent": 5.464,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 559,
+      "pkt_id": 559,
+      "sent": 5.472,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 560,
+      "pkt_id": 560,
+      "sent": 5.48,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 561,
+      "pkt_id": 561,
+      "sent": 5.488,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 562,
+      "pkt_id": 562,
+      "sent": 5.496,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.4988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 563,
+      "pkt_id": 563,
+      "sent": 5.504,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 564,
+      "pkt_id": 564,
+      "sent": 5.512,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 565,
+      "pkt_id": 565,
+      "sent": 5.52,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 566,
+      "pkt_id": 566,
+      "sent": 5.528,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 567,
+      "pkt_id": 567,
+      "sent": 5.536,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 568,
+      "pkt_id": 568,
+      "sent": 5.544,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 569,
+      "pkt_id": 569,
+      "sent": 5.552,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 570,
+      "pkt_id": 570,
+      "sent": 5.56,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 571,
+      "pkt_id": 571,
+      "sent": 5.568,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 572,
+      "pkt_id": 572,
+      "sent": 5.576,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 573,
+      "pkt_id": 573,
+      "sent": 5.584,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 574,
+      "pkt_id": 574,
+      "sent": 5.592,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.5948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 575,
+      "pkt_id": 575,
+      "sent": 5.6,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 576,
+      "pkt_id": 576,
+      "sent": 5.608,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 577,
+      "pkt_id": 577,
+      "sent": 5.616,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 578,
+      "pkt_id": 578,
+      "sent": 5.624,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 579,
+      "pkt_id": 579,
+      "sent": 5.632,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 580,
+      "pkt_id": 580,
+      "sent": 5.64,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 581,
+      "pkt_id": 581,
+      "sent": 5.648,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 582,
+      "pkt_id": 582,
+      "sent": 5.656,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 583,
+      "pkt_id": 583,
+      "sent": 5.664,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 584,
+      "pkt_id": 584,
+      "sent": 5.672,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 585,
+      "pkt_id": 585,
+      "sent": 5.68,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 586,
+      "pkt_id": 586,
+      "sent": 5.688,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 587,
+      "pkt_id": 587,
+      "sent": 5.696,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.6988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 588,
+      "pkt_id": 588,
+      "sent": 5.704,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 589,
+      "pkt_id": 589,
+      "sent": 5.712,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 590,
+      "pkt_id": 590,
+      "sent": 5.72,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 591,
+      "pkt_id": 591,
+      "sent": 5.728,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 592,
+      "pkt_id": 592,
+      "sent": 5.736,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 593,
+      "pkt_id": 593,
+      "sent": 5.744,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 594,
+      "pkt_id": 594,
+      "sent": 5.752,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 595,
+      "pkt_id": 595,
+      "sent": 5.76,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 596,
+      "pkt_id": 596,
+      "sent": 5.768,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 597,
+      "pkt_id": 597,
+      "sent": 5.776,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 598,
+      "pkt_id": 598,
+      "sent": 5.784,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 599,
+      "pkt_id": 599,
+      "sent": 5.792,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.7948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 600,
+      "pkt_id": 600,
+      "sent": 5.8,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8028s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 601,
+      "pkt_id": 601,
+      "sent": 5.808,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8108s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 602,
+      "pkt_id": 602,
+      "sent": 5.816,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8188s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 603,
+      "pkt_id": 603,
+      "sent": 5.824,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8268s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 604,
+      "pkt_id": 604,
+      "sent": 5.832,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8348s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 605,
+      "pkt_id": 605,
+      "sent": 5.84,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8428s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 606,
+      "pkt_id": 606,
+      "sent": 5.848,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8508s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 607,
+      "pkt_id": 607,
+      "sent": 5.856,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8588s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 608,
+      "pkt_id": 608,
+      "sent": 5.864,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8668s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 609,
+      "pkt_id": 609,
+      "sent": 5.872,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8748s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 610,
+      "pkt_id": 610,
+      "sent": 5.88,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8828s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 611,
+      "pkt_id": 611,
+      "sent": 5.888,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8908s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 612,
+      "pkt_id": 612,
+      "sent": 5.896,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.8988s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 613,
+      "pkt_id": 613,
+      "sent": 5.904,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9068s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 614,
+      "pkt_id": 614,
+      "sent": 5.912,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9148s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 615,
+      "pkt_id": 615,
+      "sent": 5.92,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9228s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 616,
+      "pkt_id": 616,
+      "sent": 5.928,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9308s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 617,
+      "pkt_id": 617,
+      "sent": 5.936,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9388s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 618,
+      "pkt_id": 618,
+      "sent": 5.944,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9468s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 619,
+      "pkt_id": 619,
+      "sent": 5.952,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9548s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 620,
+      "pkt_id": 620,
+      "sent": 5.96,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9628s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 621,
+      "pkt_id": 621,
+      "sent": 5.968,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9708s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 622,
+      "pkt_id": 622,
+      "sent": 5.976,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9788s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 623,
+      "pkt_id": 623,
+      "sent": 5.984,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9868s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 624,
+      "pkt_id": 624,
+      "sent": 5.992,
+      "fate": "lost_at_node",
+      "detail": "arrived at node 1 at t=5.9948s and was never forwarded (no d event written by NS2); adjacent link(s) down at that time: 1-2",
+      "path_so_far": "0-1"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+# Minimal image providing the real NS2 (ns-2.35) simulator from Ubuntu's archive.
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ns2 tcl \
+ && rm -rf /var/lib/apt/lists/*
+WORKDIR /work
+ENTRYPOINT ["ns"]

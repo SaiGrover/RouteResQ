@@ -1,0 +1,15 @@
+time,source,event,description
+0.0,configured,SIM_START,Simulation starts (routing=Static).
+1.0,configured,TRAFFIC_START,"Monitored CBR traffic starts (flow 1, n0 -> n5)."
+1.0336,trace,FIRST_DELIVERY,"First monitored packet delivered (seq 0, path 0-1-2-4-5, delay 33.6 ms)."
+3.0,configured,LINK_DOWN,Configured failure: link 1-2 is taken down (rtmodel-at down).
+3.0,trace,LINK_DOWN_TRACED,Trace records link 1-2 down (NS2 'v link-down' event).
+3.0,trace,FIRST_LOSS_AFTER_FAILURE,First monitored packet lost after the failure (seq 248): d event on link 1->2 at t=3.0000s while link 1-2 was down.
+3.0096,trace,DELIVERY_GAP_START,Delivery gap begins: no packets reach n5 for 3.024 s.
+6.0,configured,LINK_UP,Configured restoration: link 1-2 is brought back up (rtmodel-at up).
+6.0,trace,LINK_UP_TRACED,Trace records link 1-2 up (NS2 'v link-up' event).
+6.0,trace,LOSS_TOTAL_DURING_FAILURE,377 monitored packet(s) were lost between the failure and t=6.00s.
+6.0336,trace,DELIVERY_RESUMED,Delivery resumes at the destination after a 3.024 s gap.
+9.0,configured,TRAFFIC_STOP,Monitored CBR traffic stops.
+9.0336,trace,LAST_DELIVERY,Last monitored packet delivered (seq 1000).
+10.0,configured,SIM_END,Simulation ends.

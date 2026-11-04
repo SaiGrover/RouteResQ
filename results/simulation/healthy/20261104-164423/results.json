@@ -1,0 +1,1367 @@
+{
+  "scenario": {
+    "id": "healthy",
+    "label": "A",
+    "name": "Scenario A - healthy network (baseline)",
+    "category": "healthy",
+    "description": "All six links are up. A single 1 Mb/s CBR/UDP flow runs from n0 to n5 over the primary path n0-n1-n2-n4-n5. This run is the baseline for every comparison.",
+    "known_cause": "No fault is introduced. All links stay up for the whole simulation.",
+    "params": {
+      "routing": "DV",
+      "stop": 10.0,
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "rate": "1Mb",
+      "pkt_size": 1000,
+      "queue_limit": 20
+    },
+    "effective_params": {
+      "stop": 10.0,
+      "routing": "DV",
+      "access_bw": "10Mb",
+      "access_delay": "2ms",
+      "core_bw": "2Mb",
+      "core_delay": "10ms",
+      "alt_delay": "15ms",
+      "queue_limit": 20,
+      "alt_cost": 3,
+      "pkt_size": 1000,
+      "rate": "1Mb",
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "fail_link": "none",
+      "fail_at": -1,
+      "restore_at": -1,
+      "cross_rate": 0,
+      "cross_start": -1,
+      "cross_stop": -1,
+      "dv_advert": 2
+    },
+    "phases": {
+      "before": [
+        1.0,
+        3.0
+      ],
+      "during": [
+        3.0,
+        6.0
+      ],
+      "after": [
+        6.0,
+        9.0
+      ]
+    },
+    "phase_note": "There is no event in this scenario. The same three windows are used as reference windows so the results line up with scenarios B and C."
+  },
+  "run": {
+    "scenario_id": "healthy",
+    "run_dir": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\healthy\\20261104-164423",
+    "trace_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\healthy\\20261104-164423\\out.tr",
+    "events_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\healthy\\20261104-164423\\events.log",
+    "backend": "docker",
+    "ns_version": "2.35+dfsg-3.1",
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-v",
+      "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\healthy\\20261104-164423:/work",
+      "-w",
+      "/work",
+      "routeresq-ns2:2.35",
+      "routeresq.tcl",
+      "trace=out.tr",
+      "events=events.log",
+      "routing=DV",
+      "stop=10.0",
+      "traffic_start=1.0",
+      "traffic_stop=9.0",
+      "rate=1Mb",
+      "pkt_size=1000",
+      "queue_limit=20"
+    ],
+    "started_at": "2026-11-04T11:14:23+00:00",
+    "wall_seconds": 0.649,
+    "returncode": 0,
+    "extra": {}
+  },
+  "trace_quality": {
+    "total_lines": 12273,
+    "packet_events": 12273,
+    "malformed_lines": 0,
+    "malformed_examples": [],
+    "trace_end_time": 9.787868,
+    "link_events": []
+  },
+  "flows": {
+    "1": {
+      "fid": 1,
+      "src": 0,
+      "dst": 5,
+      "rate_bps": 1000000.0,
+      "start": 1.0,
+      "stop": 9.0,
+      "role": "monitored",
+      "summary": {
+        "window_start": 1.0,
+        "window_end": 9.034,
+        "sent": 1001,
+        "delivered": 1001,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 996.81,
+        "received_bytes": 1001000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 1001,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "phases": {
+    "1": {
+      "before": {
+        "window_start": 1.0,
+        "window_end": 3.0,
+        "sent": 250,
+        "delivered": 250,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 984.0,
+        "received_bytes": 246000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 250,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "during": {
+        "window_start": 3.0,
+        "window_end": 6.0,
+        "sent": 375,
+        "delivered": 375,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 1000.0,
+        "received_bytes": 375000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 375,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "after": {
+        "window_start": 6.0,
+        "window_end": 9.0,
+        "sent": 375,
+        "delivered": 375,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 1000.0,
+        "received_bytes": 375000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 375,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "path_usage": {
+    "before": {
+      "0-1-2-4-5": 250
+    },
+    "during": {
+      "0-1-2-4-5": 375
+    },
+    "after": {
+      "0-1-2-4-5": 375
+    }
+  },
+  "route_changes": [],
+  "delivery_gaps": [],
+  "queue_stats": {
+    "0->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0002,
+      "samples": 2018
+    },
+    "2->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0071,
+      "samples": 14
+    },
+    "2->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0071,
+      "samples": 2016
+    },
+    "1->0": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "1->2": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 2016
+    },
+    "1->3": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->2": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->3": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->5": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 2016
+    },
+    "5->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0191,
+      "samples": 14
+    },
+    "3->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0321,
+      "samples": 16
+    },
+    "3->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0321,
+      "samples": 16
+    }
+  },
+  "bottleneck_link": "0->1",
+  "drops_by_location": {},
+  "routing_control": {
+    "total_messages": 87,
+    "bin_size": 0.5,
+    "series": [
+      {
+        "t": 0.0,
+        "messages": 36
+      },
+      {
+        "t": 0.5,
+        "messages": 0
+      },
+      {
+        "t": 1.0,
+        "messages": 0
+      },
+      {
+        "t": 1.5,
+        "messages": 3
+      },
+      {
+        "t": 2.0,
+        "messages": 8
+      },
+      {
+        "t": 2.5,
+        "messages": 1
+      },
+      {
+        "t": 3.0,
+        "messages": 0
+      },
+      {
+        "t": 3.5,
+        "messages": 3
+      },
+      {
+        "t": 4.0,
+        "messages": 8
+      },
+      {
+        "t": 4.5,
+        "messages": 1
+      },
+      {
+        "t": 5.0,
+        "messages": 0
+      },
+      {
+        "t": 5.5,
+        "messages": 3
+      },
+      {
+        "t": 6.0,
+        "messages": 9
+      },
+      {
+        "t": 6.5,
+        "messages": 0
+      },
+      {
+        "t": 7.0,
+        "messages": 0
+      },
+      {
+        "t": 7.5,
+        "messages": 3
+      },
+      {
+        "t": 8.0,
+        "messages": 9
+      },
+      {
+        "t": 8.5,
+        "messages": 0
+      },
+      {
+        "t": 9.0,
+        "messages": 0
+      },
+      {
+        "t": 9.5,
+        "messages": 3
+      }
+    ]
+  },
+  "timeline": [
+    {
+      "time": 0.0,
+      "source": "configured",
+      "event": "SIM_START",
+      "description": "Simulation starts (routing=DV)."
+    },
+    {
+      "time": 1.0,
+      "source": "configured",
+      "event": "TRAFFIC_START",
+      "description": "Monitored CBR traffic starts (flow 1, n0 -> n5)."
+    },
+    {
+      "time": 1.0336,
+      "source": "trace",
+      "event": "FIRST_DELIVERY",
+      "description": "First monitored packet delivered (seq 0, path 0-1-2-4-5, delay 33.6 ms)."
+    },
+    {
+      "time": 9.0,
+      "source": "configured",
+      "event": "TRAFFIC_STOP",
+      "description": "Monitored CBR traffic stops."
+    },
+    {
+      "time": 9.0336,
+      "source": "trace",
+      "event": "LAST_DELIVERY",
+      "description": "Last monitored packet delivered (seq 1000)."
+    },
+    {
+      "time": 10.0,
+      "source": "configured",
+      "event": "SIM_END",
+      "description": "Simulation ends."
+    }
+  ],
+  "timeseries": [
+    {
+      "t": 0.0,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 0.1,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.2,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.3,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.4,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.5,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.6,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.7,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.8,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.9,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 1.0,
+      "throughput_kbps": 720.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 4.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 5.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.0,
+      "throughput_kbps": 400.0,
+      "sent": 1,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.1,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.2,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.3,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.4,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.5,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.6,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.7,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "bottleneck_queue_pkts": 0
+    }
+  ],
+  "findings": {
+    "failure_type": "none (baseline)",
+    "known_cause": "No fault is introduced. All links stay up for the whole simulation.",
+    "failure_time": null,
+    "affected_link": null,
+    "what_failed": "Nothing. No fault was introduced; this is the control experiment.",
+    "why": "No fault is introduced. All links stay up for the whole simulation.",
+    "observed_impact": [
+      "1001 packets sent, 1001 delivered, 0 lost (0.00% loss).",
+      "Average end-to-end delay 33.60 ms, throughput 996.8 kb/s.",
+      "Delivered packets used path(s): 0-1-2-4-5."
+    ],
+    "routing_behavior": "Only path 0-1-2-4-5 was used.",
+    "route_changes": 0,
+    "recovery": {
+      "outcome": "not applicable",
+      "evidence": []
+    },
+    "explanation": "With all links up and an offered load of 1 Mb/s on 2 Mb/s core links, every packet followed the lowest-cost path. No packets were lost. These numbers are the baseline for the other scenarios.",
+    "can_conclude": [
+      "Baseline throughput, delay and loss of the configured model."
+    ],
+    "cannot_conclude": [
+      "NS2 results describe this configured model, not any real network."
+    ],
+    "performance_degradation": {
+      "throughput_kbps": {
+        "before": 984.0,
+        "during": 1000.0,
+        "after": 1000.0,
+        "during_vs_before_pct": 1.6,
+        "after_vs_before_pct": 1.6
+      },
+      "avg_delay_ms": {
+        "before": 33.6,
+        "during": 33.6,
+        "after": 33.6,
+        "during_vs_before_pct": 0.0,
+        "after_vs_before_pct": 0.0
+      },
+      "max_delay_ms": {
+        "before": 33.6,
+        "during": 33.6,
+        "after": 33.6,
+        "during_vs_before_pct": 0.0,
+        "after_vs_before_pct": 0.0
+      },
+      "jitter_ms": {
+        "before": 0.0,
+        "during": 0.0,
+        "after": 0.0,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": null
+      },
+      "loss_pct": {
+        "before": 0.0,
+        "during": 0.0,
+        "after": 0.0,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": null
+      },
+      "delivery_ratio_pct": {
+        "before": 100.0,
+        "during": 100.0,
+        "after": 100.0,
+        "during_vs_before_pct": 0.0,
+        "after_vs_before_pct": 0.0
+      }
+    }
+  },
+  "lost_packets": []
+}

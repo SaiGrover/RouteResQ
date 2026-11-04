@@ -1,0 +1,19 @@
+{
+  "_comment": "Destinations RouteResQ may actively probe (ping / traceroute / TCP connect). Only add hosts you are authorised to test.",
+  "allow_loopback": true,
+  "allow_private_networks": true,
+  "hosts": [
+    "localhost",
+    "8.8.8.8",
+    "1.1.1.1",
+    "9.9.9.9",
+    "dns.google",
+    "one.one.one.one",
+    "example.com",
+    "github.com"
+  ],
+  "reserved_test_targets": {
+    "nonexistent.invalid": "RFC 6761 reserved TLD '.invalid' - can never resolve; demonstrates a DNS resolution failure.",
+    "192.0.2.1": "RFC 5737 TEST-NET-1 documentation address - no real host; demonstrates timeouts / unreachable destination."
+  }
+}

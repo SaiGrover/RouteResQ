@@ -1,0 +1,354 @@
+# RouteResQ
+
+**Network failure detection, root-cause analysis and recovery observation.** A Computer Networks lab project (24B15CS313, JIIT Noida).
+
+RouteResQ answers four questions about a network problem, using evidence only:
+
+1. **What failed?** Connectivity, DNS, latency, loss, routing or congestion symptoms.
+2. **Why did it fail?** The causes the evidence supports, kept separate from what is only possible.
+3. **What happened next?** Interruption, packet drops, route changes and recovery.
+4. **How did performance change?** Throughput, delay and loss before, during and after the failure.
+
+The workflow is **Detect → Diagnose → Analyse impact → Observe recovery → Report**.
+
+| Component | Environment | What it does |
+|---|---|---|
+| Network diagnostics & failure analysis | **Live network** | Real `ping`, `tracert`/`traceroute`, DNS and TCP checks. A deterministic rule engine turns the evidence into findings and possible root causes. |
+| NS2 failure simulation & recovery analysis | **NS2 simulation** | A real NS2 2.35 run of a 6-node wired topology: healthy baseline, link failure (DV and static routing) and congestion. A Python parser analyses the trace. |
+| TCP/UDP communication & secure transfer | **Real sockets** (loopback or two lab PCs) | TCP and UDP client/server, a TCP vs UDP experiment, a TLS-encrypted transfer with SHA-256 integrity checks, and controlled failure demonstrations. |
+
+Simulated results and live measurements are always labelled and kept apart. A failure seen on the live network is never assumed to have the same cause as a simulated one.
+
+---
+
+## 1. Architecture
+
+```
+streamlit_app.py            UI entry point (st.navigation); the pages only display backend results
+app_pages/                  overview, diagnostics, communication, simulation, comparison, results
+ui/                         small presentation helpers (badges, cached NS2 status)
+
+diagnostics/                live measurements
+  commands.py               allow-listed subprocess runner, OS-specific command builders
+  parsers.py                ping / tracert / traceroute / tracepath / route / DNS-config parsers
+  engine.py                 DNS lookup, gateway check, ping, traceroute, TCP connect, network inspection
+  authorization.py          destination validation and allow-list (config/authorized_targets.json)
+  history.py                JSON-lines history, baselines, run-to-run comparison
+  cli.py                    command-line front end
+failure_analysis/
+  rules.py                  rule-based root-cause engine (no ML), thresholds, rule trace
+  report.py                 Markdown report for a diagnostic run
+simulation/
+  tcl/routeresq.tcl         the NS2 topology and experiment script (parametrised)
+  scenarios/*.json          scenario A, B1, B2, C definitions
+  scenario.py               scenario loading and strict parameter validation
+  runner.py                 runs NS2 (local `ns` or the Docker image)
+  trace_parser.py           NS2 wired-trace and event-log parser
+  experiments.py            simulate -> parse -> analyse -> save -> report (CLI)
+analysis/
+  packets.py                per-packet reconstruction and fate classification
+  metrics.py                loss, delay, jitter, throughput, phases, time series, queue occupancy
+  routing.py                paths, route changes, delivery gaps, routing-protocol traffic
+  timeline.py               configured and observed failure timeline
+  experiment.py             answers what / why / what next / how / recovery for one run
+  comparison.py, report.py  scenario comparison and Markdown reports
+communication/
+  framing.py                length-prefixed framing (handles partial reads)
+  tcp_server.py, tcp_client.py   message + file transfer, timing, error classification (also TLS)
+  udp.py                    sequenced datagrams, loss / reorder / duplicate / timeout detection
+  experiments.py            TCP vs UDP experiment
+  failures.py               controlled failure demonstrations
+  report.py                 runs everything and writes reports/communication.md
+security/
+  certs.py                  lab PKI (CA, valid server cert, untrusted cert, wrong-host cert)
+  tls.py                    TLS server/client contexts and the secure-transfer demo
+  integrity.py              SHA-256 helpers
+config/                     authorised destinations, rule thresholds
+results/                    generated JSON / CSV / trace files (simulation runs are kept in git)
+reports/                    generated Markdown experiment reports
+tests/                      pytest suite (+ real captured command outputs in tests/fixtures)
+docker/Dockerfile.ns2       NS2 2.35 image for Windows/macOS
+```
+
+The networking logic does not depend on Streamlit. Every module can be used from Python or from its command line.
+
+## 2. Installation
+
+Requires Python 3.11 or newer (developed and tested on 3.13).
+
+```bash
+pip install -r requirements.txt
+```
+
+### NS2
+
+RouteResQ runs the **real** NS2 simulator. It uses an `ns` binary on `PATH` if there is one; otherwise it uses Docker.
+
+**Linux (verified on Ubuntu 22.04; the `ns2` package is in the universe repository):**
+
+```bash
+sudo apt install ns2
+```
+
+**Windows / macOS, or Linux without an `ns2` package:** install Docker Desktop, then build the image once. It is Ubuntu 22.04 with the distribution's `ns2 2.35+dfsg-3.1` package:
+
+```bash
+docker build -f docker/Dockerfile.ns2 -t routeresq-ns2:2.35 docker
+```
+
+The Overview page shows which back end was detected. The test suite skips NS2 tests when neither is available.
+
+### Diagnostic tools
+
+* **Windows:** `ping`, `tracert`, `route` and `ipconfig` are built in.
+* **Linux:** `ping` (iputils), `ip` (iproute2) and `traceroute` (`sudo apt install traceroute`). If `traceroute` is missing, `tracepath` is used instead.
+
+## 3. Running
+
+```bash
+streamlit run streamlit_app.py
+```
+
+| Task | Command |
+|---|---|
+| All four NS2 experiments + reports | `python -m simulation.experiments` |
+| Selected experiments | `python -m simulation.experiments healthy congestion` |
+| Re-analyse stored traces only | `python -m simulation.experiments --reanalyze` |
+| Live diagnostics + report | `python -m diagnostics.cli 8.8.8.8 nonexistent.invalid 192.0.2.1 --report reports/live_diagnostics.md` |
+| Record a baseline | `python -m diagnostics.cli 8.8.8.8 --set-baseline` |
+| Communication experiments + report | `python -m communication.report` |
+| TCP server / client (two lab PCs) | `python -m communication.tcp_server --host 0.0.0.0 --port 5050` and `python -m communication.tcp_client --host <server-ip> --port 5050 --file data.bin` |
+| TLS server / client | add `--tls` to both (the client trusts `results/certs/lab-ca.pem`, so copy it to the client PC) |
+| UDP receiver / sender | `python -m communication.udp receive --host 0.0.0.0 --port 5051` and `python -m communication.udp send --host <ip> --port 5051 --count 1000 --size 1024` |
+
+### Authorised destinations
+
+Active probes (ping, traceroute, TCP connect) are only sent to destinations in [config/authorized_targets.json](config/authorized_targets.json), to loopback, and to private (RFC 1918) addresses. Two reserved targets are included for demonstrations:
+
+* `nonexistent.invalid` can never resolve (RFC 6761), so it shows a DNS failure.
+* `192.0.2.1` is a documentation address with no host (RFC 5737), so it shows a timeout or unreachable destination.
+
+Add a destination only if you are allowed to test it. The Diagnostics page asks you to confirm this. Targets are validated, so option injection such as `-n …` or shell syntax is rejected, and commands are never run through a shell.
+
+## 4. Module 1: diagnostics and root-cause analysis
+
+### Measurements
+
+| Step | Windows | Linux |
+|---|---|---|
+| Network configuration | `route print -4`, `ipconfig /all` | `ip route`, `/etc/resolv.conf` |
+| DNS | `socket.getaddrinfo` (error kind: not-found / temporary / no-data) | same |
+| Gateway reachability | `ping -n N -w ms <gateway>` | `ping -c N -W s <gateway>` |
+| Destination RTT and loss | `ping -n N -w ms <ip>` | `ping -c N -W s -i 0.5 <ip>` |
+| Path | `tracert -d -h H -w ms <ip>` | `traceroute -n -m H -w s -q 3 <ip>` (or `tracepath`) |
+| Connection timeout / refusal | `socket.create_connection` to an optional TCP port | same |
+
+Packet counts are computed from the individual echo-reply lines and cross-checked against the tool's own summary. Windows counts *"Destination host unreachable"* replies as "Received"; RouteResQ does not, and records a parser note when the two disagree.
+
+### Classification
+
+Each run gets one or more of: *Healthy / Reachable*, *DNS Resolution Failure*, *Unreachable Destination*, *High Latency*, *Packet Loss*, *Possible Routing Issue*, *Possible Congestion*, *Inconclusive / Insufficient Evidence*.
+
+### Evidence levels
+
+There are no confidence percentages. Every statement has exactly one of these levels:
+
+* **confirmed**: directly observed in command output (an observation, not a cause)
+* **likely**: the explanation most consistent with all the evidence
+* **possible**: consistent with the evidence, but alternatives cannot be ruled out
+* **insufficient_evidence**: the data cannot support a conclusion (for example, too few RTT samples)
+
+### Rules ([failure_analysis/rules.py](failure_analysis/rules.py))
+
+Thresholds are in [config/thresholds.json](config/thresholds.json).
+
+| Rule | Condition | Produces |
+|---|---|---|
+| R-DNS-01 | name lookup fails | DNS Resolution Failure (confirmed); causes depend on the error kind and gateway reachability |
+| R-PING-00 | ping output missing or unparseable | Inconclusive |
+| R-REACH-01 | 0 echo replies and no TCP/traceroute contradiction | Unreachable Destination (confirmed) |
+| R-REACH-02 | OS or a router reports *unreachable* / *no route* (`!H`, `!N`, …) | Unreachable; "no route at a router" is *likely* |
+| R-TCP-01 | TCP connect times out | Connection timeout (confirmed) |
+| R-LOSS-01 / 02 | partial loss ≥ threshold / 100 % loss | Packet Loss |
+| R-LAT-01 | mean RTT > threshold with ≥ `min_rtt_samples` samples | High Latency; fewer samples gives *insufficient_evidence* |
+| R-LAT-02 | RTT standard deviation > threshold | High Latency (jitter) |
+| R-BASE-01..04 | RTT, loss, jitter or throughput clearly worse than the recorded baseline | baseline-relative findings |
+| R-CONG-01 | **two or more** congestion indicators together | Possible Congestion. A single high-latency reading is never classified as congestion. |
+| R-ROUTE-01 | traceroute stops before the destination **and** ping fails | Possible Routing Issue |
+| R-ROUTE-02 | responding hop sequence differs from the previous run | route change (confirmed) |
+| R-OK-01 | name resolves and the host answers | Healthy / Reachable |
+
+**Contradictory evidence** is reported, not hidden. Examples:
+
+* Ping fails but TCP connects: ICMP is probably filtered, and the host counts as reachable.
+* Ping works but traceroute stops: probes are being filtered or NAT is in the way. This is *not* treated as a routing failure.
+* The gateway ignores ping but the destination answers.
+
+Every rule is listed in a **rule trace** with the reason it fired or did not.
+
+Example from a real run against `192.0.2.1` (see [reports/live_diagnostics.md](reports/live_diagnostics.md)):
+
+* The gateway answered 4/4 pings.
+* Ping to the destination got 0/4 replies.
+* Traceroute's last responding hop was TTL 2, followed by silent hops.
+* A TCP connect timed out.
+
+Possible explanations: the destination is down, a downstream path is inaccessible, or ICMP is filtered. Conclusion: *"192.0.2.1 could not be reached using the available diagnostic methods. No device reported an explicit error, so the precise cause is not confirmed."*
+
+### History and baselines
+
+Every run is appended to `results/diagnostics/history.jsonl`. You can mark any healthy run as the **baseline** for its destination (`baselines.json`). Later runs are judged against the baseline (factor + absolute margin) as well as the fixed thresholds. The UI and `compare_runs()` compare two runs: status, RTT, loss and traceroute path changes. History can be exported to CSV.
+
+## 5. Module 2: NS2 simulation
+
+### Topology ([simulation/tcl/routeresq.tcl](simulation/tcl/routeresq.tcl))
+
+```
+                 n2
+      (primary) /  \ (primary)
+   n0 ---- n1          n4 ---- n5
+  source        \  /         destination
+                 n3   (alternative path, cost 3 per link)
+```
+
+| Link | Bandwidth | Delay | Queue | Routing cost |
+|---|---|---|---|---|
+| n0–n1, n4–n5 (access) | 10 Mb/s | 2 ms | DropTail, 20 pkts | 1 |
+| n1–n2, n2–n4 (primary core) | 2 Mb/s | 10 ms | DropTail, 20 pkts | 1 |
+| n1–n3, n3–n4 (alternative) | 2 Mb/s | 15 ms | DropTail, 20 pkts | 3 |
+
+* **Traffic:** monitored flow 1 is CBR over UDP, n0→n5, 1 Mb/s, 1000-byte packets, 1.0–9.0 s (1001 packets). The simulation stops at 10 s.
+* **Routing:** `DV` (NS2 distance-vector, `rtProto DV`, advert interval 2 s) or `Static`.
+* **Failures:** injected with `$ns rtmodel-at <t> down|up $n1 $n2`.
+
+### Scenarios ([simulation/scenarios/](simulation/scenarios/))
+
+| | Scenario | Injected condition (known cause) |
+|---|---|---|
+| A | healthy | none (baseline) |
+| B1 | link_failure_dv | link n1–n2 down 3.0–6.0 s, DV routing |
+| B2 | link_failure_static | same failure, static routing |
+| C | congestion | competing 1.5 Mb/s CBR flow 2 from 3.0 to 6.0 s (2.5 Mb/s offered to a 2 Mb/s link) |
+
+Phase windows are the same in every scenario: **before 1–3 s, during 3–6 s, after 6–9 s**. In scenario A they are reference windows only, since nothing happens at 3 s.
+
+### Trace analysis and metric definitions
+
+[analysis/packets.py](analysis/packets.py) rebuilds each data packet from its NS2 unique id (last trace column). The counting rules avoid double counting at routers:
+
+* **Sent:** the packet's first `+` event at its *source* node. Forwarding `+` events at routers are ignored.
+* **Received:** an `r` event at the *destination* node. `r` events at routers only extend the packet's path.
+* **End-to-end delay:** receive time − send time of the same packet id. This includes queueing, transmission and propagation.
+* **Packet loss %:** lost ÷ (sent − in-flight) × 100.
+* **Jitter:** mean absolute difference between delays of consecutively sent packets (a simplified form of RFC 3550).
+* **Throughput:** bits received at the destination in a window ÷ window length. For a whole flow the window is [first send, last receive].
+* **Phase assignment:** loss and delay go to a phase by **send time**; throughput goes by **receive time**.
+* **Queue occupancy:** rebuilt per link from `+`, `-` and `d` events. A `d` for a packet already being transmitted does not reduce the queue.
+* **Route changes:** detected when consecutively sent, delivered packets switch path and the new path holds for at least 3 packets.
+* **Delivery gaps (interruptions):** periods with no arrivals longer than max(5 × packet interval, 50 ms).
+* **Recovery:**
+  * Link failure: *rerouted* if packets sent during the failure arrived over a path that avoids the failed link. *Interrupted until restored* if delivery resumed only after link-up.
+  * Congestion: *recovered* if packets sent after the bottleneck queue drained show 0 % loss and delay within 10 % of the before phase.
+
+**Each lost packet gets one fate:**
+
+* `dropped_queue`: a `d` event on a link that was up (DropTail overflow).
+* `dropped_link_down`: a `d` event on a failed link.
+* `lost_at_node` / `lost_on_link`: there is **no** `d` event. NS2 2.35 silently discards packets that reach a router whose only route uses a down link (this happens in scenario B2). RouteResQ finds these losses because the packet is never seen again, and gives its last traced location.
+
+### Reference results (real NS2 2.35 runs, deterministic)
+
+From [reports/scenario_comparison.md](reports/scenario_comparison.md). The per-scenario reports are in [reports/](reports/), and the raw traces and CSV/JSON are in `results/simulation/<scenario>/<run>/`.
+
+| Scenario | Delivered | Loss % | Avg delay ms | During-phase throughput kb/s | Route changes | Longest gap | Outcome |
+|---|---|---|---|---|---|---|---|
+| A healthy | 1001/1001 | 0.00 | 33.60 | 1000.0 | 0 | none | baseline |
+| B1 link failure, DV | 999/1001 | 0.20 | 37.36 | 992.0 | 2 (to n1-n3-n4 at 3.0 s, back at 6.008 s) | none | rerouted; first packet over the alternative path 43.6 ms after the failure; 2 packets lost (they were on the failed link) |
+| B2 link failure, static | 624/1001 | 37.66 | 33.60 | 5.3 | 0 | 3.024 s | interrupted until the link was restored; 375 packets silently discarded at n1 |
+| C congestion | 884/1001 | 11.69 | 54.55 | 682.7 | 0 | none | queue n1→n2 reached 20/20; 170 overflow drops (117 of flow 1); recovered 0.14 s after the load stopped |
+
+The 33.6 ms baseline delay can be checked by hand: propagation is 2 + 10 + 10 + 2 ms, and transmission is 0.8 + 4 + 4 + 0.8 ms for a 1000-byte packet.
+
+## 6. Module 3: TCP, UDP and TLS
+
+### TCP
+
+* **Framing:** 1-byte type + 4-byte length + payload. `recv_exact()` loops until the whole frame has arrived, so partial reads are handled.
+* **Operations:** message echo with acknowledgement; file transfer in 64 KiB chunks with a SHA-256 check on the server.
+* **Measurements:** connection set-up time, transfer time and throughput.
+* **Errors** are classified as refused, timeout, reset, closed-by-peer, TLS certificate, TLS other, protocol, DNS or unreachable.
+
+### UDP
+
+* **Datagram header:** sequence number, run id, total count and send timestamp.
+* **The receiver reports:** missing sequence numbers (as ranges), duplicates, out-of-order arrivals, loss %, throughput, and an idle-timeout flag.
+* **No reliability layer is added:** UDP loss is measured, never repaired.
+
+### TCP vs UDP
+
+The same amount of data is sent over both protocols on loopback. The explanation is generated from the measured numbers and never claims one protocol is always faster.
+
+### TLS
+
+* Python's `ssl` module, TLS 1.2 minimum.
+* The client requires a certificate chain to the RouteResQ lab CA **and** a matching host name.
+* Messages and files go through the same framed protocol, with SHA-256 checked end to end.
+* Certificates are generated with the `cryptography` package. No custom cryptography is used.
+
+### Failure demonstrations
+
+| Failure | How it is created | Observed by the client |
+|---|---|---|
+| Server unavailable | no listener on the port | `ConnectionRefusedError` (Windows retries ~2 s first) |
+| Connection timeout | server accepts but never replies | read timeout |
+| Interrupted transfer | server sends RST after ~300 kB of 2 MB | `ConnectionResetError` |
+| Missing UDP datagrams | sender skips chosen sequence numbers (**injected**) | exact missing ranges + idle timeout |
+| Invalid TLS certificate | untrusted issuer / wrong host name | `SSLCertVerificationError` |
+| (optional) SYN timeout | connect to 192.0.2.1:80 | connect timeout |
+
+Each demonstration then restores the condition and records whether communication resumed. See [reports/communication.md](reports/communication.md).
+
+## 7. Testing
+
+```bash
+pytest                                  # everything (133 tests)
+pytest -m "not ns2 and not network"     # mocked / offline only
+pytest -m ns2                           # real NS2 runs
+pytest -m network                       # real ping/traceroute/DNS (loopback + RFC-reserved targets only)
+pytest -m ui                            # Streamlit AppTest smoke tests
+```
+
+| File | Kind | Covers |
+|---|---|---|
+| `test_parsers.py` | unit, **real captured outputs** (Windows 11, Ubuntu 24.04) + synthetic edge cases | reachable, DNS failure, timeouts, partial/complete loss, `<1ms`, unreachable replies, truncated/garbage output, traceroute formats |
+| `test_rules.py` | unit, **mocked measurements** | every classification, evidence levels, contradictions, single-indicator ≠ congestion, baseline comparison, route change |
+| `test_diagnostics_engine.py` | unit, mocked command runner | full pipeline, authorisation and injection rejection, allow-listed executables, history/baseline |
+| `test_trace_analysis.py` | unit, synthetic traces with known answers | parsing, packet matching, no double counting, every loss fate, delay/throughput/jitter, queue occupancy, route changes, gaps |
+| `test_scenarios.py` | unit | scenario validation (rejects Tcl injection and invalid links/times) |
+| `test_ns2_integration.py` | **real NS2** | script execution, the expected behaviour of all four scenarios, timeline events, comparison, reports |
+| `test_communication.py` | **real sockets** | framing with partial reads, TCP/UDP/TLS transfers, integrity, certificate rejection, every failure demonstration |
+| `test_live_network.py` | **real commands** | loopback health, reserved-name DNS failure, documentation-address unreachability, refused port |
+| `test_streamlit_ui.py` | UI | every page renders, scenario switching, authorisation guard |
+
+## 8. Methodology notes and limitations
+
+* **Live diagnostics only show what devices choose to answer.** Routers rate-limit or drop ICMP, firewalls block traceroute probes, and NAT (including Docker's) hides hops. RouteResQ therefore reports causes as *possible* unless the evidence singles one out. With only 4 probes, loss has 25-point resolution, so use more probes for loss studies.
+* **Windows** reports sub-millisecond RTTs as `<1ms`, which RouteResQ records as 0 ms. Command output is parsed in English; other OS languages are not supported.
+* **NS2 results describe the configured model**, not a real network.
+  * NS2's DV agents learn about a link failure immediately and send triggered updates, so rerouting in B1 is almost instant. Real protocols with hold-down timers converge more slowly.
+  * Both CBR flows use UDP and do not back off, so scenario C does not show TCP congestion control.
+* **Communication experiments on loopback** have no propagation delay and almost no loss. Throughput depends on the host, so use two lab PCs for path effects.
+* **The lab PKI is for local demonstration only.** Its private keys are generated into `results/certs/` and are not committed.
+
+## 9. Scope
+
+Included: the three components above, integrated in Streamlit.
+
+Deliberately **not** included, as the project brief requires:
+
+* Wireshark or packet capture
+* intrusion detection
+* machine learning
+* automatic repair of real networks
+* custom cryptography
+* mock replacements for NS2

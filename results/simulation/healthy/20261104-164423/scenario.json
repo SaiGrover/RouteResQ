@@ -1,0 +1,54 @@
+{
+  "id": "healthy",
+  "label": "A",
+  "name": "Scenario A - healthy network (baseline)",
+  "category": "healthy",
+  "description": "All six links are up. A single 1 Mb/s CBR/UDP flow runs from n0 to n5 over the primary path n0-n1-n2-n4-n5. This run is the baseline for every comparison.",
+  "known_cause": "No fault is introduced. All links stay up for the whole simulation.",
+  "params": {
+    "routing": "DV",
+    "stop": 10.0,
+    "traffic_start": 1.0,
+    "traffic_stop": 9.0,
+    "rate": "1Mb",
+    "pkt_size": 1000,
+    "queue_limit": 20
+  },
+  "effective_params": {
+    "stop": 10.0,
+    "routing": "DV",
+    "access_bw": "10Mb",
+    "access_delay": "2ms",
+    "core_bw": "2Mb",
+    "core_delay": "10ms",
+    "alt_delay": "15ms",
+    "queue_limit": 20,
+    "alt_cost": 3,
+    "pkt_size": 1000,
+    "rate": "1Mb",
+    "traffic_start": 1.0,
+    "traffic_stop": 9.0,
+    "fail_link": "none",
+    "fail_at": -1,
+    "restore_at": -1,
+    "cross_rate": 0,
+    "cross_start": -1,
+    "cross_stop": -1,
+    "dv_advert": 2
+  },
+  "phases": {
+    "before": [
+      1.0,
+      3.0
+    ],
+    "during": [
+      3.0,
+      6.0
+    ],
+    "after": [
+      6.0,
+      9.0
+    ]
+  },
+  "phase_note": "There is no event in this scenario. The same three windows are used as reference windows so the results line up with scenarios B and C."
+}

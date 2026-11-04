@@ -1,0 +1,3 @@
+fid,seq,pkt_id,sent,fate,detail,path_so_far
+1,248,296,2.984,dropped_link_down,d event on link 1->2 at t=3.0000s while link 1-2 was down,0-1
+1,249,297,2.992,dropped_link_down,d event on link 1->2 at t=3.0000s while link 1-2 was down,0-1

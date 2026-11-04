@@ -1,0 +1,3171 @@
+{
+  "scenario": {
+    "id": "congestion",
+    "label": "C",
+    "name": "Scenario C - congestion from competing traffic",
+    "category": "congestion",
+    "description": "The monitored 1 Mb/s flow (fid 1) runs as in the baseline. From t = 3.0 s to t = 6.0 s a competing 1.5 Mb/s CBR flow (fid 2) is added on the same path, so 2.5 Mb/s is offered to the 2 Mb/s core link n1-n2.",
+    "known_cause": "Competing traffic (flow 2, 1.5 Mb/s) was deliberately injected between t = 3.0 s and t = 6.0 s. Offered load on link n1-n2 is 2.5 Mb/s against 2 Mb/s capacity.",
+    "params": {
+      "routing": "DV",
+      "stop": 10.0,
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "rate": "1Mb",
+      "pkt_size": 1000,
+      "queue_limit": 20,
+      "cross_rate": "1.5Mb",
+      "cross_start": 3.0,
+      "cross_stop": 6.0
+    },
+    "effective_params": {
+      "stop": 10.0,
+      "routing": "DV",
+      "access_bw": "10Mb",
+      "access_delay": "2ms",
+      "core_bw": "2Mb",
+      "core_delay": "10ms",
+      "alt_delay": "15ms",
+      "queue_limit": 20,
+      "alt_cost": 3,
+      "pkt_size": 1000,
+      "rate": "1Mb",
+      "traffic_start": 1.0,
+      "traffic_stop": 9.0,
+      "fail_link": "none",
+      "fail_at": -1,
+      "restore_at": -1,
+      "cross_rate": "1.5Mb",
+      "cross_start": 3.0,
+      "cross_stop": 6.0,
+      "dv_advert": 2
+    },
+    "phases": {
+      "before": [
+        1.0,
+        3.0
+      ],
+      "during": [
+        3.0,
+        6.0
+      ],
+      "after": [
+        6.0,
+        9.0
+      ]
+    },
+    "phase_note": ""
+  },
+  "run": {
+    "scenario_id": "congestion",
+    "run_dir": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\congestion\\20261104-164425",
+    "trace_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\congestion\\20261104-164425\\out.tr",
+    "events_file": "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\congestion\\20261104-164425\\events.log",
+    "backend": "docker",
+    "ns_version": "2.35+dfsg-3.1",
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "-v",
+      "C:\\Users\\Aditya\\AppData\\Local\\Claude-Data\\claude_pzs8sxrjxfjjc\\scratch-workspaces\\cd6a4156-9f3b-47f6-9837-f1cc0711a291\\bd2a9cd6-7d84-4284-b93a-7971c0f98a00\\scratch-2026-11-04-50bf27\\results\\simulation\\congestion\\20261104-164425:/work",
+      "-w",
+      "/work",
+      "routeresq-ns2:2.35",
+      "routeresq.tcl",
+      "trace=out.tr",
+      "events=events.log",
+      "routing=DV",
+      "stop=10.0",
+      "traffic_start=1.0",
+      "traffic_stop=9.0",
+      "rate=1Mb",
+      "pkt_size=1000",
+      "queue_limit=20",
+      "cross_rate=1.5Mb",
+      "cross_start=3.0",
+      "cross_stop=6.0"
+    ],
+    "started_at": "2026-11-04T11:14:25+00:00",
+    "wall_seconds": 0.522,
+    "returncode": 0,
+    "extra": {}
+  },
+  "trace_quality": {
+    "total_lines": 17839,
+    "packet_events": 17839,
+    "malformed_lines": 0,
+    "malformed_examples": [],
+    "trace_end_time": 9.787868,
+    "link_events": []
+  },
+  "flows": {
+    "1": {
+      "fid": 1,
+      "src": 0,
+      "dst": 5,
+      "rate_bps": 1000000.0,
+      "start": 1.0,
+      "stop": 9.0,
+      "role": "monitored",
+      "summary": {
+        "window_start": 1.0,
+        "window_end": 9.034,
+        "sent": 1001,
+        "delivered": 884,
+        "lost": 117,
+        "in_flight": 0,
+        "loss_pct": 11.69,
+        "delivery_ratio_pct": 88.31,
+        "avg_delay_ms": 54.554,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 109.648,
+        "jitter_ms": 0.181,
+        "throughput_kbps": 880.3,
+        "received_bytes": 884000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 884,
+          "dropped_queue": 117,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    },
+    "2": {
+      "fid": 2,
+      "src": 0,
+      "dst": 5,
+      "rate_bps": 1500000.0,
+      "start": 3.0,
+      "stop": 6.0,
+      "role": "competing",
+      "summary": {
+        "window_start": 3.0,
+        "window_end": 6.106,
+        "sent": 563,
+        "delivered": 510,
+        "lost": 53,
+        "in_flight": 0,
+        "loss_pct": 9.41,
+        "delivery_ratio_pct": 90.59,
+        "avg_delay_ms": 103.725,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 109.648,
+        "jitter_ms": 2.012,
+        "throughput_kbps": 1313.74,
+        "received_bytes": 510000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 510,
+          "dropped_queue": 53,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "phases": {
+    "1": {
+      "before": {
+        "window_start": 1.0,
+        "window_end": 3.0,
+        "sent": 250,
+        "delivered": 250,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": 0.0,
+        "delivery_ratio_pct": 100.0,
+        "avg_delay_ms": 33.6,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 33.6,
+        "jitter_ms": 0.0,
+        "throughput_kbps": 984.0,
+        "received_bytes": 246000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 250,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "during": {
+        "window_start": 3.0,
+        "window_end": 6.0,
+        "sent": 375,
+        "delivered": 259,
+        "lost": 116,
+        "in_flight": 0,
+        "loss_pct": 30.93,
+        "delivery_ratio_pct": 69.07,
+        "avg_delay_ms": 102.75,
+        "min_delay_ms": 37.6,
+        "max_delay_ms": 109.648,
+        "jitter_ms": 0.326,
+        "throughput_kbps": 682.67,
+        "received_bytes": 256000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 259,
+          "dropped_queue": 116,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "after": {
+        "window_start": 6.0,
+        "window_end": 9.0,
+        "sent": 375,
+        "delivered": 374,
+        "lost": 1,
+        "in_flight": 0,
+        "loss_pct": 0.27,
+        "delivery_ratio_pct": 99.73,
+        "avg_delay_ms": 35.239,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 101.648,
+        "jitter_ms": 0.182,
+        "throughput_kbps": 1005.33,
+        "received_bytes": 377000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 374,
+          "dropped_queue": 1,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    },
+    "2": {
+      "before": {
+        "window_start": 1.0,
+        "window_end": 3.0,
+        "sent": 0,
+        "delivered": 0,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": null,
+        "delivery_ratio_pct": null,
+        "avg_delay_ms": null,
+        "min_delay_ms": null,
+        "max_delay_ms": null,
+        "jitter_ms": null,
+        "throughput_kbps": 0.0,
+        "received_bytes": 0,
+        "reordered": 0,
+        "fates": {
+          "delivered": 0,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "during": {
+        "window_start": 3.0,
+        "window_end": 6.0,
+        "sent": 563,
+        "delivered": 510,
+        "lost": 53,
+        "in_flight": 0,
+        "loss_pct": 9.41,
+        "delivery_ratio_pct": 90.59,
+        "avg_delay_ms": 103.725,
+        "min_delay_ms": 33.6,
+        "max_delay_ms": 109.648,
+        "jitter_ms": 2.012,
+        "throughput_kbps": 1306.67,
+        "received_bytes": 490000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 510,
+          "dropped_queue": 53,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      },
+      "after": {
+        "window_start": 6.0,
+        "window_end": 9.0,
+        "sent": 0,
+        "delivered": 0,
+        "lost": 0,
+        "in_flight": 0,
+        "loss_pct": null,
+        "delivery_ratio_pct": null,
+        "avg_delay_ms": null,
+        "min_delay_ms": null,
+        "max_delay_ms": null,
+        "jitter_ms": null,
+        "throughput_kbps": 53.33,
+        "received_bytes": 20000,
+        "reordered": 0,
+        "fates": {
+          "delivered": 0,
+          "dropped_queue": 0,
+          "dropped_link_down": 0,
+          "lost_at_node": 0,
+          "lost_on_link": 0,
+          "in_flight": 0
+        }
+      }
+    }
+  },
+  "path_usage": {
+    "before": {
+      "0-1-2-4-5": 250
+    },
+    "during": {
+      "0-1-2-4-5": 259
+    },
+    "after": {
+      "0-1-2-4-5": 374
+    }
+  },
+  "route_changes": [],
+  "delivery_gaps": [],
+  "queue_stats": {
+    "0->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0002,
+      "samples": 3144
+    },
+    "2->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0071,
+      "samples": 14
+    },
+    "2->4": {
+      "max_queue_pkts": 2,
+      "time_of_max": 4.1928,
+      "samples": 2802
+    },
+    "1->0": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "1->2": {
+      "max_queue_pkts": 20,
+      "time_of_max": 3.3015,
+      "samples": 3142
+    },
+    "1->3": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->2": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->3": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 14
+    },
+    "4->5": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0171,
+      "samples": 2802
+    },
+    "5->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0191,
+      "samples": 14
+    },
+    "3->1": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0321,
+      "samples": 16
+    },
+    "3->4": {
+      "max_queue_pkts": 1,
+      "time_of_max": 0.0321,
+      "samples": 16
+    }
+  },
+  "bottleneck_link": "1->2",
+  "drops_by_location": {
+    "1->2": {
+      "dropped_queue": 170
+    }
+  },
+  "routing_control": {
+    "total_messages": 87,
+    "bin_size": 0.5,
+    "series": [
+      {
+        "t": 0.0,
+        "messages": 36
+      },
+      {
+        "t": 0.5,
+        "messages": 0
+      },
+      {
+        "t": 1.0,
+        "messages": 0
+      },
+      {
+        "t": 1.5,
+        "messages": 3
+      },
+      {
+        "t": 2.0,
+        "messages": 8
+      },
+      {
+        "t": 2.5,
+        "messages": 1
+      },
+      {
+        "t": 3.0,
+        "messages": 0
+      },
+      {
+        "t": 3.5,
+        "messages": 3
+      },
+      {
+        "t": 4.0,
+        "messages": 8
+      },
+      {
+        "t": 4.5,
+        "messages": 1
+      },
+      {
+        "t": 5.0,
+        "messages": 0
+      },
+      {
+        "t": 5.5,
+        "messages": 3
+      },
+      {
+        "t": 6.0,
+        "messages": 9
+      },
+      {
+        "t": 6.5,
+        "messages": 0
+      },
+      {
+        "t": 7.0,
+        "messages": 0
+      },
+      {
+        "t": 7.5,
+        "messages": 3
+      },
+      {
+        "t": 8.0,
+        "messages": 9
+      },
+      {
+        "t": 8.5,
+        "messages": 0
+      },
+      {
+        "t": 9.0,
+        "messages": 0
+      },
+      {
+        "t": 9.5,
+        "messages": 3
+      }
+    ]
+  },
+  "timeline": [
+    {
+      "time": 0.0,
+      "source": "configured",
+      "event": "SIM_START",
+      "description": "Simulation starts (routing=DV)."
+    },
+    {
+      "time": 1.0,
+      "source": "configured",
+      "event": "TRAFFIC_START",
+      "description": "Monitored CBR traffic starts (flow 1, n0 -> n5)."
+    },
+    {
+      "time": 1.0336,
+      "source": "trace",
+      "event": "FIRST_DELIVERY",
+      "description": "First monitored packet delivered (seq 0, path 0-1-2-4-5, delay 33.6 ms)."
+    },
+    {
+      "time": 3.0,
+      "source": "configured",
+      "event": "CROSS_TRAFFIC_START",
+      "description": "Configured load increase: competing flow 2 starts."
+    },
+    {
+      "time": 3.3015,
+      "source": "trace",
+      "event": "QUEUE_FULL",
+      "description": "Queue of link 1->2 reaches its limit (20 packets)."
+    },
+    {
+      "time": 4.1468,
+      "source": "trace",
+      "event": "FIRST_LOSS",
+      "description": "First monitored packet lost (seq 393): d event at queue of link 1->2 at t=4.1468s (link up -> DropTail overflow)."
+    },
+    {
+      "time": 4.1468,
+      "source": "trace",
+      "event": "FIRST_QUEUE_DROP",
+      "description": "First queue-overflow drop of a monitored packet at link 1->2."
+    },
+    {
+      "time": 6.0,
+      "source": "configured",
+      "event": "CROSS_TRAFFIC_STOP",
+      "description": "Competing flow 2 stops."
+    },
+    {
+      "time": 6.0028,
+      "source": "trace",
+      "event": "LAST_QUEUE_DROP",
+      "description": "Last queue-overflow drop of a monitored packet (117 in total)."
+    },
+    {
+      "time": 6.1428,
+      "source": "trace",
+      "event": "QUEUE_DRAINED",
+      "description": "Queue of link 1->2 has drained to 0 after the competing flow stopped."
+    },
+    {
+      "time": 9.0,
+      "source": "configured",
+      "event": "TRAFFIC_STOP",
+      "description": "Monitored CBR traffic stops."
+    },
+    {
+      "time": 9.0336,
+      "source": "trace",
+      "event": "LAST_DELIVERY",
+      "description": "Last monitored packet delivered (seq 1000)."
+    },
+    {
+      "time": 10.0,
+      "source": "configured",
+      "event": "SIM_END",
+      "description": "Simulation ends."
+    }
+  ],
+  "timeseries": [
+    {
+      "t": 0.0,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 0.1,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.2,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 0.3,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.4,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.5,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.6,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.7,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.8,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 0.9,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 1.0,
+      "throughput_kbps": 720.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 1.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.3,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.4,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.5,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.6,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.7,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.8,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 2.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 3.0,
+      "throughput_kbps": 880.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 48.677,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 800.0,
+      "bottleneck_queue_pkts": 7
+    },
+    {
+      "t": 3.1,
+      "throughput_kbps": 800.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 73.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1200.0,
+      "bottleneck_queue_pkts": 13
+    },
+    {
+      "t": 3.2,
+      "throughput_kbps": 800.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 98.523,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1200.0,
+      "bottleneck_queue_pkts": 19
+    },
+    {
+      "t": 3.3,
+      "throughput_kbps": 800.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1200.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.4,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1040.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.5,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 960.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.6,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1040.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.7,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 960.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.8,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1040.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 3.9,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 109.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 960.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.0,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 107.459,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1040.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.1,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 4,
+      "avg_delay_ms": 107.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 960.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.2,
+      "throughput_kbps": 720.0,
+      "sent": 13,
+      "lost": 6,
+      "avg_delay_ms": 109.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1280.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.3,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 109.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.4,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 7,
+      "avg_delay_ms": 109.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.5,
+      "throughput_kbps": 560.0,
+      "sent": 13,
+      "lost": 6,
+      "avg_delay_ms": 106.791,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1440.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.6,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.7,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 7,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.8,
+      "throughput_kbps": 560.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1440.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 4.9,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.0,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.1,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.2,
+      "throughput_kbps": 560.0,
+      "sent": 13,
+      "lost": 7,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1440.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.3,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.4,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.5,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 7,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.6,
+      "throughput_kbps": 560.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1440.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.7,
+      "throughput_kbps": 480.0,
+      "sent": 13,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.8,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 5.9,
+      "throughput_kbps": 480.0,
+      "sent": 12,
+      "lost": 6,
+      "avg_delay_ms": 105.648,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1520.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 6.0,
+      "throughput_kbps": 560.0,
+      "sent": 13,
+      "lost": 1,
+      "avg_delay_ms": 79.652,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 1440.0,
+      "bottleneck_queue_pkts": 20
+    },
+    {
+      "t": 6.1,
+      "throughput_kbps": 1600.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 38.636,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 160.0,
+      "bottleneck_queue_pkts": 6
+    },
+    {
+      "t": 6.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 6.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.1,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.2,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 7.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.0,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.1,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.2,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.3,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.4,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.5,
+      "throughput_kbps": 960.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.6,
+      "throughput_kbps": 1040.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.7,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.8,
+      "throughput_kbps": 1040.0,
+      "sent": 13,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 8.9,
+      "throughput_kbps": 960.0,
+      "sent": 12,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.0,
+      "throughput_kbps": 400.0,
+      "sent": 1,
+      "lost": 0,
+      "avg_delay_ms": 33.6,
+      "path": "0-1-2-4-5",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 1
+    },
+    {
+      "t": 9.1,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.2,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.3,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.4,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.5,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.6,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    },
+    {
+      "t": 9.7,
+      "throughput_kbps": 0.0,
+      "sent": 0,
+      "lost": 0,
+      "avg_delay_ms": null,
+      "path": "",
+      "cross_throughput_kbps": 0.0,
+      "bottleneck_queue_pkts": 0
+    }
+  ],
+  "findings": {
+    "failure_type": "congestion (increased traffic load)",
+    "known_cause": "Competing traffic (flow 2, 1.5 Mb/s) was deliberately injected between t = 3.0 s and t = 6.0 s. Offered load on link n1-n2 is 2.5 Mb/s against 2 Mb/s capacity.",
+    "failure_time": 3.0,
+    "restore_time": 6.0,
+    "affected_link": "n1-n2",
+    "what_failed": "No component failed. Offered load exceeded the capacity of the core link, degrading service between t=3s and t=6s.",
+    "why": "Competing traffic (flow 2, 1.5 Mb/s) was deliberately injected between t = 3.0 s and t = 6.0 s. Offered load on link n1-n2 is 2.5 Mb/s against 2 Mb/s capacity.",
+    "observed_impact": [
+      "Offered load on the core path during t=3-6s: 2.50 Mb/s vs 2.00 Mb/s capacity (125% utilisation demand).",
+      "Queue at link 1->2 peaked at 20 packets (limit 20) at t=3.301s.",
+      "Monitored flow average delay: 33.60 ms before -> 102.75 ms during -> 35.24 ms after.",
+      "Monitored flow throughput: 984.0 kb/s before -> 682.7 kb/s during -> 1005.3 kb/s after.",
+      "Congestion loss confirmed: 170 queue-overflow drops ('d' events on an up link) - flow 1: 117, flow 2: 53."
+    ],
+    "routing_behavior": "No route change was observed (NS2 DV routing is not load-aware).",
+    "route_changes": 0,
+    "queue_drops": 170,
+    "queue_drops_monitored_flow": 117,
+    "recovery": {
+      "outcome": "recovered - delay and loss returned to baseline once the queue drained",
+      "time_to_recovery_s": 0.1428,
+      "evidence": [
+        "Bottleneck queue drained to 0 at t=6.1428s (0.1428 s after competing traffic stopped).",
+        "After-phase loss 0.27%, delay 35.24 ms (before-phase delay 33.60 ms).",
+        "Packets sent after the queue drained (t=6.143-9s): 357 sent, 0.00% loss, 33.60 ms average delay.",
+        "1 monitored packet(s) sent just after t=6s were still dropped by the full queue before it drained (transient)."
+      ]
+    },
+    "explanation": "Between t=3s and t=6s the core link 1->2 was offered more traffic than it can carry, so its DropTail queue filled. Queueing added delay, and once the queue was full new arrivals were dropped. Packet loss was caused by queue overflow at the bottleneck (confirmed by d events).",
+    "can_conclude": [
+      "Queue build-up, delay increase and drop counts at the bottleneck (from the trace)."
+    ],
+    "cannot_conclude": [
+      "How a TCP flow would react (both flows are CBR/UDP and do not back off).",
+      "NS2 results describe this configured model, not any real network."
+    ],
+    "performance_degradation": {
+      "throughput_kbps": {
+        "before": 984.0,
+        "during": 682.67,
+        "after": 1005.33,
+        "during_vs_before_pct": -30.6,
+        "after_vs_before_pct": 2.2
+      },
+      "avg_delay_ms": {
+        "before": 33.6,
+        "during": 102.75,
+        "after": 35.239,
+        "during_vs_before_pct": 205.8,
+        "after_vs_before_pct": 4.9
+      },
+      "max_delay_ms": {
+        "before": 33.6,
+        "during": 109.648,
+        "after": 101.648,
+        "during_vs_before_pct": 226.3,
+        "after_vs_before_pct": 202.5
+      },
+      "jitter_ms": {
+        "before": 0.0,
+        "during": 0.326,
+        "after": 0.182,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": null
+      },
+      "loss_pct": {
+        "before": 0.0,
+        "during": 30.93,
+        "after": 0.27,
+        "during_vs_before_pct": null,
+        "after_vs_before_pct": null
+      },
+      "delivery_ratio_pct": {
+        "before": 100.0,
+        "during": 69.07,
+        "after": 99.73,
+        "during_vs_before_pct": -30.9,
+        "after_vs_before_pct": -0.3
+      }
+    }
+  },
+  "lost_packets": [
+    {
+      "fid": 1,
+      "seq": 393,
+      "pkt_id": 662,
+      "sent": 4.144,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1468s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 395,
+      "pkt_id": 667,
+      "sent": 4.16,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1628s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 397,
+      "pkt_id": 672,
+      "sent": 4.176,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1788s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 399,
+      "pkt_id": 679,
+      "sent": 4.192,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1948s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 401,
+      "pkt_id": 684,
+      "sent": 4.208,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2108s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 403,
+      "pkt_id": 689,
+      "sent": 4.224,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2268s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 405,
+      "pkt_id": 694,
+      "sent": 4.24,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2428s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 407,
+      "pkt_id": 699,
+      "sent": 4.256,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2588s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 409,
+      "pkt_id": 704,
+      "sent": 4.272,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2748s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 411,
+      "pkt_id": 709,
+      "sent": 4.288,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.2908s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 413,
+      "pkt_id": 714,
+      "sent": 4.304,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3068s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 415,
+      "pkt_id": 719,
+      "sent": 4.32,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3228s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 417,
+      "pkt_id": 724,
+      "sent": 4.336,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3388s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 419,
+      "pkt_id": 729,
+      "sent": 4.352,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3548s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 421,
+      "pkt_id": 734,
+      "sent": 4.368,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3708s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 423,
+      "pkt_id": 739,
+      "sent": 4.384,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.3868s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 425,
+      "pkt_id": 744,
+      "sent": 4.4,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4028s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 427,
+      "pkt_id": 749,
+      "sent": 4.416,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4188s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 429,
+      "pkt_id": 757,
+      "sent": 4.432,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4348s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 431,
+      "pkt_id": 762,
+      "sent": 4.448,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4508s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 433,
+      "pkt_id": 767,
+      "sent": 4.464,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4668s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 435,
+      "pkt_id": 772,
+      "sent": 4.48,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4828s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 437,
+      "pkt_id": 777,
+      "sent": 4.496,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.4988s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 439,
+      "pkt_id": 783,
+      "sent": 4.512,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5148s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 441,
+      "pkt_id": 788,
+      "sent": 4.528,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5308s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 443,
+      "pkt_id": 793,
+      "sent": 4.544,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5468s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 445,
+      "pkt_id": 798,
+      "sent": 4.56,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5628s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 447,
+      "pkt_id": 803,
+      "sent": 4.576,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5788s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 449,
+      "pkt_id": 808,
+      "sent": 4.592,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.5948s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 451,
+      "pkt_id": 813,
+      "sent": 4.608,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6108s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 453,
+      "pkt_id": 818,
+      "sent": 4.624,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6268s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 455,
+      "pkt_id": 823,
+      "sent": 4.64,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6428s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 457,
+      "pkt_id": 828,
+      "sent": 4.656,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6588s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 459,
+      "pkt_id": 833,
+      "sent": 4.672,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6748s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 461,
+      "pkt_id": 838,
+      "sent": 4.688,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.6908s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 463,
+      "pkt_id": 843,
+      "sent": 4.704,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7068s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 465,
+      "pkt_id": 848,
+      "sent": 4.72,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7228s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 467,
+      "pkt_id": 853,
+      "sent": 4.736,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7388s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 469,
+      "pkt_id": 858,
+      "sent": 4.752,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7548s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 471,
+      "pkt_id": 863,
+      "sent": 4.768,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7708s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 473,
+      "pkt_id": 868,
+      "sent": 4.784,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.7868s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 475,
+      "pkt_id": 873,
+      "sent": 4.8,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8028s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 477,
+      "pkt_id": 878,
+      "sent": 4.816,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8188s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 479,
+      "pkt_id": 883,
+      "sent": 4.832,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8348s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 481,
+      "pkt_id": 888,
+      "sent": 4.848,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8508s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 483,
+      "pkt_id": 893,
+      "sent": 4.864,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8668s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 485,
+      "pkt_id": 898,
+      "sent": 4.88,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8828s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 487,
+      "pkt_id": 903,
+      "sent": 4.896,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.8988s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 489,
+      "pkt_id": 908,
+      "sent": 4.912,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9148s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 491,
+      "pkt_id": 913,
+      "sent": 4.928,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9308s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 493,
+      "pkt_id": 918,
+      "sent": 4.944,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9468s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 495,
+      "pkt_id": 923,
+      "sent": 4.96,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9628s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 497,
+      "pkt_id": 928,
+      "sent": 4.976,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9788s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 499,
+      "pkt_id": 933,
+      "sent": 4.992,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.9948s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 501,
+      "pkt_id": 938,
+      "sent": 5.008,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0108s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 503,
+      "pkt_id": 943,
+      "sent": 5.024,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0268s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 505,
+      "pkt_id": 948,
+      "sent": 5.04,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0428s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 507,
+      "pkt_id": 953,
+      "sent": 5.056,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0588s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 509,
+      "pkt_id": 958,
+      "sent": 5.072,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0748s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 511,
+      "pkt_id": 963,
+      "sent": 5.088,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.0908s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 513,
+      "pkt_id": 968,
+      "sent": 5.104,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1068s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 515,
+      "pkt_id": 973,
+      "sent": 5.12,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1228s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 517,
+      "pkt_id": 978,
+      "sent": 5.136,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1388s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 519,
+      "pkt_id": 983,
+      "sent": 5.152,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1548s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 521,
+      "pkt_id": 988,
+      "sent": 5.168,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1708s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 523,
+      "pkt_id": 993,
+      "sent": 5.184,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.1868s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 525,
+      "pkt_id": 998,
+      "sent": 5.2,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2028s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 527,
+      "pkt_id": 1003,
+      "sent": 5.216,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2188s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 529,
+      "pkt_id": 1008,
+      "sent": 5.232,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2348s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 531,
+      "pkt_id": 1013,
+      "sent": 5.248,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2508s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 533,
+      "pkt_id": 1018,
+      "sent": 5.264,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2668s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 535,
+      "pkt_id": 1023,
+      "sent": 5.28,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2828s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 537,
+      "pkt_id": 1028,
+      "sent": 5.296,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.2988s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 539,
+      "pkt_id": 1033,
+      "sent": 5.312,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3148s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 541,
+      "pkt_id": 1038,
+      "sent": 5.328,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3308s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 543,
+      "pkt_id": 1043,
+      "sent": 5.344,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3468s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 545,
+      "pkt_id": 1048,
+      "sent": 5.36,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3628s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 547,
+      "pkt_id": 1053,
+      "sent": 5.376,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3788s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 549,
+      "pkt_id": 1058,
+      "sent": 5.392,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.3948s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 551,
+      "pkt_id": 1063,
+      "sent": 5.408,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4108s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 553,
+      "pkt_id": 1068,
+      "sent": 5.424,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4268s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 555,
+      "pkt_id": 1073,
+      "sent": 5.44,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4428s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 557,
+      "pkt_id": 1078,
+      "sent": 5.456,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4588s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 559,
+      "pkt_id": 1083,
+      "sent": 5.472,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4748s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 561,
+      "pkt_id": 1088,
+      "sent": 5.488,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.4908s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 563,
+      "pkt_id": 1093,
+      "sent": 5.504,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5068s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 565,
+      "pkt_id": 1098,
+      "sent": 5.52,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5228s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 567,
+      "pkt_id": 1103,
+      "sent": 5.536,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5388s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 569,
+      "pkt_id": 1108,
+      "sent": 5.552,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5548s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 571,
+      "pkt_id": 1113,
+      "sent": 5.568,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5708s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 573,
+      "pkt_id": 1118,
+      "sent": 5.584,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.5868s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 575,
+      "pkt_id": 1123,
+      "sent": 5.6,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6028s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 577,
+      "pkt_id": 1128,
+      "sent": 5.616,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6188s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 579,
+      "pkt_id": 1136,
+      "sent": 5.632,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6348s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 581,
+      "pkt_id": 1141,
+      "sent": 5.648,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6508s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 583,
+      "pkt_id": 1146,
+      "sent": 5.664,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6668s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 585,
+      "pkt_id": 1151,
+      "sent": 5.68,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6828s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 587,
+      "pkt_id": 1156,
+      "sent": 5.696,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.6988s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 589,
+      "pkt_id": 1161,
+      "sent": 5.712,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7148s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 591,
+      "pkt_id": 1166,
+      "sent": 5.728,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7308s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 593,
+      "pkt_id": 1171,
+      "sent": 5.744,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7468s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 595,
+      "pkt_id": 1176,
+      "sent": 5.76,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7628s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 597,
+      "pkt_id": 1181,
+      "sent": 5.776,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7788s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 599,
+      "pkt_id": 1186,
+      "sent": 5.792,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.7948s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 601,
+      "pkt_id": 1191,
+      "sent": 5.808,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8108s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 603,
+      "pkt_id": 1196,
+      "sent": 5.824,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8268s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 605,
+      "pkt_id": 1201,
+      "sent": 5.84,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8428s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 607,
+      "pkt_id": 1206,
+      "sent": 5.856,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8588s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 609,
+      "pkt_id": 1211,
+      "sent": 5.872,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8748s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 611,
+      "pkt_id": 1216,
+      "sent": 5.888,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.8908s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 613,
+      "pkt_id": 1221,
+      "sent": 5.904,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9068s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 615,
+      "pkt_id": 1226,
+      "sent": 5.92,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9228s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 617,
+      "pkt_id": 1231,
+      "sent": 5.936,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9388s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 619,
+      "pkt_id": 1236,
+      "sent": 5.952,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9548s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 621,
+      "pkt_id": 1241,
+      "sent": 5.968,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9708s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 623,
+      "pkt_id": 1246,
+      "sent": 5.984,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=5.9868s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 1,
+      "seq": 625,
+      "pkt_id": 1251,
+      "sent": 6.0,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=6.0028s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 56,
+      "pkt_id": 392,
+      "sent": 3.298667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3015s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 59,
+      "pkt_id": 397,
+      "sent": 3.314667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3175s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 62,
+      "pkt_id": 402,
+      "sent": 3.330667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3335s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 65,
+      "pkt_id": 407,
+      "sent": 3.346667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3495s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 68,
+      "pkt_id": 412,
+      "sent": 3.362667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3655s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 71,
+      "pkt_id": 417,
+      "sent": 3.378667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3815s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 74,
+      "pkt_id": 422,
+      "sent": 3.394667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.3975s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 77,
+      "pkt_id": 427,
+      "sent": 3.410667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4135s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 80,
+      "pkt_id": 432,
+      "sent": 3.426667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4295s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 83,
+      "pkt_id": 437,
+      "sent": 3.442667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4455s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 86,
+      "pkt_id": 442,
+      "sent": 3.458667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4615s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 89,
+      "pkt_id": 447,
+      "sent": 3.474667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4775s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 92,
+      "pkt_id": 452,
+      "sent": 3.490667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.4935s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 95,
+      "pkt_id": 457,
+      "sent": 3.506667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5095s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 98,
+      "pkt_id": 462,
+      "sent": 3.522667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5255s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 101,
+      "pkt_id": 467,
+      "sent": 3.538667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5415s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 104,
+      "pkt_id": 472,
+      "sent": 3.554667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5575s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 107,
+      "pkt_id": 477,
+      "sent": 3.570667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5735s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 110,
+      "pkt_id": 482,
+      "sent": 3.586667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.5895s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 113,
+      "pkt_id": 487,
+      "sent": 3.602667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6055s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 116,
+      "pkt_id": 492,
+      "sent": 3.618667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6215s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 119,
+      "pkt_id": 497,
+      "sent": 3.634667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6375s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 122,
+      "pkt_id": 502,
+      "sent": 3.650667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6535s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 125,
+      "pkt_id": 507,
+      "sent": 3.666667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6695s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 128,
+      "pkt_id": 512,
+      "sent": 3.682667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.6855s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 131,
+      "pkt_id": 517,
+      "sent": 3.698667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7015s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 134,
+      "pkt_id": 522,
+      "sent": 3.714667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7175s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 137,
+      "pkt_id": 527,
+      "sent": 3.730667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7335s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 140,
+      "pkt_id": 532,
+      "sent": 3.746667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7495s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 143,
+      "pkt_id": 539,
+      "sent": 3.762667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7655s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 146,
+      "pkt_id": 544,
+      "sent": 3.778667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7815s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 149,
+      "pkt_id": 550,
+      "sent": 3.794667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.7975s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 152,
+      "pkt_id": 555,
+      "sent": 3.810667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8135s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 155,
+      "pkt_id": 560,
+      "sent": 3.826667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8295s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 158,
+      "pkt_id": 565,
+      "sent": 3.842667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8455s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 161,
+      "pkt_id": 570,
+      "sent": 3.858667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8615s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 164,
+      "pkt_id": 575,
+      "sent": 3.874667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8775s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 167,
+      "pkt_id": 580,
+      "sent": 3.890667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.8935s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 170,
+      "pkt_id": 585,
+      "sent": 3.906667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9095s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 173,
+      "pkt_id": 590,
+      "sent": 3.922667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9255s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 176,
+      "pkt_id": 595,
+      "sent": 3.938667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9415s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 179,
+      "pkt_id": 600,
+      "sent": 3.954667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9575s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 182,
+      "pkt_id": 605,
+      "sent": 3.970667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9735s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 185,
+      "pkt_id": 610,
+      "sent": 3.986667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=3.9895s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 188,
+      "pkt_id": 615,
+      "sent": 4.002667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0055s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 191,
+      "pkt_id": 620,
+      "sent": 4.018667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0215s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 194,
+      "pkt_id": 625,
+      "sent": 4.034667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0375s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 196,
+      "pkt_id": 628,
+      "sent": 4.045333,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0481s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 197,
+      "pkt_id": 633,
+      "sent": 4.050667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0535s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 200,
+      "pkt_id": 638,
+      "sent": 4.066667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0695s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 203,
+      "pkt_id": 643,
+      "sent": 4.082667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.0855s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 206,
+      "pkt_id": 648,
+      "sent": 4.098667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1015s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    },
+    {
+      "fid": 2,
+      "seq": 209,
+      "pkt_id": 653,
+      "sent": 4.114667,
+      "fate": "dropped_queue",
+      "detail": "d event at queue of link 1->2 at t=4.1175s (link up -> DropTail overflow)",
+      "path_so_far": "0-1"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.claude/
+
+# generated at runtime (machine-specific or secret)
+results/logs/
+results/certs/
+results/diagnostics/
+results/communication/
