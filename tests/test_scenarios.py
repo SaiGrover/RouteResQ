@@ -52,3 +52,17 @@ def test_restore_must_follow_failure_and_category_consistency():
 def test_units():
     assert parse_bandwidth("1.5Mb") == 1.5e6 and parse_bandwidth("10Kb") == 1e4
     assert parse_delay("10ms") == pytest.approx(0.01)
+
+
+def test_runs_sorted_by_utc_start_not_folder_name(tmp_path):
+    import json
+
+    from simulation.runner import list_runs
+
+    for name, started in [("20261104-164423", "2026-11-04T11:14:23+00:00"),   # IST-named, earlier
+                          ("20261104-113737", "2026-11-04T11:37:37+00:00")]:  # UTC-named, later
+        d = tmp_path / "healthy" / name
+        d.mkdir(parents=True)
+        (d / "out.tr").write_text("")
+        (d / "run.json").write_text(json.dumps({"started_at": started}))
+    assert [r.name for r in list_runs("healthy", tmp_path)] == ["20261104-113737", "20261104-164423"]

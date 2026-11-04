@@ -237,4 +237,16 @@ def list_runs(scenario_id: str | None = None, out_root: Path = SIM_RESULTS_DIR) 
     for d in dirs:
         if d.exists():
             runs.extend(p for p in d.iterdir() if p.is_dir() and (p / "out.tr").exists())
-    return sorted(runs, key=lambda p: p.name, reverse=True)
+    return sorted(runs, key=_run_sort_key, reverse=True)
+
+
+def _run_sort_key(run_dir: Path) -> str:
+    """Newest first by the UTC start time stored in run.json. Folder names use the local
+    clock of whichever machine ran NS2, so they are not comparable across machines."""
+    import json
+
+    try:
+        started = json.loads((run_dir / "run.json").read_text(encoding="utf-8")).get("started_at", "")
+    except (OSError, ValueError):
+        started = ""
+    return started or "0000"
