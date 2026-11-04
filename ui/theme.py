@@ -73,7 +73,7 @@ header[data-testid="stHeader"] {{ background: transparent !important; }}
 .stMarkdown p, .stMarkdown li {{ line-height: 1.62; }}
 
 /* ---------- brand bar ---------- */
-.st-key-topbar {{ position:relative; padding-bottom:.85rem; }}
+.st-key-topbar {{ position:relative; padding-bottom:1.15rem; }}
 .st-key-topbar:after {{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
   background:linear-gradient(90deg, transparent, {SIGNAL}88, {STEEL}66, {GREEN}55, transparent); }}
 .rr-brand {{ display:flex; align-items:center; gap:.85rem; }}
@@ -124,7 +124,7 @@ div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ font-family:{
   text-decoration:none !important; white-space:nowrap; min-width:9.6rem; justify-content:center; }}
 .st-key-demo_link a p, .st-key-demo_link a span {{ color:{BG} !important; font-weight:700 !important; }}
 .st-key-demo_link a:hover {{ filter:brightness(1.08); }}
-.rr-arrow {{ text-align:center; color:{DIM}; font-size:1rem; line-height:84px; }}
+.rr-arrow {{ text-align:center; color:{MUT}; font-size:1.05rem; line-height:84px; opacity:.8; transform:translateX(-6px); }}
 
 @media (max-width: 640px) {{
   .rr-arrow {{ display:none; }}

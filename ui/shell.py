@@ -113,16 +113,15 @@ def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
                        f" box-shadow: inset 0 3px 0 0 {c}, 0 10px 26px -16px {c} !important; }}"
                        f"{sel} p, {sel} span {{ color:{c} !important; }}")
     st.html("<style>" + "".join(css) + "</style>")
-    arrow_after = {"detect", "diagnose", "impact"}  # arrows only inside the workflow
+    # Every node gets the same width and every gap the same arrow separator, so the rail reads as
+    # one evenly spaced journey. No hover tooltip: it covered the brand bar above the rail.
     with st.container(key="rail"):
-        widths = []
-        for key, *_r in nav:
-            widths.append(4)
-            if key in arrow_after:
-                widths.append(.45)
+        widths = [4]
+        for _ in nav[1:]:
+            widths += [.42, 4]
         cols = iter(st.columns(widths, gap="small", vertical_alignment="center"))
-        for key, _stage, title, page in nav:
-            with next(cols), st.container(key=f"nav_{key}"):
-                st.page_link(page, label=title, help=f"Open {title}", width="stretch")
-            if key in arrow_after:
+        for i, (key, _stage, title, page) in enumerate(nav):
+            if i:
                 next(cols).html('<div class="rr-arrow">&#10230;</div>')
+            with next(cols), st.container(key=f"nav_{key}"):
+                st.page_link(page, label=title, width="stretch")
