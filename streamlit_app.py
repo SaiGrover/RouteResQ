@@ -7,9 +7,54 @@ navigation; Streamlit's own page menu is hidden.
 """
 from __future__ import annotations
 
+import os
+import sys
+import time
+from pathlib import Path
+
 import streamlit as st
 
-from common.logging_setup import setup_logging
+# Streamlit re-executes this script on every run but keeps already-imported project modules.
+# After a `git pull` on Streamlit Community Cloud (or an edit while the local server runs) that
+# meant ui/*.py changes stayed invisible until the app was rebooted. Before importing anything
+# from the project, drop our own packages from sys.modules if any of their files changed since
+# they were loaded, so this run imports the current code.
+_PROJECT_PACKAGES = ("common", "diagnostics", "failure_analysis", "simulation", "analysis",
+                     "communication", "security", "ui", "walkthrough")
+
+
+def _process_start() -> float:
+    try:
+        return os.stat(f"/proc/{os.getpid()}").st_ctime   # Linux (Streamlit Cloud)
+    except OSError:
+        return time.time()                                 # elsewhere: first run of this script
+
+
+def _drop_stale_project_modules() -> None:
+    root = Path(__file__).resolve().parent
+    loaded: dict = sys.__dict__.setdefault("_routeresq_loaded", {})
+    start: float = sys.__dict__.setdefault("_routeresq_started", _process_start())
+    ours = {n: m for n, m in list(sys.modules.items())
+            if n.split(".")[0] in _PROJECT_PACKAGES and getattr(m, "__file__", None)
+            and Path(m.__file__).resolve().is_relative_to(root)}
+    stale = False
+    for name, mod in ours.items():
+        try:
+            if Path(mod.__file__).stat().st_mtime > loaded.get(name, start):
+                stale = True
+                break
+        except OSError:
+            continue
+    if stale:
+        now = time.time()
+        for name in ours:
+            del sys.modules[name]
+            loaded[name] = now
+
+
+_drop_stale_project_modules()
+
+from common.logging_setup import setup_logging  # noqa: E402 - must follow the module refresh
 from common.paths import ensure_dirs
 from ui import shell, theme
 
