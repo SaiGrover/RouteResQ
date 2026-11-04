@@ -121,6 +121,17 @@ streamlit run streamlit_app.py
 | TLS server / client | add `--tls` to both (the client trusts `results/certs/lab-ca.pem`, so copy it to the client PC) |
 | UDP receiver / sender | `python -m communication.udp receive --host 0.0.0.0 --port 5051` and `python -m communication.udp send --host <ip> --port 5051 --count 1000 --size 1024` |
 
+### Hosted deployment (Streamlit Community Cloud)
+
+Deploy `streamlit_app.py` from this repository. [packages.txt](packages.txt) installs Debian's `ns2`, `tcl8.6`, `iputils-ping`, `traceroute` and `iproute2`, so the hosted app runs real NS2 (no Docker needed).
+
+On a hosted deployment (detected from the `/mount/src` path, or forced with `ROUTERESQ_PUBLIC=1`) RouteResQ runs in **public mode**:
+
+* only the listed destinations and loopback can be probed (private address ranges would be the host's internal network);
+* visitors cannot add destinations.
+
+Live diagnostics there measure the *hosting server's* network, not the visitor's. The full test suite has been run in a container that mirrors this setup (Debian bookworm, Python 3.12, non-root user).
+
 ### Authorised destinations
 
 Active probes (ping, traceroute, TCP connect) are only sent to destinations in [config/authorized_targets.json](config/authorized_targets.json), to loopback, and to private (RFC 1918) addresses. Two reserved targets are included for demonstrations:
@@ -311,7 +322,7 @@ Each demonstration then restores the condition and records whether communication
 ## 7. Testing
 
 ```bash
-pytest                                  # everything (133 tests)
+pytest                                  # everything (134 tests)
 pytest -m "not ns2 and not network"     # mocked / offline only
 pytest -m ns2                           # real NS2 runs
 pytest -m network                       # real ping/traceroute/DNS (loopback + RFC-reserved targets only)

@@ -2,6 +2,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
+from common.deployment import is_public_deployment
 from diagnostics.authorization import add_authorized_host, authorized_list, check_target
 from diagnostics.engine import run_diagnostics
 from diagnostics.history import DiagnosticHistory, compare_runs, summary_row
@@ -10,13 +11,18 @@ from failure_analysis.rules import CATEGORIES, Thresholds, analyze_run
 from ui.components import bullet, category_badges, level_badge, live_badge
 
 history = DiagnosticHistory()
+PUBLIC = is_public_deployment()
 if "diag_last_run" not in st.session_state:
     st.session_state.diag_last_run = None
 
 st.title("Diagnostics & root-cause analysis")
 live_badge()
-st.caption("Every measurement comes from a command executed on this machine. Only destinations in the "
-           "authorised list can be probed.")
+st.caption("Every measurement comes from a command executed on the machine running RouteResQ. Only destinations "
+           "in the authorised list can be probed.")
+if PUBLIC:
+    st.info("This is the hosted demo: probes run from the hosting server, not from your computer, and only the "
+            "listed destinations are allowed. Run RouteResQ locally to diagnose your own network.",
+            icon=":material/cloud:")
 
 mode = st.segmented_control(
     "View", ["Run diagnostics", "History & comparison", "Authorised destinations"],
@@ -29,8 +35,9 @@ if mode == "Run diagnostics":
         c1, c2 = st.columns([2, 1])
         options = authorized_list()
         target = c1.selectbox("Destination", options, index=options.index("8.8.8.8") if "8.8.8.8" in options else 0,
-                              accept_new_options=True,
-                              help="Pick an authorised destination or type one (private/loopback addresses are allowed).")
+                              accept_new_options=not PUBLIC,
+                              help="Pick an authorised destination" + ("." if PUBLIC else
+                                   " or type one (private/loopback addresses are allowed)."))
         label = c2.text_input("Label (optional)", placeholder="e.g. lab Wi-Fi, before change")
         c3, c4, c5, c6 = st.columns(4)
         count = c3.number_input("Ping probes", 1, 50, 4)
@@ -233,6 +240,9 @@ else:
                 "plus loopback and private addresses on your own network.")
     st.dataframe(pd.DataFrame({"Authorised destination": authorized_list()}), hide_index=True,
                  alt="Authorised destinations")
+    if PUBLIC:
+        st.caption("Adding destinations is disabled on the public deployment.")
+        st.stop()
     with st.form("add_host"):
         host = st.text_input("Add a destination")
         ok = st.checkbox("I am authorised to run network tests against this destination")

@@ -150,3 +150,15 @@ def test_history_baseline_and_comparison(tmp_path):
     # round trip through JSON keeps nested objects
     rt = run_from_dict(h.records()[0]["run"])
     assert rt.traceroute.hops[1].address == "10.0.0.1"
+
+
+def test_public_deployment_restrictions(monkeypatch, tmp_path):
+    from diagnostics.authorization import add_authorized_host
+
+    monkeypatch.setenv("ROUTERESQ_PUBLIC", "1")
+    assert not check_target("192.168.1.1").allowed  # hosting provider's internal network
+    assert check_target("127.0.0.1").allowed and check_target("8.8.8.8").allowed
+    with pytest.raises(TargetNotAllowed):
+        add_authorized_host("example.org")
+    monkeypatch.setenv("ROUTERESQ_PUBLIC", "0")
+    assert check_target("192.168.1.1").allowed

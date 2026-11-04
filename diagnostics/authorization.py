@@ -7,6 +7,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from common.deployment import is_public_deployment
 from common.paths import CONFIG_DIR
 
 AUTH_FILE = CONFIG_DIR / "authorized_targets.json"
@@ -57,7 +58,7 @@ def check_target(target: str, policy: dict | None = None) -> AuthorizationDecisi
         ip = ipaddress.ip_address(t)
         if ip.is_loopback and policy.get("allow_loopback", True):
             return AuthorizationDecision(t, True, "loopback address")
-        if ip.is_private and policy.get("allow_private_networks", False):
+        if ip.is_private and policy.get("allow_private_networks", False) and not is_public_deployment():
             return AuthorizationDecision(t, True, "private (RFC 1918 / local) address - your own network")
     except ValueError:
         if t == "localhost" and policy.get("allow_loopback", True):
@@ -76,6 +77,8 @@ def authorize(target: str, policy: dict | None = None) -> str:
 
 
 def add_authorized_host(target: str, path: Path = AUTH_FILE) -> str:
+    if is_public_deployment():
+        raise TargetNotAllowed("Adding destinations is disabled on the public deployment")
     t = normalize_target(target)
     policy = load_policy(path)
     if t not in policy["hosts"]:
