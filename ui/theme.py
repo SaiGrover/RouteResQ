@@ -66,6 +66,9 @@ CSS = f"""
     {BG};
 }}
 @media (max-width: 640px) {{ .stApp {{ background-attachment: scroll; }} }}
+/* Streamlit's header bar is painted in the solid theme colour, which showed as a dark band over the
+   artwork; make it transparent so only its menu button floats over the page. */
+header[data-testid="stHeader"] {{ background: transparent !important; }}
 .block-container {{ padding-top: 3.6rem; padding-bottom: 4rem; max-width: 1560px; }}
 .stMarkdown p, .stMarkdown li {{ line-height: 1.62; }}
 
