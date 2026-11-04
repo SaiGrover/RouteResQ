@@ -55,13 +55,17 @@ LEVEL_LABEL = {"confirmed": "Confirmed observation", "likely": "Likely explanati
 
 CSS = f"""
 <style>
+/* Background artwork (static/bg.webp) fixed behind everything, under a scrim that deepens down
+   the page: the network art shows at the top, the dense charts lower down sit on near-solid colour.
+   Cards stay opaque, so no text is ever read against the texture. */
 .stApp {{
   background:
-    radial-gradient(1200px 600px at 85% -10%, rgba(79,179,200,.07), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgba(111,159,224,.05), transparent 60%),
-    radial-gradient(rgba(148,178,204,.07) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(180deg, rgba(10,15,20,.30) 0%, rgba(10,15,20,.55) 26%, rgba(10,15,20,.86) 55%,
+                            rgba(10,15,20,.95) 100%),
+    url("app/static/bg.webp") center top / cover no-repeat fixed,
     {BG};
 }}
+@media (max-width: 640px) {{ .stApp {{ background-attachment: scroll; }} }}
 .block-container {{ padding-top: 3.6rem; padding-bottom: 4rem; max-width: 1560px; }}
 .stMarkdown p, .stMarkdown li {{ line-height: 1.62; }}
 

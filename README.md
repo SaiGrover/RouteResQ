@@ -129,6 +129,7 @@ The design adapts the strongest patterns of the team's Data Vortex Round 4 dashb
   | sand | simulation, alternative path |
 
   Each NS2 scenario also keeps a fixed colour on every chart.
+* **Background artwork:** `static/bg.webp` is a network-topology image showing a failed link and its reroute. It is served by Streamlit's static file serving and fixed behind a dark overlay that deepens down the page; cards stay opaque, so text never sits on the texture.
 * **One type scale:** Space Grotesk (headings, values), Inter (text) and JetBrains Mono (addresses, timings).
 * **Clear source labels:** every page is labelled *Live measurement*, *NS2 simulation* or *Real sockets – loopback*.
 

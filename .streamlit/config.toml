@@ -22,6 +22,8 @@ codeBackgroundColor = "#0e151c"
 [server]
 headless = true
 runOnSave = false
+# serves ./static (background artwork) at app/static/, fetched once and cached by the browser
+enableStaticServing = true
 
 [browser]
 gatherUsageStats = false
