@@ -63,7 +63,7 @@ def _headlines() -> dict[str, str]:
     last = recs[-1] if recs else None
     sims = data.latest_all()
     out = {
-        "overview": f"{len(recs)} checks · {len(sims)} scenarios",
+        "overview": f"{len(recs)} checks · {len(sims)} sims",
         "detect": (f"{last['run']['target']} · {(last['run'].get('ping') or {}).get('loss_pct', 'n/a')}% loss"
                    if last else "no checks yet"),
         "diagnose": (", ".join(last["analysis"]["classifications"])[:34] if last and last.get("analysis") else "awaiting evidence"),
@@ -123,6 +123,6 @@ def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
         cols = iter(st.columns(widths, gap="small", vertical_alignment="center"))
         for key, _stage, title, page in nav:
             with next(cols), st.container(key=f"nav_{key}"):
-                st.page_link(page, label=title, help=f"Open {title}")
+                st.page_link(page, label=title, help=f"Open {title}", width="stretch")
             if key in arrow_after:
                 next(cols).html('<div class="rr-arrow">&#10230;</div>')

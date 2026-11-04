@@ -23,9 +23,9 @@ PAGES = [
     ("overview", "Command", "Overview", st.Page("app_pages/overview_page.py", title="Overview", default=True, url_path="overview")),
     ("detect", "01 · Detect", "Diagnostics", st.Page("app_pages/detect_page.py", title="Diagnostics", url_path="detect")),
     ("diagnose", "02 · Diagnose", "Root cause", st.Page("app_pages/diagnose_page.py", title="Root cause", url_path="diagnose")),
-    ("impact", "03 · Analyse impact", "NS2 simulation", st.Page("app_pages/impact_page.py", title="NS2 simulation", url_path="simulate")),
-    ("recovery", "04 · Observe recovery", "Recovery", st.Page("app_pages/recovery_page.py", title="Failure & recovery", url_path="recovery")),
-    ("transport", "Lab · transport", "TCP · UDP · TLS", st.Page("app_pages/transport_page.py", title="TCP · UDP · TLS", url_path="transport")),
+    ("impact", "03 · Impact", "NS2 simulation", st.Page("app_pages/impact_page.py", title="NS2 simulation", url_path="simulate")),
+    ("recovery", "04 · Recovery", "Recovery", st.Page("app_pages/recovery_page.py", title="Failure & recovery", url_path="recovery")),
+    ("transport", "Lab", "TCP · UDP · TLS", st.Page("app_pages/transport_page.py", title="TCP · UDP · TLS", url_path="transport")),
     ("report", "05 · Report", "Reports", st.Page("app_pages/report_page.py", title="Reports", url_path="reports")),
     ("demo", "Showcase", "Guided demo", st.Page("app_pages/demo_page.py", title="Guided demo", url_path="demo")),
 ]

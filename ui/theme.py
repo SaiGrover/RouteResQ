@@ -107,11 +107,14 @@ header[data-testid="stHeader"] {{ background: transparent !important; }}
 /* ---------- workflow rail (navigation) ---------- */
 .st-key-rail {{ margin:.9rem 0 1.4rem 0; }}
 div[class*="st-key-nav_"] a {{ display:flex !important; flex-direction:column; align-items:flex-start; justify-content:center;
-  width:100%; min-height:82px; padding:.5rem .7rem !important; margin:0; background:{PANEL} !important;
+  width:100%; height:84px; padding:.5rem .7rem !important; margin:0; background:{PANEL} !important; gap:.05rem;
   border:1px solid {BORDER}; border-radius:12px !important; text-decoration:none !important; overflow:hidden;
   transition:border-color .12s ease, transform .12s ease; }}
 div[class*="st-key-nav_"] a:hover {{ transform:translateY(-1px); }}
-div[class*="st-key-nav_"] a::before {{ font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:{DIM}; line-height:1.5; }}
+div[class*="st-key-nav_"] a::before {{ font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:{DIM}; line-height:1.5;
+  display:block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+div[class*="st-key-nav_"] [data-testid="stPageLink"] {{ width:100%; }}
 div[class*="st-key-nav_"] a::after {{ font-family:{MONO}; font-size:.68rem; color:{MUT}; line-height:1.5; white-space:nowrap;
   display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; }}
 div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ font-family:{HEAD} !important; font-size:.95rem !important;
@@ -121,11 +124,11 @@ div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ font-family:{
   text-decoration:none !important; white-space:nowrap; min-width:9.6rem; justify-content:center; }}
 .st-key-demo_link a p, .st-key-demo_link a span {{ color:{BG} !important; font-weight:700 !important; }}
 .st-key-demo_link a:hover {{ filter:brightness(1.08); }}
-.rr-arrow {{ text-align:center; color:{DIM}; font-size:1rem; line-height:82px; }}
+.rr-arrow {{ text-align:center; color:{DIM}; font-size:1rem; line-height:84px; }}
 
 @media (max-width: 640px) {{
   .rr-arrow {{ display:none; }}
-  div[class*="st-key-nav_"] a {{ min-height:58px; }}
+  div[class*="st-key-nav_"] a {{ height:62px; }}
   .rr-ph h1 {{ font-size:1.55rem; }}
   .rr-steps {{ grid-template-columns:1fr 1fr; }}
 }}
