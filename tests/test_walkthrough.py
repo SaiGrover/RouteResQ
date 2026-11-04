@@ -40,7 +40,10 @@ def fake_sim(fail: set[str] = frozenset()):
     def _run(sc, *_a, **_k):
         if sc.id in fail:
             raise RuntimeError(f"ns crashed for {sc.id}")
-        return latest_result(sc.id)          # a real stored result stands in for a fresh run
+        # a real stored result stands in for a fresh run; like a real run, it records this machine's path
+        run_dir, res = flow._stored_run(sc.id)
+        res["run"]["run_dir"] = str(run_dir)
+        return res
     return _run
 
 

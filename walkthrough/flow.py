@@ -98,6 +98,19 @@ def run_detect(state: dict, targets: list[str] | None = None) -> dict:
     return state["detect"]
 
 
+def _stored_run(sid: str) -> tuple[Path | None, dict | None]:
+    """Newest stored run found on disk. The run_dir recorded inside results.json is not used:
+    it is the path on the machine that produced the run (e.g. a Windows path in the repo)."""
+    from common.storage import read_json
+    from simulation.runner import list_runs
+
+    for d in list_runs(sid):
+        res = read_json(d / "results.json")
+        if res:
+            return d, res
+    return None, None
+
+
 def run_impact(state: dict, scenario_ids: list[str] | None, ns2: dict) -> dict:
     from simulation import experiments
     from simulation.scenario import load_all_scenarios
@@ -118,10 +131,10 @@ def run_impact(state: dict, scenario_ids: list[str] | None, ns2: dict) -> dict:
         else:
             entry["error"] = "NS2 is not available on this server: " + str(ns2.get("detail", ""))[:200]
         if not entry["ok"]:
-            stored = experiments.latest_result(sid)
+            stored_dir, stored = _stored_run(sid)
             if stored:
                 ok, why = verify_sim(stored)
-                entry.update(source="stored", run_dir=stored["run"]["run_dir"], ok=ok,
+                entry.update(source="stored", run_dir=str(stored_dir), ok=ok,
                              verified=f"stored run started {stored['run'].get('started_at', '?')} - {why}")
         per[sid] = entry
     fresh = sum(1 for e in per.values() if e["ok"] and e["source"] == "fresh")
