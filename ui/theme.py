@@ -93,6 +93,17 @@ header[data-testid="stHeader"] {{ background: transparent !important; }}
   background:rgba(255,255,255,.025); font-family:{MONO}; white-space:nowrap; }}
 .rr-chip i {{ width:7px; height:7px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c); display:inline-block; }}
 
+.rr-who {{ display:flex; flex-direction:column; align-items:flex-end; gap:.35rem; text-align:right; }}
+.rr-lab {{ display:inline-block; padding:.2rem .7rem; border-radius:999px; font-size:.64rem; font-weight:700;
+  letter-spacing:.2em; text-transform:uppercase; color:{GREEN}; background:rgba(88,189,140,.10);
+  border:1px solid rgba(88,189,140,.45); white-space:nowrap; }}
+.rr-team {{ font-family:{HEAD}; font-size:1.08rem; font-weight:700; color:{TXT}; letter-spacing:-.01em; white-space:nowrap; }}
+.rr-repo {{ display:inline-flex; align-items:center; gap:.4rem; padding:.24rem .7rem; border-radius:999px;
+  border:1px solid {BORDER_HI}; background:rgba(255,255,255,.035); color:{MUT} !important; font-size:.78rem;
+  text-decoration:none !important; transition:border-color .15s ease, color .15s ease; white-space:nowrap; }}
+.rr-repo:hover {{ color:{TXT} !important; border-color:{SIGNAL}; }}
+@media (max-width: 640px) {{ .rr-who {{ align-items:flex-start; text-align:left; }} }}
+
 /* ---------- workflow rail (navigation) ---------- */
 .st-key-rail {{ margin:.9rem 0 1.4rem 0; }}
 div[class*="st-key-nav_"] a {{ display:flex !important; flex-direction:column; align-items:flex-start; justify-content:center;
