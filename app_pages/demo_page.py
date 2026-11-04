@@ -1,250 +1,275 @@
-"""Guided demo: one walkthrough of every RouteResQ capability, running the real backend at
-each step. Nothing is pre-recorded except where a stored NS2 run is used because NS2 is
-unavailable - and that is labelled."""
-from pathlib import Path
-
+"""Guided demo: one network-failure story told with the real backend. Stage logic, verification
+and error handling live in walkthrough/flow.py; this page only presents them."""
 import pandas as pd
 import streamlit as st
 
-from common.storage import utc_now_iso
-from communication.experiments import run_comparison
-from communication.failures import run_all
-from diagnostics.engine import run_diagnostics
-from diagnostics.history import DiagnosticHistory
-from failure_analysis.rules import analyze_run
-from security.tls import run_secure_transfer
-from simulation.experiments import run_and_analyze
+from analysis import cause_report
+from diagnostics.authorization import authorized_list
 from ui import charts, data
 from ui import theme as T
-from ui.components import (card, card_title, chain, chart, e, empty, eyebrow, fmt, note, page_header, pill, tiles,
-                           verdict)
+from ui.components import (card, card_title, cause_register, chain, chart, code, e, empty, eyebrow, fmt, note, page_header,
+                           pill, tiles, verdict)
+from walkthrough import flow
 
-STEPS = [("Detect", "live probes", T.SIGNAL), ("Diagnose", "rule engine", T.AMBER), ("Analyse impact", "NS2", T.CLAY),
-         ("Observe recovery", "trace evidence", T.GREEN), ("Transport", "TCP · UDP · TLS", T.STEEL), ("Report", "summary", T.SAND)]
-TARGETS = [("8.8.8.8", "a reachable public resolver"), ("nonexistent.invalid", "a name that can never resolve (RFC 6761)"),
-           ("192.0.2.1", "an address with no host behind it (RFC 5737)")]
+LOOK = {flow.SUCCESS: ("verified", T.GREEN, "✓"), flow.PARTIAL: ("partial", T.AMBER, "◐"),
+        flow.FAILED: ("failed", T.CLAY, "✕"), flow.STORED: ("stored data", T.SAND, "◆"),
+        flow.NOT_STARTED: ("not run", T.SLATE, "○")}
+SC = data.scenarios()
+st.session_state.setdefault("wt", flow.new_state())
+W = st.session_state.wt
 
-history = DiagnosticHistory()
-st.session_state.setdefault("demo", {"step": 0, "done": []})
-D = st.session_state.demo
-
-page_header("Showcase", "Guided demo",
-            "Six steps that exercise every part of RouteResQ with real measurements: probe three destinations, explain "
-            "what failed, inject failures in NS2, check whether the network recovered, drill transport-layer failures, "
-            "and assemble a report. Run one step at a time or the whole sequence.", T.SIGNAL)
-
-
-# ------------------------------------------------------------------ actions (each calls the real backend)
-def do_detect():
-    ids = []
-    for t, _ in TARGETS:
-        run = run_diagnostics(t, ping_count=3, timeout_s=0.6, max_hops=8, label="guided demo")
-        rep = analyze_run(run, baseline=history.baseline(t), previous=history.previous(t))
-        history.save(run, rep)
-        ids.append(run.run_id)
-    D["detect"] = ids
+page_header("Showcase", "Guided demo: one network failure, end to end",
+            "Detect a problem on the live network, work out its cause, then reproduce known failures in NS2 to see "
+            "their impact and whether the network recovers, test the transport layer, and report. Every stage runs "
+            "the real backend and checks its own results; stored data is always labelled as such.", T.SIGNAL)
 
 
-def do_impact():
-    status = data.ns2_status()
-    if status["available"]:
-        D["sim"] = {sid: run_and_analyze(sc)["run"]["run_dir"] for sid, sc in data.scenarios().items()}
-        D["sim_source"] = f"fresh runs on {status['kind']} ns2 {status['version']}"
-    else:
-        D["sim"] = {sid: str(data.runs(sid)[0]) for sid in data.scenarios() if data.runs(sid)}
-        D["sim_source"] = "stored runs (NS2 unavailable here)"
+def status_of(key: str) -> str:
+    return flow.step_status(W, key)
 
 
-def do_transport():
-    D["tcpudp"] = run_comparison(total_bytes=400_000, datagram_payload=1024, trials=1)
-    D["tls"] = run_secure_transfer(data=None, message="guided demo")
-    D["fails"] = run_all()
+def show_errors(items: dict) -> None:
+    for name, v in items.items():
+        if v.get("error"):
+            st.html(f'<div class="rr-note" style="--c:{T.CLAY}"><b>{e(name)}:</b> {e(v["error"])}</div>')
 
 
-ACTIONS = {0: ("Probe 3 destinations", do_detect), 2: ("Run the 4 NS2 scenarios", do_impact),
-           4: ("Run transport experiments", do_transport)}
+# ------------------------------------------------------------------ stepper (clickable, per-stage status)
+css = []
+for i, (key, _name) in enumerate(flow.STEPS):
+    label, col, _ = LOOK[status_of(key)]
+    css.append(f".st-key-wt_step_{i} button {{ box-shadow: inset 0 3px 0 0 {col} !important; min-height:64px; }}")
+    if i == W["step"]:
+        css.append(f".st-key-wt_step_{i} button {{ border-color:{T.SIGNAL} !important; background:color-mix(in srgb,{T.SIGNAL} 10%,{T.PANEL}) !important; }}")
+st.html("<style>" + "".join(css) + "</style>")
+cols = st.columns(len(flow.STEPS), gap="small")
+for i, ((key, name), col) in enumerate(zip(flow.STEPS, cols)):
+    label, _c, icon = LOOK[status_of(key)]
+    with col, st.container(key=f"wt_step_{i}"):
+        if st.button(f"{i + 1:02d} · **{name}**  \n{icon} {label}", key=f"wt_btn_{i}", width="stretch"):
+            W["step"] = i
+            st.rerun()
 
-
-def mark(i):
-    if i not in D["done"]:
-        D["done"].append(i)
-
-
-# ------------------------------------------------------------------ stepper
-step = D["step"]
-st.html('<div class="rr-steps">' + "".join(
-    f'<div class="{"on" if i == step else "done" if i in D["done"] else ""}" style="--c:{c}"><b>{i + 1:02d} · {n}</b>{s}</div>'
-    for i, (n, s, c) in enumerate(STEPS)) + "</div>")
-b = st.columns([1, 1, 1.3, 3], vertical_alignment="center")
-if b[0].button("Back", icon=":material/arrow_back:", disabled=step == 0, width="stretch"):
-    D["step"] -= 1
+b = st.columns([1, 1, 1.5, 1, 2.6], vertical_alignment="center")
+if b[0].button("Back", icon=":material/arrow_back:", disabled=W["step"] == 0, width="stretch"):
+    W["step"] -= 1
     st.rerun()
-if b[1].button("Next", icon=":material/arrow_forward:", disabled=step == len(STEPS) - 1, width="stretch"):
-    D["step"] += 1
+if b[1].button("Next", icon=":material/arrow_forward:", disabled=W["step"] == len(flow.STEPS) - 1, width="stretch"):
+    W["step"] += 1
     st.rerun()
-if b[2].button("Run the full demo", type="primary", icon=":material/play_circle:", width="stretch"):
+run_all = b[2].button("Run the full demo", type="primary", icon=":material/play_circle:", width="stretch")
+if b[3].button("Reset", icon=":material/restart_alt:", width="stretch"):
+    st.session_state.wt = flow.new_state()
+    st.rerun()
+b[4].caption("About a minute: three live probes, the selected NS2 scenarios, and the transport experiments.")
+
+if run_all:
     with st.status("Running every stage with the real backend", expanded=True) as stt:
-        st.write("Detect · probing 8.8.8.8, nonexistent.invalid and 192.0.2.1 ...")
-        do_detect()
-        mark(0)
-        mark(1)
-        st.write("Analyse impact · simulating four NS2 scenarios ...")
-        do_impact()
-        mark(2)
-        mark(3)
-        st.write("Transport · TCP vs UDP, TLS transfer, six failure drills ...")
-        do_transport()
-        mark(4)
-        mark(5)
-        stt.update(label="Demo complete - every step below now shows its results", state="complete", expanded=False)
-    D["step"] = 5
+        for key, label, fn in [("detect", "Detect · probing the selected destinations", lambda: flow.run_detect(W)),
+                               ("impact", "Analyse impact · NS2 scenarios", lambda: flow.run_impact(W, W["scenarios"], data.ns2_status())),
+                               ("transport", "Transport · TCP/UDP, TLS, failure drills", lambda: flow.run_transport(W))]:
+            st.write(f"{label} ...")
+            try:
+                fn()
+            except Exception as exc:  # noqa: BLE001 - flow already guards; this is a last resort
+                W[key] = {"status": flow.FAILED, "error": str(exc), "per_target": {}, "per_scenario": {}, "parts": {}}
+            s = status_of(key)
+            st.write(f"→ {LOOK[s][2]} {LOOK[s][0]}")
+        final = [status_of(k) for k, _ in flow.STEPS]
+        all_ok = all(s == flow.SUCCESS for s in final)
+        stt.update(label="Demo complete - every stage verified" if all_ok else "Demo finished - some stages need attention",
+                   state="complete" if all_ok else "error", expanded=False)
+    W["step"] = len(flow.STEPS) - 1
     st.rerun()
-b[3].caption("A full run takes roughly 30-60 seconds, mostly traceroute waiting on silent hops.")
 
-name, sub, color = STEPS[step]
-eyebrow(f"Step {step + 1} · {name}", sub, color)
+key, name = flow.STEPS[W["step"]]
+s = status_of(key)
+eyebrow(f"Step {W['step'] + 1} · {name}", LOOK[s][0], LOOK[s][1])
 
-if step in ACTIONS:
-    label, fn = ACTIONS[step]
-    if st.button(label, icon=":material/play_arrow:", key=f"act{step}"):
-        with st.spinner(f"{label} ..."):
-            fn()
-        mark(step)
-        if step in (0, 2):
-            mark(step + 1)
+# ================================================================== 1 detect
+if key == "detect":
+    st.markdown("The story starts on the **live network**: probe destinations and record exactly what answered. "
+                "The defaults cover a healthy host, a name that can never resolve and an address with no host.")
+    opts = authorized_list()
+    pick = st.multiselect("Destinations to probe", opts, default=[t for t in W["targets"] if t in opts], key="wt_targets")
+    if st.button("Retry detection" if W["detect"] else "Run detection", icon=":material/radar:", disabled=not pick):
+        with st.spinner("Pinging, tracing and resolving ..."):
+            flow.run_detect(W, pick)
         st.rerun()
-
-# ================================================================== step bodies
-if step == 0:
-    st.markdown("RouteResQ first **detects** symptoms with real commands. The demo probes three deliberately different "
-                "destinations so every kind of outcome appears:")
-    st.html("".join(pill(f"{t} — {why}", T.SIGNAL, dot=False) for t, why in TARGETS))
-    if D.get("detect"):
-        cols = st.columns(3, gap="medium")
-        for col, rid in zip(cols, D["detect"]):
-            r = history.get_record(rid)
+    if W["detect"]:
+        show_errors(W["detect"]["per_target"])
+        recs = {r["run"]["target"]: r for r in flow.detect_records(W)}
+        cols = st.columns(max(1, len(recs)), gap="medium")
+        for col, (t, v) in zip(cols, [(t, v) for t, v in W["detect"]["per_target"].items() if t in recs]):
+            r = recs[t]
             p = r["run"].get("ping") or {}
-            with col, card("d"):
-                card_title(r["run"]["target"], ", ".join(r["analysis"]["classifications"]))
+            with col, card("wt_d"):
+                card_title(t, ", ".join(r["analysis"]["classifications"]))
+                st.html(pill("measurement verified" if v["ok"] else "measurement incomplete", T.GREEN if v["ok"] else T.AMBER)
+                        + f'<div class="rr-csub">{e(v["verified"])}</div>')
                 if p.get("sent"):
-                    st.plotly_chart(charts.rtt_probes(p, 150, h=190), width="stretch", config={"displayModeBar": False}, key=f"dp{rid}")
+                    st.plotly_chart(charts.rtt_probes(p, 150, h=180), width="stretch", config={"displayModeBar": False},
+                                    key=f"wt_rtt_{t}")
                 else:
                     st.caption("No probe sent: the name could not be resolved.")
-                tr = r["run"].get("traceroute")
-                st.caption(f"replies {p.get('received', 0)}/{p.get('sent', 0)} · "
-                           + (f"traceroute {'reached' if tr['reached_destination'] else 'stopped'} after {len(tr['hops'])} hops" if tr else "no traceroute"))
     else:
-        empty("Not run yet", "Press <b>Probe 3 destinations</b>.")
+        empty("Not run yet", "Choose destinations and press <b>Run detection</b>.")
 
-elif step == 1:
-    st.markdown("Next the rule engine **diagnoses** each run: observations, findings, candidate causes and what the "
-                "evidence cannot tell us.")
-    if not D.get("detect"):
+# ================================================================== 2 diagnose
+elif key == "diagnose":
+    st.markdown("For each destination the rule engine builds an **evidence chain**: what went wrong, the measurements "
+                "that show it, the explanation they support, what the evidence cannot tell us, and the check that would "
+                "settle it.")
+    recs = flow.detect_records(W)
+    if not recs:
         empty("Run step 1 first", "The diagnosis needs measurements.")
     else:
-        cols = st.columns(3, gap="medium")
-        for col, rid in zip(cols, D["detect"]):
-            a = history.get_record(rid)["analysis"]
-            with col, card("dx"):
-                card_title(a["target"])
-                st.html("".join(pill(c, T.CATEGORY_COLOR[c]) for c in a["classifications"]))
-                st.markdown(f"_{a['conclusion']}_")
-                for x in a["explanations"][:3]:
-                    st.html(f'<div class="rr-csub">{pill(x["level"], T.LEVEL_COLOR[x["level"]], dot=False)} {e(x["cause"])}</div>')
-                if a["contradictions"]:
-                    st.caption("Contradiction: " + a["contradictions"][0][:160])
-                if st.button("Full reasoning", key=f"open{rid}", icon=":material/psychology:"):
-                    st.session_state.diag_run_id = rid
-                    st.switch_page("app_pages/diagnose_page.py")
+        names = [r["run"]["target"] for r in recs]
+        sel = st.segmented_control("Destination", names, default=names[0], key="wt_dx", required=True)
+        rec = recs[names.index(sel)]
+        ch = flow.evidence_chain(rec)
+        sc_col = {cause_report.CONFIRMED: T.GREEN, cause_report.LIKELY: T.SIGNAL, cause_report.NOT_CONFIRMED: T.AMBER,
+                  cause_report.NO_FAILURE: T.SLATE}.get(ch["status"], T.SLATE)
+        verdict(f"Root cause · {ch['status']}", ch["explanation"], sc_col)
 
-elif step == 2:
-    st.markdown("Live diagnostics can only suggest causes. In **NS2** the cause is known because it is injected: a link "
-                "failure under two routing protocols, and congestion.")
-    sims = {sid: data.result_at(Path(p)) for sid, p in D.get("sim", {}).items()}
-    if not sims:
-        empty("Not run yet", "Press <b>Run the 4 NS2 scenarios</b>.")
+        def rung(n, title, items, color):
+            lis = "".join(f"<li>{e(i)}</li>" for i in items) or f'<li style="color:{T.DIM}">none</li>'
+            return (f'<div class="rr-rung" style="--c:{color}"><div class="h"><div class="num">{n}</div>'
+                    f'<div class="t">{e(title)}</div></div><ul>{lis}</ul></div>')
+
+        if ch["status"] == cause_report.NOT_CONFIRMED:
+            expl = ["No single cause is supported over the others. Possible:"] + ch["alternatives"]
+        else:
+            expl = [ch["explanation"]] + [f"also possible: {x}" for x in ch["alternatives"]]
+        st.html('<div class="rr-ladder" style="grid-template-columns:repeat(5,minmax(0,1fr))">'
+                + rung(1, "Observed symptom", ch["symptoms"], T.CLAY)
+                + rung(2, "Measurement", ch["measurements"], T.SIGNAL)
+                + rung(3, f"Explanation ({ch['status']})", expl, sc_col)
+                + rung(4, "Limitations", ch["limitations"], T.SLATE)
+                + rung(5, "Next check", ch["next_checks"], T.GREEN) + "</div>")
+        if st.button("Open the full rule trace", icon=":material/psychology:"):
+            st.session_state.diag_run_id = rec["run"]["run_id"]
+            st.switch_page("app_pages/diagnose_page.py")
+
+# ================================================================== 3 impact
+elif key == "impact":
+    st.markdown("A live diagnosis can only suggest causes. In **NS2** the cause is known because it is injected, so "
+                "we can watch what it does to traffic. Pick the experiments; the healthy baseline is needed for comparison.")
+    ns2 = data.ns2_status()
+    if not ns2["available"]:
+        note(f"<b>NS2 is not available here</b> ({e(ns2['detail'][:160])}). The demo will use <b>stored runs</b> and label them.", T.SAND)
+    labels = {sid: f"{sc.label} · {sc.name.split(' - ', 1)[-1]}" for sid, sc in SC.items()}
+    pick = st.multiselect("Experiments", list(SC), default=W["scenarios"] or list(SC), format_func=labels.get, key="wt_sc")
+    if pick and "healthy" not in pick:
+        st.caption("Tip: include A (healthy) so the failure can be compared against a baseline.")
+    if st.button("Retry experiments" if W["impact"] else "Run experiments", icon=":material/science:", disabled=not pick):
+        with st.spinner("Simulating and analysing ..."):
+            flow.run_impact(W, pick, ns2)
+        st.rerun()
+    if W["impact"]:
+        per = W["impact"]["per_scenario"]
+        show_errors({sid: v for sid, v in per.items() if not v["ok"] or v["source"] == "stored"})
+        st.html("".join(pill(f"{SC[sid].label} · {v['source'] or 'no result'}", T.GREEN if v["source"] == "fresh" else
+                             T.SAND if v["source"] == "stored" else T.CLAY) for sid, v in per.items()))
+        sims = flow.sim_results(W)
+        if sims:
+            tiles([(f"{SC[sid].label} delivered", f"{r['flows']['1']['summary']['delivered']}<small>/{r['flows']['1']['summary']['sent']}</small>",
+                    ("fresh run" if per[sid]["source"] == "fresh" else "stored run") + " · " + SC[sid].name.split(" - ", 1)[-1],
+                    T.SCENARIO_COLOR[sid]) for sid, r in sims.items()])
+            chart(charts.overlay_throughput(list(sims.values())), "Throughput at the destination",
+                  what="Shaded: the 3-6 s window in which the fault or extra load is applied.",
+                  why="Same network, different injected cause, different impact.")
     else:
-        note(f"<b>Source:</b> {e(D.get('sim_source', ''))}.", T.SAND)
-        tiles([(f"{data.scenarios()[s].label} delivered", f"{r['flows']['1']['summary']['delivered']}<small>/{r['flows']['1']['summary']['sent']}</small>",
-                data.scenarios()[s].name.split(" - ", 1)[-1], T.SCENARIO_COLOR[s]) for s, r in sims.items()])
-        chart(charts.overlay_throughput(list(sims.values())), "Throughput at the destination, every scenario",
-              what="The shaded window is when the fault or extra load is applied.",
-              why="Same failure, different routing, very different outcome.")
+        empty("Not run yet", "Choose experiments and press <b>Run experiments</b>.")
 
-elif step == 3:
-    st.markdown("RouteResQ then checks the trace for **recovery**: did traffic reroute, how long was delivery "
-                "interrupted, and did performance return to its earlier level?")
-    sims = {sid: data.result_at(Path(p)) for sid, p in D.get("sim", {}).items()}
-    if not sims:
-        empty("Run step 3 first", "Recovery is read from the NS2 traces.")
+# ================================================================== 4 recovery
+elif key == "recovery":
+    st.markdown("Now compare a failure against the healthy **baseline**: what changed, why, and did the network recover?")
+    sims = flow.sim_results(W)
+    avail = [s for s in flow.FAILURE_SCENARIOS if s in sims]
+    if not avail:
+        empty("No failure experiment available", "Run at least one of B1, B2 or C in step 3.")
     else:
-        cols = st.columns(3, gap="medium")
-        for col, sid in zip(cols, [s for s in ("link_failure_dv", "link_failure_static", "congestion") if s in sims]):
-            r = sims[sid]
-            sc = data.scenarios()[sid]
-            with col, card("rv"):
-                card_title(f"{sc.label} · {sc.name.split(' - ', 1)[-1]}", r["findings"]["recovery"]["outcome"])
-                st.plotly_chart(charts.topology(sc.to_dict(), r, "during", h=200, labels=False), width="stretch",
-                                config={"displayModeBar": False}, key=f"rt{sid}")
-                for x in r["findings"]["recovery"]["evidence"][:2]:
-                    st.caption(x)
-        if st.button("Open the full failure & recovery analysis", icon=":material/healing:"):
-            st.switch_page("app_pages/recovery_page.py")
+        sid = st.segmented_control("Failure to examine", avail, format_func=lambda s: f"{SC[s].label} · {SC[s].name.split(' - ', 1)[-1]}",
+                                   default=avail[0], key="wt_rec", required=True)
+        r, base = sims[sid], sims.get("healthy")
+        f = r["findings"]
+        src = W["impact"]["per_scenario"][sid]["source"]
+        oc = T.GREEN if f["recovery"]["outcome"].startswith(("rerouted", "recovered")) else T.AMBER
+        verdict(f"Recovery · {'fresh run' if src == 'fresh' else 'stored run'}", f["recovery"]["outcome"], oc)
+        st.html(f'<div class="rr-note" style="--c:{T.GREEN}"><b>Root cause (confirmed - injected).</b> {code(SC[sid].known_cause)}'
+                f'<br><b>Mechanism seen in the trace.</b> {e(f["explanation"])}</div>')
+        left, right = st.columns([1, 1.25], gap="medium")
+        with left, card("wt_cmp"):
+            card_title("Baseline vs failure, during 3-6 s", "monitored flow 1")
+            rows = []
+            for label, res in [("A baseline", base), (f"{SC[sid].label} failure", r)]:
+                if res:
+                    d = res["phases"]["1"]["during"]
+                    rows.append({"run": label, "delivered": f"{d['delivered']}/{d['sent']}", "loss %": d["loss_pct"],
+                                 "avg delay ms": d["avg_delay_ms"], "kb/s": d["throughput_kbps"]})
+            st.dataframe(pd.DataFrame(rows), hide_index=True, alt="Baseline versus failure")
+            if not base:
+                st.caption("A (healthy) was not run, so there is no baseline row.")
+            st.plotly_chart(charts.topology(SC[sid].to_dict(), r, "during", h=220, labels=False), width="stretch",
+                            config={"displayModeBar": False}, key=f"wt_topo_{sid}")
+        with right:
+            chart(charts.overlay_throughput([x for x in (base, r) if x], h=320), "Throughput: baseline vs failure",
+                  what="Both runs use identical traffic; only the injected condition differs.",
+                  why="The gap between the curves is the impact of the failure; where they meet again is recovery.")
 
-elif step == 4:
-    st.markdown("Failures happen at the transport layer too. This step compares **TCP and UDP**, sends a file over "
+# ================================================================== 5 transport
+elif key == "transport":
+    st.markdown("Failures also happen between applications. This stage compares **TCP and UDP**, sends a file over "
                 "**TLS** with certificate and SHA-256 checks, and runs six controlled **failure drills**.")
-    if not D.get("fails"):
+    if st.button("Retry transport experiments" if W["transport"] else "Run transport experiments", icon=":material/swap_horiz:"):
+        with st.spinner("Running real sockets on loopback ..."):
+            flow.run_transport(W)
+        st.rerun()
+    if not W["transport"]:
         empty("Not run yet", "Press <b>Run transport experiments</b>.")
     else:
-        tu, tls, fl = D["tcpudp"], D["tls"], D["fails"]
-        f = tls.file
-        tiles([("TCP delivered", f"{tu['tcp'][0]['delivered_pct']:g}<small>%</small>", "SHA-256 verified" if tu["tcp"][0]["integrity_ok"] else "check failed", T.SIGNAL),
-               ("UDP delivered", f"{tu['udp'][0]['delivered_pct']:g}<small>%</small>", f"missing: {tu['udp'][0]['missing']}", T.AMBER),
-               ("TLS", e(f.tls_info.version) if f.tls_info else "failed", "chain + host name validated" if f.ok else (f.error_kind or ""), T.GREEN if f.ok else T.CLAY),
-               ("Drills recovered", f"{sum(x['resumed'] for x in fl['records'])}<small>/{len(fl['records'])}</small>", "after restoring each condition", T.GREEN)])
-        chain([("TCP connect", "ok" if f.connect_ms is not None else "fail", f"{fmt(f.connect_ms, ' ms', 3)}"),
-               ("TLS handshake", "ok" if f.tls_info else "fail", f"{f.tls_info.version} {f.tls_info.cipher}" if f.tls_info else ""),
-               ("Certificate", "ok" if f.tls_info else "fail", "lab CA · localhost"),
-               ("Encrypted transfer", "ok" if f.server_ack else "fail", f"{f.payload_bytes:,} bytes"),
-               ("SHA-256", "ok" if f.integrity_ok else "fail", "client = server")])
-        st.dataframe(pd.DataFrame([{"drill": x["failure_type"], "observed": x["observed_error_kind"], "resumed": x["resumed"],
-                                    "detail": x["resume_detail"]} for x in fl["records"]]), hide_index=True,
-                     alt="Failure drills", column_config={"resumed": st.column_config.CheckboxColumn()})
+        parts = W["transport"]["parts"]
+        show_errors(parts)
+        c = st.columns(3, gap="medium")
+        for col, (k, title) in zip(c, [("tcpudp", "TCP vs UDP"), ("tls", "TLS secure transfer"), ("drills", "Failure drills")]):
+            v = parts[k]
+            with col, card("wt_t"):
+                card_title(title)
+                st.html(pill("verified" if v["ok"] else "not verified", T.GREEN if v["ok"] else T.CLAY)
+                        + f'<div class="rr-csub">{e(v["verified"] or v["error"] or "")}</div>')
+        tls = (parts["tls"].get("result") or {}).get("file")
+        if tls:
+            ti = tls.get("tls_info") or {}
+            chain([("TCP connect", "ok" if tls["connect_ms"] is not None else "fail", fmt(tls["connect_ms"], " ms", 3)),
+                   ("TLS handshake", "ok" if ti else "fail", f"{ti.get('version', '')} {ti.get('cipher', '')}"),
+                   ("Certificate", "ok" if ti else "fail", "lab CA · localhost"),
+                   ("Encrypted transfer", "ok" if tls["server_ack"] else "fail", f"{tls['payload_bytes']:,} bytes"),
+                   ("SHA-256", "ok" if tls["integrity_ok"] else "fail", "client = server")])
+        drills = parts["drills"].get("result")
+        if drills:
+            st.dataframe(pd.DataFrame([{"drill": x["failure_type"], "root cause (injected)": x["condition_created"],
+                                        "observed": x["observed_error_kind"], "resumed": x["resumed"]} for x in drills["records"]]),
+                         hide_index=True, alt="Failure drills", column_config={"resumed": st.column_config.CheckboxColumn()})
 
+# ================================================================== 6 report
 else:
-    st.markdown("Finally everything is **reported**. Below is a summary of what this demo produced; the same results "
-                "are stored as JSON/CSV and appear on the Reports page.")
-    lines = [f"# RouteResQ guided demo\n\nGenerated {utc_now_iso()}.\n"]
-    if D.get("detect"):
-        lines.append("## Live diagnostics\n")
-        for rid in D["detect"]:
-            a = history.get_record(rid)["analysis"]
-            lines.append(f"- **{a['target']}**: {', '.join(a['classifications'])}. {a['conclusion']}")
-    sims = {sid: data.result_at(Path(p)) for sid, p in D.get("sim", {}).items()}
-    if sims:
-        lines.append(f"\n## NS2 ({D.get('sim_source')})\n")
-        for sid, r in sims.items():
-            s = r["flows"]["1"]["summary"]
-            lines.append(f"- **{r['scenario']['label']} {sid}**: {s['delivered']}/{s['sent']} delivered, "
-                         f"{s['loss_pct']}% loss, {s['avg_delay_ms']} ms mean delay - {r['findings']['recovery']['outcome']}.")
-    if D.get("fails"):
-        lines.append("\n## Transport\n")
-        tu = D["tcpudp"]
-        lines.append(f"- TCP delivered {tu['tcp'][0]['delivered_pct']}%, UDP {tu['udp'][0]['delivered_pct']}%.")
-        f = D["tls"].file
-        lines.append(f"- TLS: {'verified' if f.ok else 'failed'}" + (f" ({f.tls_info.version}, {f.tls_info.cipher})" if f.tls_info else ""))
-        for x in D["fails"]["records"]:
-            lines.append(f"- {x['failure_type']}: observed `{x['observed_error_kind']}`, resumed: {x['resumed']}")
-    md = "\n".join(lines)
-    if len(lines) == 1:
+    statuses = {k: status_of(k) for k, _ in flow.STEPS}
+    if all(v == flow.NOT_STARTED for k, v in statuses.items() if k != "report"):
         empty("Nothing to report yet", "Run the earlier steps or <b>Run the full demo</b>.")
     else:
-        done_all = all(i in D["done"] for i in range(5))
-        verdict("Demo summary", "All stages completed with real measurements." if done_all else "Some stages have not been run yet.",
-                T.GREEN if done_all else T.AMBER)
-        with card("sum"):
+        all_ok = all(v == flow.SUCCESS for v in statuses.values())
+        verdict("Demo status", "Every stage completed with fresh, verified measurements." if all_ok else
+                "Not every stage produced fresh, verified results - see the stage table and labels below.",
+                T.GREEN if all_ok else T.AMBER)
+        st.dataframe(pd.DataFrame([{"stage": n, "status": LOOK[statuses[k]][0]} for k, n in flow.STEPS]),
+                     hide_index=True, alt="Stage status")
+        eyebrow("Root causes identified in this demo", "", T.AMBER)
+        rows = cause_report.collect(flow.detect_records(W), flow.sim_results(W),
+                                    ((W.get("transport") or {}).get("parts", {}).get("drills") or {}).get("result"))
+        cause_register(rows)
+        md = flow.build_report(W)
+        with st.expander("Full demo report"):
             st.markdown(md)
         st.download_button("Download demo report", md.encode(), "routeresq_demo_report.md", "text/markdown",
                            icon=":material/download:", type="primary")
-        st.page_link("app_pages/report_page.py", label="Open all reports", icon=":material/description:")

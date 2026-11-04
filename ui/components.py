@@ -164,3 +164,21 @@ def chain(stages: list[tuple[str, str, str]]) -> None:
     st.html('<div class="rr-chain">' + "".join(
         f'<div class="s" style="--c:{look[s][0]}"><div class="t"><i>{look[s][1]}</i>{e(t)}</div><div class="d">{e(d)}</div></div>'
         for t, s, d in stages) + "</div>")
+
+
+STATUS_COLOR = {"Confirmed (injected)": T.GREEN, "Likely": T.SIGNAL, "Not confirmed": T.AMBER, "No failure detected": T.SLATE}
+
+
+def cause_register(rows: list[dict], show_healthy: bool = True) -> None:
+    """Compact root-cause register: source, subject, failure, cause status and the cause itself."""
+    rows = [r for r in rows if show_healthy or r["status"] != "No failure detected"]
+    if not rows:
+        empty("No failures to explain", "Nothing in the stored results needs a root cause.")
+        return
+    head = ('<div class="rr-reg"><div class="rr-reg-h"><span>Source</span><span>Subject</span><span>Failure</span>'
+            '<span>Cause status</span><span>Root cause</span></div>')
+    body = "".join(
+        f'<div class="rr-reg-r"><span class="src">{e(r["source"])}</span><span class="sub">{e(r["subject"])}</span>'
+        f'<span>{e(r["failure"])}</span><span>{pill(r["status"], STATUS_COLOR[r["status"]])}</span>'
+        f'<span class="cause">{code(r["cause"])}</span></div>' for r in rows)
+    st.html(head + body + "</div>")

@@ -8,9 +8,12 @@ The monitored 1 Mb/s flow (fid 1) runs as in the baseline. From t = 3.0 s to t =
 
 No component failed. Offered load exceeded the capacity of the core link, degrading service between t=3s and t=6s.
 
-## Why did it fail?
+## Root cause
 
-Competing traffic (flow 2, 1.5 Mb/s) was deliberately injected between t = 3.0 s and t = 6.0 s. Offered load on link n1-n2 is 2.5 Mb/s against 2 Mb/s capacity.
+**Cause status: Confirmed - the cause was injected deliberately in this experiment.**
+
+- **Cause:** Competing traffic (flow 2, 1.5 Mb/s) was deliberately injected between t = 3.0 s and t = 6.0 s. Offered load on link n1-n2 is 2.5 Mb/s against 2 Mb/s capacity.
+- **How it caused the failure (from the trace):** Between t=3s and t=6s the core link 1->2 was offered more traffic than it can carry, so its DropTail queue filled. Queueing added delay, and once the queue was full new arrivals were dropped. Packet loss was caused by queue overflow at the bottleneck (confirmed by d events).
 
 ## What happened next?
 
@@ -58,10 +61,6 @@ Loss and delay are assigned to a phase by **send time**; throughput by **receive
 | 9.0000 | configured | TRAFFIC_STOP | Monitored CBR traffic stops. |
 | 9.0336 | trace | LAST_DELIVERY | Last monitored packet delivered (seq 1000). |
 | 10.0000 | configured | SIM_END | Simulation ends. |
-
-## Technical explanation
-
-Between t=3s and t=6s the core link 1->2 was offered more traffic than it can carry, so its DropTail queue filled. Queueing added delay, and once the queue was full new arrivals were dropped. Packet loss was caused by queue overflow at the bottleneck (confirmed by d events).
 
 ## What can and cannot be concluded
 

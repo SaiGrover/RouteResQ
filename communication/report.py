@@ -46,16 +46,16 @@ def build_report(cmp: dict, fails: dict, tls) -> str:
         "",
         "## Communication failure demonstrations",
         "",
-        "| Failure | Observed error | Resumed after restore |",
-        "|---|---|---|",
+        "| Failure | Root cause (injected) | Observed error | Resumed after restore |",
+        "|---|---|---|---|",
     ]
     for r in fails["records"]:
-        out.append(f"| {r['failure_type']} | {r['observed_error_kind']}: {(r['observed_error'] or '')[:90]} | "
+        out.append(f"| {r['failure_type']} | {r['condition_created']} | {r['observed_error_kind']}: {(r['observed_error'] or '')[:90]} | "
                    f"{'yes' if r['resumed'] else 'no'} |")
     out.append("")
     for r in fails["records"]:
         out += [f"### {r['failure_type']}", "",
-                f"- **Condition (what failed / why):** {r['condition_created']}",
+                f"- **Root cause (confirmed - injected):** {r['condition_created']}",
                 f"- **Observed error:** `{r['observed_error']}`",
                 f"- **Impact (what happened next):** {r['impact']}",
                 f"- **Restoration:** {r['restoration']}",

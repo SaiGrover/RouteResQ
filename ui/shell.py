@@ -31,15 +31,16 @@ def brand_bar(demo_page=None) -> None:
     ]
     chip_html = "".join(f'<span class="rr-chip" style="--c:{c}"><i></i>{e(t)}</span>' for t, c in chips)
     with st.container(key="topbar"):
-        left, right = st.columns([3, 2.4], vertical_alignment="center")
+        left, right = st.columns([2.6, 2.8], vertical_alignment="center")
         left.html(f"""<div class="rr-brand"><div class="rr-mark">{MARK}</div><div>
           <div class="rr-wm">Route<b>ResQ</b></div>
           <div class="rr-tag">Network failure detection · root cause · recovery analytics</div></div></div>""")
         with right.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center", gap="small"):
             st.html(f'<div class="rr-env">{chip_html}</div>')
-            if demo_page is not None and st.button("Guided demo", key="nav_demo", type="primary",
-                                                   icon=":material/play_circle:"):
-                st.switch_page(demo_page)
+            if demo_page is not None:
+                # page_link navigates client-side: no rerun of the page being left
+                with st.container(key="demo_link"):
+                    st.page_link(demo_page, label="Guided demo", icon=":material/play_circle:")
 
 
 def _headlines() -> dict[str, str]:
@@ -68,22 +69,34 @@ def _headlines() -> dict[str, str]:
     return out
 
 
+def _css_str(text: str) -> str:
+    """Quote text for a CSS ``content:`` value."""
+    clean = " ".join(str(text).split())
+    return '"' + clean.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
 def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
-    """nav: (key, stage label, title, st.Page). The workflow stages are joined by arrows."""
+    """nav: (key, stage label, title, st.Page).
+
+    Each node is an st.page_link, so navigation happens in the browser without re-running the
+    page being left (buttons + switch_page re-ran the whole current page first, which felt laggy).
+    The stage label and the live headline are drawn with CSS pseudo-elements around the link text.
+    """
     heads = _headlines()
     accents = {"overview": T.SLATE, "detect": T.SIGNAL, "diagnose": T.AMBER, "impact": T.CLAY,
                "recovery": T.GREEN, "transport": T.STEEL, "report": T.SAND, "demo": T.SIGNAL}
     css = []
-    for key, _stage, _title, page in nav:
+    for key, stage, _title, page in nav:
         c = accents[key]
-        css.append(f".st-key-nav_{key} button:hover {{ border-color:{c}aa !important; box-shadow:0 8px 22px -14px {c} !important; }}"
-                   f".st-key-nav_{key} button:before {{ content:''; position:absolute; top:0; left:0; right:0; height:2px;"
-                   f" background:linear-gradient(90deg,{c},transparent); }}")
+        sel = f".st-key-nav_{key} a"
+        css.append(f"{sel}::before {{ content:{_css_str(stage)}; }}"
+                   f"{sel}::after {{ content:{_css_str(heads.get(key, '')[:32])}; }}"
+                   f"{sel} {{ box-shadow: inset 0 2px 0 0 {c}; }}"
+                   f"{sel}:hover {{ border-color:{c}aa !important; }}")
         if page.title == current_title:
-            css.append(f".st-key-nav_{key} button {{ border-color:{c} !important; background:color-mix(in srgb,{c} 11%,{T.PANEL}) !important;"
-                       f" box-shadow:0 0 0 1px {c}55, 0 10px 26px -16px {c} !important; }}"
-                       f".st-key-nav_{key} button strong {{ color:{c} !important; }}"
-                       f".st-key-nav_{key} button:before {{ height:3px !important; }}")
+            css.append(f"{sel} {{ border-color:{c} !important; background:color-mix(in srgb,{c} 12%,{T.PANEL}) !important;"
+                       f" box-shadow: inset 0 3px 0 0 {c}, 0 10px 26px -16px {c} !important; }}"
+                       f"{sel} p, {sel} span {{ color:{c} !important; }}")
     st.html("<style>" + "".join(css) + "</style>")
     arrow_after = {"detect", "diagnose", "impact"}  # arrows only inside the workflow
     with st.container(key="rail"):
@@ -93,10 +106,8 @@ def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
             if key in arrow_after:
                 widths.append(.45)
         cols = iter(st.columns(widths, gap="small", vertical_alignment="center"))
-        for key, stage, title, page in nav:
-            with next(cols):
-                label = f"{stage}  \n**{title}**  \n*{heads.get(key, '')[:30]}*"
-                if st.button(label, key=f"nav_{key}", width="stretch", help=f"Open {title}"):
-                    st.switch_page(page)
+        for key, _stage, title, page in nav:
+            with next(cols), st.container(key=f"nav_{key}"):
+                st.page_link(page, label=title, help=f"Open {title}")
             if key in arrow_after:
                 next(cols).html('<div class="rr-arrow">&#10230;</div>')

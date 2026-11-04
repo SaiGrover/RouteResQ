@@ -9,7 +9,8 @@ from diagnostics.history import DiagnosticHistory, compare_runs, summary_row
 from failure_analysis.rules import Thresholds, analyze_run
 from ui import charts
 from ui import theme as T
-from ui.components import (badge_row, card, card_title, chart, e, empty, eyebrow, fmt, method, note, page_header,
+from analysis.cause_report import NO_FAILURE, live_cause
+from ui.components import (STATUS_COLOR, badge_row, card, card_title, chart, e, empty, eyebrow, fmt, method, note, page_header,
                            pill, tiles, verdict)
 
 PUBLIC = is_public_deployment()
@@ -72,6 +73,11 @@ else:
     bad = [c for c in cats if c != "Healthy / Reachable"]
     col = T.CLAY if any(c in cats for c in ("DNS Resolution Failure", "Unreachable Destination")) else T.AMBER if bad else T.GREEN
     verdict(" · ".join(cats), a["conclusion"], col)
+    rc = live_cause(run, a)
+    if rc["status"] != NO_FAILURE:
+        st.html(f'<div class="rr-note" style="--c:{STATUS_COLOR[rc["status"]]}"><b>Root cause · {e(rc["status"])}.</b> '
+                f'{e(rc["cause"])}' + (f' Other possibilities: {e("; ".join(rc["alternatives"]))}.' if rc["alternatives"] else "")
+                + ' The Root cause page shows the full evidence chain.</div>')
 
     jitter = p.get("stdev_ms")
     tiles([

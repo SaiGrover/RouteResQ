@@ -11,7 +11,8 @@ from common.paths import COMM_RESULTS_DIR, PROJECT_ROOT, RESULTS_DIR
 from diagnostics.history import summary_row
 from ui import data
 from ui import theme as T
-from ui.components import card, card_title, empty, eyebrow, page_header, tiles
+from analysis.cause_report import NO_FAILURE, cause_report_markdown
+from ui.components import STATUS_COLOR, card, card_title, cause_register, empty, eyebrow, page_header, tiles
 
 page_header("Stage 05 · Report", "Reports & experiment history",
             "Every experiment is stored as JSON, CSV, Markdown or raw NS2 trace. Nothing here is typed in by hand: "
@@ -30,10 +31,46 @@ tiles([("Reports", f"{len(reps)}", "Markdown, generated", T.SAND),
        ("Transport experiments", f"{len(comm)}", "TCP/UDP and failure drills", T.STEEL),
        ("Result files", f"{len(files)}", f"{sum(p.stat().st_size for p in files) / 1048576:.1f} MB on disk", T.SLATE)])
 
-view = st.segmented_control("View", ["Reports", "Experiment history", "Files & export", "Log"], default="Reports",
+view = st.segmented_control("View", ["Root-cause report", "Reports", "Experiment history", "Files & export", "Log"],
+                            default="Root-cause report",
                             required=True, label_visibility="collapsed", key="rep_view")
 
-if view == "Reports":
+if view == "Root-cause report":
+    all_runs = st.toggle("Include every live run (default: latest run per destination)", key="rc_all")
+    rows = data.cause_rows(latest_per_target=not all_runs)
+    by = {k: sum(1 for r in rows if r["status"] == k) for k in STATUS_COLOR}
+    tiles([(k, f"{v}", {"Confirmed (injected)": "cause introduced on purpose, effect observed",
+                        "Likely": "one explanation fits all live evidence",
+                        "Not confirmed": "several live explanations still possible",
+                        NO_FAILURE: "nothing to explain"}[k], STATUS_COLOR[k]) for k, v in by.items()])
+    eyebrow("Root-cause register", "every detected failure and what caused it", T.AMBER)
+    cause_register(rows)
+    eyebrow("Evidence behind each cause", "", T.AMBER)
+    for r in [x for x in rows if x["status"] != NO_FAILURE]:
+        with st.expander(f"{r['source']} · {r['subject']} — {r['status']}"):
+            st.markdown(f"**Root cause.** {r['cause']}")
+            if r["mechanism"]:
+                st.markdown(f"**How it caused the failure.** {r['mechanism']}")
+            if r["evidence"]:
+                st.markdown("**Evidence**")
+                st.markdown("\n".join(f"- {x}" for x in r["evidence"]))
+            if r["alternatives"]:
+                st.markdown("**Other possible causes:** " + "; ".join(r["alternatives"]))
+            if r["next_checks"]:
+                st.markdown("**Checks needed to confirm:** " + "; ".join(r["next_checks"]))
+            if r["contradictions"]:
+                st.caption("Contradictory evidence: " + " ".join(r["contradictions"]))
+    md = cause_report_markdown(rows)
+    c1, c2, _ = st.columns([1, 1, 2])
+    c1.download_button("Download root-cause report", md.encode(), "root_cause_report.md", "text/markdown",
+                       icon=":material/download:", type="primary", width="stretch")
+    if c2.button("Save to reports/", icon=":material/save:", width="stretch"):
+        out = PROJECT_ROOT / "reports" / "root_cause_report.md"
+        out.parent.mkdir(exist_ok=True)
+        out.write_text(md, encoding="utf-8")
+        st.toast(f"Saved {out.name}")
+
+elif view == "Reports":
     if not reps:
         empty("No reports yet", "Run <code>python -m simulation.experiments</code> or the NS2 page to generate them.")
     else:

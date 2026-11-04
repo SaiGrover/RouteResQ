@@ -8,9 +8,12 @@ Same traffic as the baseline. Link n1-n2 on the primary path is taken down at t 
 
 Link n1-n2 failed at t=3 s. Confirmed by the trace: link-down event at t=3 s.
 
-## Why did it fail?
+## Root cause
 
-Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. This is the experimental condition.
+**Cause status: Confirmed - the cause was injected deliberately in this experiment.**
+
+- **Cause:** Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. This is the experimental condition.
+- **How it caused the failure (from the trace):** Link 1-2 failed at t=3 s. When link 1-2 went down, NS2's distance-vector agents at the adjacent routers were notified and sent triggered updates; node 1 already had a route via the alternative path, so forwarding switched almost immediately. Only packets that were already queued on or in transit over the failed link were lost. Average delay changed from 33.60 ms before the failure to 43.60 ms during it because the alternative path is longer.
 
 ## What happened next?
 
@@ -57,10 +60,6 @@ Loss and delay are assigned to a phase by **send time**; throughput by **receive
 | 9.0000 | configured | TRAFFIC_STOP | Monitored CBR traffic stops. |
 | 9.0336 | trace | LAST_DELIVERY | Last monitored packet delivered (seq 1000). |
 | 10.0000 | configured | SIM_END | Simulation ends. |
-
-## Technical explanation
-
-Link 1-2 failed at t=3 s. When link 1-2 went down, NS2's distance-vector agents at the adjacent routers were notified and sent triggered updates; node 1 already had a route via the alternative path, so forwarding switched almost immediately. Only packets that were already queued on or in transit over the failed link were lost. Average delay changed from 33.60 ms before the failure to 43.60 ms during it because the alternative path is longer.
 
 ## What can and cannot be concluded
 

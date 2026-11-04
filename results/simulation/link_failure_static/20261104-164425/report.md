@@ -8,9 +8,12 @@ Identical failure to B1 (link n1-n2 down from t = 3.0 s to t = 6.0 s), but route
 
 Link n1-n2 failed at t=3 s. Confirmed by the trace: link-down event at t=3 s.
 
-## Why did it fail?
+## Root cause
 
-Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. Static routing is the second controlled condition.
+**Cause status: Confirmed - the cause was injected deliberately in this experiment.**
+
+- **Cause:** Link n1-n2 was deliberately disabled with `$ns rtmodel-at 3.0 down $n1 $n2` and re-enabled at t = 6.0 s. Static routing is the second controlled condition.
+- **How it caused the failure (from the trace):** Link 1-2 failed at t=3 s. With static routing the forwarding table still pointed at link 1-2, so node 1 received the packets but could not forward them. NS2 discarded them without writing 'd' events; their loss was detected because they were never seen again after arriving at node 1. Delivery resumed only when the link came back. No packet sent during the failure was delivered, so no delay can be measured for that phase.
 
 ## What happened next?
 
@@ -56,10 +59,6 @@ Loss and delay are assigned to a phase by **send time**; throughput by **receive
 | 9.0000 | configured | TRAFFIC_STOP | Monitored CBR traffic stops. |
 | 9.0336 | trace | LAST_DELIVERY | Last monitored packet delivered (seq 1000). |
 | 10.0000 | configured | SIM_END | Simulation ends. |
-
-## Technical explanation
-
-Link 1-2 failed at t=3 s. With static routing the forwarding table still pointed at link 1-2, so node 1 received the packets but could not forward them. NS2 discarded them without writing 'd' events; their loss was detected because they were never seen again after arriving at node 1. Delivery resumed only when the link came back. No packet sent during the failure was delivered, so no delay can be measured for that phase.
 
 ## What can and cannot be concluded
 

@@ -35,6 +35,8 @@ def comparison_row(result: dict) -> dict:
         "max_queue_pkts": (result["queue_stats"].get(result["bottleneck_link"]) or {}).get("max_queue_pkts")
         if result["bottleneck_link"] else None,
         "recovery_outcome": f["recovery"]["outcome"],
+        "known_cause": sc["known_cause"],
+        "mechanism": f["explanation"],
     }
 
 

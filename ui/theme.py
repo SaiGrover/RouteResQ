@@ -88,21 +88,26 @@ CSS = f"""
 
 /* ---------- workflow rail (navigation) ---------- */
 .st-key-rail {{ margin:.9rem 0 1.4rem 0; }}
-.st-key-rail button {{ width:100%; min-height:82px; padding:.55rem .6rem !important; text-align:left;
-  background:{PANEL} !important; border:1px solid {BORDER} !important; border-radius:12px !important;
-  position:relative; overflow:hidden; transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease; }}
-.st-key-rail button:hover {{ transform:translateY(-1px); }}
-.st-key-rail button p {{ margin:0; font-size:.6rem !important; letter-spacing:.14em; text-transform:uppercase;
-  color:{DIM} !important; line-height:1.55; white-space:normal; text-align:left; }}
-.st-key-rail button strong {{ display:inline-block; font-family:{HEAD}; font-size:.95rem; letter-spacing:-.01em;
-  text-transform:none; color:{TXT}; font-weight:600; margin:.05rem 0; }}
-.st-key-rail button em {{ display:inline-block; font-style:normal; font-family:{MONO}; font-size:.68rem;
-  letter-spacing:0; text-transform:none; color:{MUT}; }}
+div[class*="st-key-nav_"] a {{ display:flex !important; flex-direction:column; align-items:flex-start; justify-content:center;
+  width:100%; min-height:82px; padding:.5rem .7rem !important; margin:0; background:{PANEL} !important;
+  border:1px solid {BORDER}; border-radius:12px !important; text-decoration:none !important; overflow:hidden;
+  transition:border-color .12s ease, transform .12s ease; }}
+div[class*="st-key-nav_"] a:hover {{ transform:translateY(-1px); }}
+div[class*="st-key-nav_"] a::before {{ font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:{DIM}; line-height:1.5; }}
+div[class*="st-key-nav_"] a::after {{ font-family:{MONO}; font-size:.68rem; color:{MUT}; line-height:1.5; white-space:nowrap;
+  display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; }}
+div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ font-family:{HEAD} !important; font-size:.95rem !important;
+  font-weight:600 !important; color:{TXT}; letter-spacing:-.01em; margin:0; }}
+.st-key-demo_link {{ flex:0 0 auto; width:auto !important; }}
+.st-key-demo_link a {{ background:{SIGNAL} !important; border-radius:10px !important; padding:.42rem .9rem !important;
+  text-decoration:none !important; white-space:nowrap; min-width:9.6rem; justify-content:center; }}
+.st-key-demo_link a p, .st-key-demo_link a span {{ color:{BG} !important; font-weight:700 !important; }}
+.st-key-demo_link a:hover {{ filter:brightness(1.08); }}
 .rr-arrow {{ text-align:center; color:{DIM}; font-size:1rem; line-height:82px; }}
 
 @media (max-width: 640px) {{
   .rr-arrow {{ display:none; }}
-  .st-key-rail button {{ min-height:58px; }}
+  div[class*="st-key-nav_"] a {{ min-height:58px; }}
   .rr-ph h1 {{ font-size:1.55rem; }}
   .rr-steps {{ grid-template-columns:1fr 1fr; }}
 }}
@@ -227,6 +232,18 @@ div[class*="st-key-card"] [data-testid="stExpander"] {{ border:0; border-top:1px
 .rr-chain .s .t {{ font-family:{HEAD}; font-size:.85rem; font-weight:600; color:{TXT}; display:flex; gap:.35rem; align-items:center; }}
 .rr-chain .s .t i {{ font-style:normal; color:var(--c); font-family:{MONO}; font-size:.8rem; }}
 .rr-chain .s .d {{ color:{MUT}; font-size:.72rem; line-height:1.45; margin-top:.2rem; font-family:{MONO}; word-break:break-word; }}
+
+/* ---------- root-cause register ---------- */
+.rr-reg {{ border:1px solid {BORDER}; border-radius:14px; overflow:hidden; background:{PANEL}; }}
+.rr-reg-h, .rr-reg-r {{ display:grid; grid-template-columns:130px 170px 1.1fr 170px 2.2fr; gap:.8rem; padding:.55rem .9rem; align-items:start; }}
+.rr-reg-h {{ background:{PANEL_2}; border-bottom:1px solid {BORDER}; }}
+.rr-reg-h span {{ font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:{DIM}; }}
+.rr-reg-r {{ border-bottom:1px solid {BORDER}; font-size:.8rem; color:{MUT}; line-height:1.5; }}
+.rr-reg-r:last-child {{ border-bottom:0; }}
+.rr-reg-r .src {{ font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:{DIM}; font-weight:600; padding-top:.15rem; }}
+.rr-reg-r .sub {{ font-family:{MONO}; color:{TXT}; font-size:.76rem; word-break:break-word; }}
+.rr-reg-r .cause {{ color:{TXT}; }}
+@media (max-width: 900px) {{ .rr-reg-h {{ display:none; }} .rr-reg-r {{ grid-template-columns:1fr; gap:.25rem; }} }}
 
 /* ---------- widgets ---------- */
 div[data-testid="stWidgetLabel"] p {{ color:{MUT} !important; font-size:.68rem !important; letter-spacing:.12em;

@@ -13,7 +13,7 @@ from simulation.runner import list_runs
 from simulation.scenario import load_all_scenarios
 
 
-@st.cache_data(ttl=120, show_spinner="Checking the NS2 installation...")
+@st.cache_data(ttl=3600, show_spinner="Checking the NS2 installation...")  # docker calls are slow; check hourly
 def ns2_status() -> dict:
     from simulation.runner import backend_status
 
@@ -77,3 +77,11 @@ def reports() -> list[Path]:
 
 def sim_dir() -> Path:
     return SIM_RESULTS_DIR
+
+
+def cause_rows(latest_per_target: bool = True) -> list[dict]:
+    """Root-cause register built from every stored result (see analysis.cause_report)."""
+    from analysis.cause_report import _baselines, collect
+
+    hist = diag_records()
+    return collect(hist, latest_all(), latest_comm("failure_demo"), latest_per_target, baselines=_baselines(hist))

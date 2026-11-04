@@ -4,7 +4,7 @@ import streamlit as st
 from failure_analysis.rules import CATEGORIES
 from ui import charts, data
 from ui import theme as T
-from ui.components import card, card_title, chart, e, empty, eyebrow, fmt, page_header, pill, tiles
+from ui.components import card, card_title, cause_register, chart, e, empty, eyebrow, fmt, page_header, pill, tiles
 
 page_header("Command centre", "Network failure intelligence",
             "One place to see what RouteResQ has measured on the live network, what the NS2 experiments showed "
@@ -32,6 +32,10 @@ tiles([
     ("Transport failures recovered", f"{sum(r['resumed'] for r in fails['records'])}<small>/{len(fails['records'])}</small>" if fails else "n/a",
      "after restoring the condition", T.GREEN),
 ])
+
+eyebrow("Root causes identified", "the cause of every detected failure and how certain it is", T.AMBER)
+cause_register(data.cause_rows(), show_healthy=False)
+st.page_link("app_pages/report_page.py", label="Full root-cause report with evidence", icon=":material/description:")
 
 left, right = st.columns([1.55, 1], gap="medium")
 with left:

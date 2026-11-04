@@ -141,7 +141,7 @@ The design adapts the strongest patterns of the team's Data Vortex Round 4 dashb
 | Failure & recovery | recovery verdict, the five questions answered, before/during/after topology triptych, timeline of configured and observed events, phase comparison, cross-scenario comparison |
 | TCP · UDP · TLS | connection-state chain built only from stages the client actually completed, TCP vs UDP charts, TLS handshake / certificate / SHA-256 details, failure drills (fault → error → restore → resumed) |
 | Reports | generated reports, full experiment history, file browser with ZIP export, log viewer |
-| Guided demo | six steps that run the real backend: probe 8.8.8.8, `nonexistent.invalid` and `192.0.2.1`; diagnose them; run the four NS2 scenarios; show recovery; run TCP/UDP, TLS and the failure drills; produce a downloadable summary. **Run the full demo** does everything in about a minute. If NS2 is unavailable, it uses stored runs and says so. |
+| Guided demo | one failure story in six steps, each running the real backend: detect (choose the destinations), diagnose (evidence chain: symptom → measurement → explanation → limitations → next check), analyse impact (choose the NS2 experiments), observe recovery (baseline vs the chosen failure), transport, report. Every step shows its own **verified status** (verified / partial / failed / stored data / not run) and is clickable; each stage is error-guarded with a retry, keeps its successful parts, and verifies its own output (parsed measurements, a valid NS2 trace, TLS integrity, every drill detected and recovered). If NS2 fails or is missing, stored runs are used **and labelled as stored**, and the report never claims fresh results. |
 
 Charts are Plotly and built only from backend results; nothing is drawn from made-up data.
 
@@ -247,6 +247,27 @@ Example from a real run against `192.0.2.1` (see [reports/live_diagnostics.md](r
 * A TCP connect timed out.
 
 Possible explanations: the destination is down, a downstream path is inaccessible, or ICMP is filtered. Conclusion: *"192.0.2.1 could not be reached using the available diagnostic methods. No device reported an explicit error, so the precise cause is not confirmed."*
+
+### Root-cause report
+
+The main question RouteResQ answers is *why* a failure happened. [analysis/cause_report.py](analysis/cause_report.py) builds a **root-cause register**: one row per detected failure, across live diagnostics, NS2 experiments and transport drills. Each row gives the failure, its root cause, how certain that cause is, the evidence, other possible causes and the checks needed to confirm. Live runs are re-analysed with the current rules, so the register never shows a verdict from an older rule set.
+
+| Cause status | Meaning |
+|---|---|
+| **Confirmed (injected)** | the cause was introduced on purpose (NS2 scenario or transport drill) and its effect is visible in the trace or error |
+| **Likely** | live network: one explanation is consistent with all the evidence (for example NXDOMAIN → the name does not exist) |
+| **Not confirmed** | live network: several explanations fit equally, so they are listed with the checks that would separate them |
+| **No failure detected** | nothing to explain |
+
+```bash
+python -m analysis.cause_report          # writes reports/root_cause_report.md
+```
+
+The register is also shown on the Overview, as the default view of the Reports page, and in the guided demo's report. Every individual report has a *Root cause* section:
+* each NS2 scenario report, giving the cause and how it produced the failure, as read from the trace;
+* the scenario comparison;
+* each live diagnostic run;
+* the communication drills.
 
 ### History and baselines
 
@@ -364,7 +385,7 @@ Each demonstration then restores the condition and records whether communication
 ## 8. Testing
 
 ```bash
-pytest                                  # everything (141 tests)
+pytest                                  # everything (159 tests)
 pytest -m "not ns2 and not network"     # mocked / offline only
 pytest -m ns2                           # real NS2 runs
 pytest -m network                       # real ping/traceroute/DNS (loopback + RFC-reserved targets only)
@@ -381,6 +402,7 @@ pytest -m ui                            # Streamlit AppTest smoke tests
 | `test_ns2_integration.py` | **real NS2** | script execution, the expected behaviour of all four scenarios, timeline events, comparison, reports |
 | `test_communication.py` | **real sockets** | framing with partial reads, TCP/UDP/TLS transfers, integrity, certificate rejection, every failure demonstration |
 | `test_live_network.py` | **real commands** | loopback health, reserved-name DNS failure, documentation-address unreachability, refused port |
+| `test_walkthrough.py` | demo logic with **mocked** backends + UI | stage statuses, per-target/per-scenario error isolation, retry, unparseable measurements, NS2 unavailable → labelled stored runs, fresh-run failure fallback, report wording, evidence chains, root-cause register (including re-analysis of stale results), full demo and reset through the UI |
 | `test_streamlit_ui.py` | UI | every page and view through the real entry point, scenario/phase switching, real TCP send, authorisation guard, the guided demo's transport step |
 
 ## 9. Methodology notes and limitations

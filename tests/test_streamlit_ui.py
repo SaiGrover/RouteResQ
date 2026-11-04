@@ -23,9 +23,10 @@ def go(at: AppTest, page: str) -> AppTest:
 
 
 def test_overview_renders_with_rail_and_brand(app):
-    keys = {b.key for b in app.button}
-    assert {"nav_overview", "nav_detect", "nav_diagnose", "nav_impact", "nav_recovery", "nav_transport",
-            "nav_report", "nav_demo"} <= keys
+    # rail nodes are page links (client-side navigation, no rerun of the page being left)
+    labels = {el.proto.label for el in app.get("page_link")}
+    assert {"Overview", "Diagnostics", "Root cause", "NS2 simulation", "Recovery", "TCP · UDP · TLS", "Reports",
+            "Guided demo"} <= labels
 
 
 @pytest.mark.parametrize("page", PAGES)
@@ -78,12 +79,16 @@ def test_authorisation_guard_on_add_destination(app):
     assert any("Confirm that you are authorised" in e.value for e in at.error)
 
 
-def test_demo_transport_step_runs_backend(app):
-    """Step 5 of the guided demo runs the real TCP/UDP, TLS and failure-drill code."""
+def test_demo_transport_step_runs_real_backend(app):
+    """Step 5 of the guided demo, with the real TCP/UDP, TLS and failure-drill code."""
+    from walkthrough import flow
+
     at = go(app, "demo")
-    at.session_state["demo"] = {"step": 4, "done": []}
+    state = flow.new_state()
+    state["step"] = 4
+    at.session_state["wt"] = state
     at.run()
-    at.button(key="act4").click().run()
+    next(b for b in at.button if b.label == "Run transport experiments").click().run()
     assert not at.exception, [e.message for e in at.exception]
-    d = at.session_state["demo"]
-    assert d["tls"].file.ok and all(r["resumed"] for r in d["fails"]["records"])
+    t = at.session_state["wt"]["transport"]
+    assert t["status"] == flow.SUCCESS, {k: v["verified"] or v["error"] for k, v in t["parts"].items()}

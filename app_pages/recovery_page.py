@@ -54,7 +54,7 @@ q = st.columns(3, gap="medium")
 with q[0], card("q1"):
     card_title("What failed?")
     st.write(f["what_failed"])
-    card_title("Why?")
+    card_title("Root cause", "confirmed - injected in this experiment")
     st.markdown(f["why"])
 with q[1], card("q2"):
     card_title("What happened next?")

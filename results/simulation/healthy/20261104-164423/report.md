@@ -8,9 +8,12 @@ All six links are up. A single 1 Mb/s CBR/UDP flow runs from n0 to n5 over the p
 
 Nothing. No fault was introduced; this is the control experiment.
 
-## Why did it fail?
+## Root cause
 
-No fault is introduced. All links stay up for the whole simulation.
+**Cause status: No failure (control experiment).**
+
+- **Cause:** No fault is introduced. All links stay up for the whole simulation.
+- **How it caused the failure (from the trace):** With all links up and an offered load of 1 Mb/s on 2 Mb/s core links, every packet followed the lowest-cost path. No packets were lost. These numbers are the baseline for the other scenarios.
 
 ## What happened next?
 
@@ -47,10 +50,6 @@ Loss and delay are assigned to a phase by **send time**; throughput by **receive
 | 9.0000 | configured | TRAFFIC_STOP | Monitored CBR traffic stops. |
 | 9.0336 | trace | LAST_DELIVERY | Last monitored packet delivered (seq 1000). |
 | 10.0000 | configured | SIM_END | Simulation ends. |
-
-## Technical explanation
-
-With all links up and an offered load of 1 Mb/s on 2 Mb/s core links, every packet followed the lowest-cost path. No packets were lost. These numbers are the baseline for the other scenarios.
 
 ## What can and cannot be concluded
 

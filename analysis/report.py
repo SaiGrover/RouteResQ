@@ -29,9 +29,13 @@ def experiment_report(result: dict) -> str:
         "",
         f["what_failed"],
         "",
-        "## Why did it fail?",
+        "## Root cause",
         "",
-        f["why"],
+        ("**Cause status: No failure (control experiment).**" if sc["category"] == "healthy"
+         else "**Cause status: Confirmed - the cause was injected deliberately in this experiment.**"),
+        "",
+        f"- **Cause:** {f['why']}",
+        f"- **How it caused the failure (from the trace):** {f['explanation']}",
         "",
         "## What happened next?",
         "",
@@ -69,10 +73,6 @@ def experiment_report(result: dict) -> str:
         "|---|---|---|---|",
         *[f"| {e['time']:.4f} | {e['source']} | {e['event']} | {e['description']} |" for e in result["timeline"]],
         "",
-        "## Technical explanation",
-        "",
-        f["explanation"],
-        "",
         "## What can and cannot be concluded",
         "",
         *[f"- Can: {x}" for x in f.get("can_conclude", [])],
@@ -103,6 +103,13 @@ def comparison_report(rows: list[dict]) -> str:
     ]
     for r in rows:
         out.append("| " + " | ".join(_v(r.get(k)) for k, _ in cols) + " |")
+    out += ["", "## Root cause of each scenario", "",
+            "The cause of every NS2 failure is known because it was injected; the mechanism is what the trace shows.", "",
+            "| Scenario | Cause status | Root cause | How it affected traffic |", "|---|---|---|---|"]
+    for r in rows:
+        status = "No failure (control)" if r["category"] == "healthy" else "Confirmed (injected)"
+        out.append(f"| {r['label']} {r['scenario']} | {status} | {r.get('known_cause', '')} | "
+                   f"{str(r.get('mechanism', '')).replace('|', '/')} |")
     out.append("")
     return "\n".join(out)
 

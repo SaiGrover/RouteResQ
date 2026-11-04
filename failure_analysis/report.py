@@ -5,6 +5,22 @@ from diagnostics.models import DiagnosticRun
 from failure_analysis.rules import AnalysisReport
 
 
+def _root_cause(run: DiagnosticRun, a: AnalysisReport) -> list[str]:
+    from analysis.cause_report import live_cause
+
+    c = live_cause({"target": run.target, "timestamp": run.timestamp, "run_id": run.run_id}, a.to_dict())
+    out = ["### Root cause", "", f"**Cause status: {c['status']}.** {c['cause']}", ""]
+    if c["mechanism"]:
+        out += [c["mechanism"], ""]
+    if c["evidence"]:
+        out += ["Evidence:", "", *[f"- {x}" for x in c["evidence"]], ""]
+    if c["alternatives"]:
+        out += ["Other possible causes: " + "; ".join(c["alternatives"]) + ".", ""]
+    if c["next_checks"]:
+        out += ["Checks needed to confirm: " + "; ".join(c["next_checks"]) + ".", ""]
+    return out
+
+
 def diagnostic_report(run: DiagnosticRun, a: AnalysisReport) -> str:
     out = [
         f"## Live diagnostics: {run.target}",
@@ -16,6 +32,7 @@ def diagnostic_report(run: DiagnosticRun, a: AnalysisReport) -> str:
         "",
         f"**Conclusion:** {a.conclusion}",
         "",
+        *_root_cause(run, a),
         "### What was observed (confirmed)",
         "",
         *[f"- {o}" for o in a.observations],
