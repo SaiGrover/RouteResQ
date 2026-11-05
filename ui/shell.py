@@ -112,16 +112,14 @@ def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
             css.append(f"{sel} {{ border-color:{c} !important; background:color-mix(in srgb,{c} 12%,{T.PANEL}) !important;"
                        f" box-shadow: inset 0 3px 0 0 {c}, 0 10px 26px -16px {c} !important; }}"
                        f"{sel} p, {sel} span {{ color:{c} !important; }}")
+    # The row is a CSS grid with one equal track per node (see theme.py): it never wraps, every node
+    # has the same width and height, and the arrows are drawn in the gaps, so the rail reads as one
+    # evenly spaced journey. Below 1180 px (too tight for seven readable nodes) it becomes a
+    # horizontal scroll strip of fixed-width nodes instead of squeezing or wrapping them.
+    css.append(f"@media (min-width: 1181px) {{ .st-key-rail [data-testid='stHorizontalBlock'] "
+               f"{{ grid-template-columns:repeat({len(nav)}, minmax(0, 1fr)) !important; }} }}")
     st.html("<style>" + "".join(css) + "</style>")
-    # Every node gets the same width and every gap the same arrow separator, so the rail reads as
-    # one evenly spaced journey. No hover tooltip: it covered the brand bar above the rail.
     with st.container(key="rail"):
-        widths = [4]
-        for _ in nav[1:]:
-            widths += [.42, 4]
-        cols = iter(st.columns(widths, gap="small", vertical_alignment="center"))
-        for i, (key, _stage, title, page) in enumerate(nav):
-            if i:
-                next(cols).html('<div class="rr-arrow">&#10230;</div>')
-            with next(cols), st.container(key=f"nav_{key}"):
+        for col, (key, _stage, title, page) in zip(st.columns(len(nav), gap="small"), nav):
+            with col, st.container(key=f"nav_{key}"):
                 st.page_link(page, label=title, width="stretch")

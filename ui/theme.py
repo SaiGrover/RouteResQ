@@ -106,29 +106,39 @@ header[data-testid="stHeader"] {{ background: transparent !important; }}
 
 /* ---------- workflow rail (navigation) ---------- */
 .st-key-rail {{ margin:.9rem 0 1.4rem 0; }}
-div[class*="st-key-nav_"] a {{ display:flex !important; flex-direction:column; align-items:flex-start; justify-content:center;
-  width:100%; height:84px; padding:.5rem .7rem !important; margin:0; background:{PANEL} !important; gap:.05rem;
+/* one grid track per node (count set in shell.rail): never wraps, equal widths, arrows live in the gaps */
+.st-key-rail [data-testid="stHorizontalBlock"] {{ display:grid !important; column-gap:30px !important; row-gap:0 !important;
+  align-items:stretch !important; flex-wrap:nowrap !important; }}
+.st-key-rail [data-testid="stColumn"] {{ width:auto !important; min-width:0 !important; flex:none !important; position:relative; }}
+.st-key-rail [data-testid="stColumn"]:not(:last-child)::after {{ content:"\\27F6"; position:absolute; right:-25px; top:50%;
+  transform:translateY(-50%); width:20px; text-align:center; color:{MUT}; font-size:1rem; opacity:.75; pointer-events:none; }}
+div[class*="st-key-nav_"] [data-testid="stPageLink"], div[class*="st-key-nav_"] [data-testid="stPageLink"] > div {{ width:100%; }}
+div[class*="st-key-nav_"] a {{ display:flex !important; flex-direction:column; align-items:flex-start; justify-content:flex-start;
+  width:100%; height:104px; padding:.6rem .75rem !important; margin:0; background:{PANEL} !important; gap:.15rem;
   border:1px solid {BORDER}; border-radius:12px !important; text-decoration:none !important; overflow:hidden;
   transition:border-color .12s ease, transform .12s ease; }}
 div[class*="st-key-nav_"] a:hover {{ transform:translateY(-1px); }}
-div[class*="st-key-nav_"] a::before {{ font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:{DIM}; line-height:1.5;
-  display:block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
-div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
-div[class*="st-key-nav_"] [data-testid="stPageLink"] {{ width:100%; }}
-div[class*="st-key-nav_"] a::after {{ font-family:{MONO}; font-size:.68rem; color:{MUT}; line-height:1.5; white-space:nowrap;
-  display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; }}
+/* stage label, title and headline wrap onto at most two lines instead of being cut off with an ellipsis */
+div[class*="st-key-nav_"] a::before {{ font-size:.6rem; letter-spacing:.13em; text-transform:uppercase; color:{DIM}; line-height:1.4;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; overflow:hidden; max-width:100%; }}
+div[class*="st-key-nav_"] a > div {{ max-width:100%; min-width:0; }}
 div[class*="st-key-nav_"] a p, div[class*="st-key-nav_"] a span {{ font-family:{HEAD} !important; font-size:.95rem !important;
-  font-weight:600 !important; color:{TXT}; letter-spacing:-.01em; margin:0; }}
+  font-weight:600 !important; color:{TXT}; letter-spacing:-.01em; margin:0; line-height:1.2; white-space:normal !important;
+  overflow-wrap:normal; word-break:normal; hyphens:none; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }}
+div[class*="st-key-nav_"] a::after {{ font-family:{MONO}; font-size:.67rem; color:{MUT}; line-height:1.4; margin-top:auto;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; max-width:100%; white-space:normal; }}
 .st-key-demo_link {{ flex:0 0 auto; width:auto !important; }}
 .st-key-demo_link a {{ background:{SIGNAL} !important; border-radius:10px !important; padding:.42rem .9rem !important;
   text-decoration:none !important; white-space:nowrap; min-width:9.6rem; justify-content:center; }}
 .st-key-demo_link a p, .st-key-demo_link a span {{ color:{BG} !important; font-weight:700 !important; }}
 .st-key-demo_link a:hover {{ filter:brightness(1.08); }}
-.rr-arrow {{ text-align:center; color:{MUT}; font-size:1.05rem; line-height:84px; opacity:.8; transform:translateX(-6px); }}
+/* narrower windows: the rail becomes a horizontal scroll strip of fixed-width nodes */
+@media (max-width: 1180px) {{
+  .st-key-rail [data-testid="stHorizontalBlock"] {{ grid-auto-flow:column; grid-auto-columns:152px;
+     overflow-x:auto; padding-bottom:.5rem; scrollbar-width:thin; }}
+}}
 
 @media (max-width: 640px) {{
-  .rr-arrow {{ display:none; }}
-  div[class*="st-key-nav_"] a {{ height:62px; }}
   .rr-ph h1 {{ font-size:1.55rem; }}
   .rr-steps {{ grid-template-columns:1fr 1fr; }}
 }}
