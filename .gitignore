@@ -10,3 +10,11 @@ results/logs/
 results/certs/
 results/diagnostics/
 results/communication/
+
+# LaTeX build files for the project report
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.lof
+report/*.lot
