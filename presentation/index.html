@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RouteResQ · Demo Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0f14; --panel:#111922; --panel2:#0e151d;
+  --border:rgba(148,178,204,.14); --border-hi:rgba(148,178,204,.28);
+  --txt:#e6edf3; --mut:#97a6b5; --dim:#66788a;
+  --signal:#4fb3c8; --amber:#e0a957; --clay:#e06b5d; --green:#58bd8c; --steel:#6f9fe0; --sand:#c8a978; --slate:#8a9bb0;
+  --head:'Space Grotesk','Inter',system-ui,sans-serif;
+  --body:'Inter','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Consolas',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#05080b;color:var(--txt);font-family:var(--body);overflow:hidden}
+#viewport{position:fixed;inset:0;overflow:hidden}
+#stage{width:1280px;height:720px;position:absolute;left:50%;top:50%;transform-origin:center center;transform:translate(-50%,-50%)}
+
+/* ---------- slide frame ---------- */
+.slide{position:absolute;inset:0;background:var(--bg);overflow:hidden;padding:64px 80px 56px;
+  display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+.slide.active{opacity:1;visibility:visible}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid,rgba(148,178,204,.05)) 1px,transparent 1px),linear-gradient(90deg,rgba(148,178,204,.05) 1px,transparent 1px);
+  background-size:40px 40px;mask-image:radial-gradient(ellipse at 70% 0%,#000 0%,transparent 70%)}
+.slide>*{position:relative}
+.foot{position:absolute;left:80px;right:80px;bottom:22px;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em}
+.foot b{color:var(--signal);font-weight:600}
+
+/* ---------- type ---------- */
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--k,var(--signal));margin-bottom:14px}
+h1{font-family:var(--head);font-weight:700;letter-spacing:-.035em;line-height:1.02}
+h2{font-family:var(--head);font-weight:700;font-size:44px;letter-spacing:-.03em;line-height:1.08;max-width:1000px}
+h3{font-family:var(--head);font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.2}
+.lede{font-size:20px;color:var(--mut);line-height:1.5;margin-top:14px;max-width:960px}
+p{line-height:1.5}
+.mut{color:var(--mut)} .dim{color:var(--dim)}
+.mono{font-family:var(--mono)}
+em{font-style:normal;color:var(--signal)}
+
+/* ---------- building blocks ---------- */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px 24px;position:relative}
+.card.accent{box-shadow:inset 0 2px 0 0 var(--c,var(--signal))}
+.card p{color:var(--mut);font-size:15.5px;margin-top:8px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;border:1px solid var(--border-hi);
+  font-family:var(--mono);font-size:12px;color:var(--mut);background:rgba(255,255,255,.03);white-space:nowrap}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--c,var(--signal));display:block}
+.num{font-family:var(--head);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--c,var(--txt))}
+.num small{font-size:.42em;color:var(--mut);font-weight:500;letter-spacing:0;margin-left:4px}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.shot{border-radius:12px;border:1px solid var(--border-hi);overflow:hidden;background:#000;box-shadow:0 30px 60px -30px rgba(0,0,0,.9)}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top}
+ul.ticks{list-style:none;display:grid;gap:12px}
+ul.ticks li{padding-left:26px;position:relative;font-size:17px;line-height:1.45;color:var(--txt)}
+ul.ticks li::before{content:"";position:absolute;left:2px;top:9px;width:10px;height:10px;border-radius:3px;background:var(--c,var(--signal));opacity:.9}
+ul.ticks li span{color:var(--mut)}
+.fill{flex:1;min-height:0}
+.row{display:flex;gap:18px;align-items:center}
+.spacer{height:26px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:stretch}
+.stage-box{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 18px 20px;
+  box-shadow:inset 0 3px 0 0 var(--c);position:relative;margin-right:30px}
+.stage-box:last-child{margin-right:0}
+.stage-box:not(:last-child)::after{content:"⟶";position:absolute;right:-27px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:20px}
+.stage-box .label{color:var(--c)}
+.stage-box h3{margin-top:8px}
+.stage-box p{font-size:14px;color:var(--mut);margin-top:8px}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:left;font-weight:600;padding:0 14px 10px;border-bottom:1px solid var(--border-hi)}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--txt);vertical-align:top}
+td.r,th.r{text-align:right;font-family:var(--mono)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;font-family:var(--mono);
+  color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);white-space:nowrap}
+
+/* bars */
+.bars{display:grid;gap:14px}
+.bar{display:grid;grid-template-columns:150px 1fr 90px;gap:14px;align-items:center;font-size:15px}
+.bar .track{height:22px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.bar .track div{height:100%;background:var(--c);border-radius:6px;min-width:3px}
+.bar .v{font-family:var(--mono);text-align:right;color:var(--c)}
+
+/* title slide */
+.title-slide{padding:0;justify-content:center}
+.title-slide .bgimg{position:absolute;inset:0;background:url(assets/bg.webp) center/cover;opacity:.55}
+.title-slide .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,15,20,.96) 0%,rgba(10,15,20,.82) 45%,rgba(10,15,20,.25) 100%)}
+.title-inner{position:relative;padding:0 96px}
+.wm{font-size:104px}
+.wm b{color:var(--signal);font-weight:700}
+
+/* notes overlay */
+#notes{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(900px,92vw);max-height:34vh;overflow:auto;
+  background:rgba(17,25,34,.97);border:1px solid var(--border-hi);border-radius:12px;padding:16px 20px;font-size:15px;line-height:1.55;
+  color:var(--txt);display:none;z-index:20;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+#notes.on{display:block}
+#notes .label{display:block;margin-bottom:6px;color:var(--amber)}
+aside.notes{display:none}
+
+/* chrome */
+#progress{position:fixed;left:0;top:0;height:3px;background:var(--signal);transition:width .3s ease;z-index:10}
+#hud{position:fixed;right:16px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:15;opacity:0;transition:opacity .3s}
+body.awake #hud{opacity:1}
+body.awake #help{opacity:.8}
+#hud button{background:var(--panel);border:1px solid var(--border-hi);color:var(--txt);border-radius:8px;height:34px;min-width:34px;
+  padding:0 10px;font:600 13px var(--mono);cursor:pointer}
+#hud button:hover{border-color:var(--signal);color:var(--signal)}
+#count{font:12px var(--mono);color:var(--mut);padding:0 6px}
+#help{position:fixed;left:16px;bottom:14px;font:11px var(--mono);color:var(--mut);z-index:15;opacity:0;transition:opacity .3s;
+  background:rgba(17,25,34,.92);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+@media print{#hud,#help,#progress,#notes{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 · Title -->
+<section class="slide title-slide">
+  <div class="bgimg"></div><div class="shade"></div>
+  <div class="title-inner">
+    <div class="row" style="gap:12px;margin-bottom:26px">
+      <span class="chip" style="--c:var(--green)"><i></i>CN LAB · JIIT NOIDA</span>
+      <span class="chip"><i></i>Computer Networks · 24B15CS313</span>
+    </div>
+    <h1 class="wm">Route<b>ResQ</b></h1>
+    <p style="font-family:var(--head);font-size:30px;font-weight:500;letter-spacing:-.01em;margin-top:14px;max-width:760px;line-height:1.25">
+      Find out <em>why</em> a network failed, what it did to the traffic, and whether it recovered.</p>
+    <div style="margin-top:48px;display:grid;grid-template-columns:repeat(4,auto);gap:10px 36px;justify-content:start">
+      <div><div class="label">Saanvi Grover</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030010</div></div>
+      <div><div class="label">Aditya Sharma</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030019</div></div>
+      <div><div class="label">Prankit Goel</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030011</div></div>
+      <div><div class="label">Aaradhya S. Kulashri</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030026</div></div>
+    </div>
+    <p class="mono dim" style="font-size:13px;margin-top:28px">Mentors: Dr. Kirti Aggarwal · Dr. Kapil Madan &nbsp;·&nbsp; live at <span style="color:var(--signal)">routeresq.streamlit.app</span></p>
+  </div>
+  <aside class="notes">Introduce the team and the one-line goal: RouteResQ explains network failures. It doesn't only detect them. It gives the cause, the impact on traffic, whether service recovered, and how sure it is.</aside>
+</section>
+
+<!-- 2 · Problem -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--clay)">The problem</div>
+  <h2>“The site is timing out.”<br><span class="mut">That one symptom has at least six different causes.</span></h2>
+  <div class="spacer"></div>
+  <div class="grid g3" style="gap:14px">
+    <div class="card accent" style="--c:var(--clay)"><h3>DNS failure</h3><p>The name never resolves, so no packet is ever sent.</p></div>
+    <div class="card accent" style="--c:var(--clay)"><h3>Host or path down</h3><p>Echo requests vanish somewhere beyond the last router that answers.</p></div>
+    <div class="card accent" style="--c:var(--amber)"><h3>Congestion</h3><p>Queues fill, delay climbs, the router drops packets.</p></div>
+    <div class="card accent" style="--c:var(--amber)"><h3>Link failure</h3><p>Routing has to find another path, or traffic stops until the link returns.</p></div>
+    <div class="card accent" style="--c:var(--steel)"><h3>Port closed / reset</h3><p>The host is alive but the service refuses or drops the connection.</p></div>
+    <div class="card accent" style="--c:var(--steel)"><h3>Bad certificate</h3><p>TLS rejects an untrusted issuer or the wrong host name.</p></div>
+  </div>
+  <p class="lede" style="margin-top:26px"><b style="color:var(--txt)">ping</b>, <b style="color:var(--txt)">tracert</b> and <b style="color:var(--txt)">nslookup</b> only show symptoms. Routers ignore ICMP, and a working TCP connection can contradict a failed ping. People end up guessing.</p>
+  <aside class="notes">Make the point that tools report symptoms, not causes. Students usually pick one cause and state it with false confidence. Our project is about evidence-backed causes.</aside>
+</section>
+
+<!-- 3 · Questions / goal -->
+<section class="slide">
+  <div class="kicker">Our goal</div>
+  <h2>Answer five questions for every failure, and only with evidence.</h2>
+  <div class="spacer"></div>
+  <div class="pipe">
+    <div class="stage-box" style="--c:var(--signal)"><div class="label">01 · Detect</div><h3>What failed?</h3><p>DNS, gateway, ping, traceroute and TCP checks against authorised hosts.</p></div>
+    <div class="stage-box" style="--c:var(--amber)"><div class="label">02 · Diagnose</div><h3>Why, and how sure?</h3><p>17 deterministic rules. Each cause gets a status, never a fake percentage.</p></div>
+    <div class="stage-box" style="--c:var(--clay)"><div class="label">03 · Impact</div><h3>What did it do to traffic?</h3><p>Loss, delay, jitter, throughput and paths from real NS2 traces.</p></div>
+    <div class="stage-box" style="--c:var(--green)"><div class="label">04 · Recovery</div><h3>Did it recover?</h3><p>Claimed only when the trace shows it: rerouted, restored or drained.</p></div>
+    <div class="stage-box" style="--c:var(--steel)"><div class="label">05 · Report</div><h3>Can we prove it?</h3><p>Root-cause register and reports, each linked to the raw evidence.</p></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="card" style="display:flex;gap:26px;align-items:center;padding:18px 24px">
+    <div class="label" style="color:var(--amber);white-space:nowrap">Ground rule</div>
+    <p style="margin:0;font-size:17px;color:var(--txt)">A simulated cause is <b>never</b> presented as the cause of a live problem. Every number on screen comes from a stored measurement, a trace event or a deliberately injected fault.</p>
+  </div>
+  <aside class="notes">These five stages are the navigation rail at the top of the app, so the demo follows this slide left to right.</aside>
+</section>
+
+<!-- 4 · Three environments -->
+<section class="slide">
+  <div class="kicker">Three evidence environments</div>
+  <h2>Live network, NS2 simulation and real sockets, kept separate on purpose</h2>
+  <div class="spacer"></div>
+  <div class="grid g3">
+    <div class="card accent" style="--c:var(--signal);padding:26px">
+      <span class="chip" style="--c:var(--signal)"><i></i>LIVE MEASUREMENT</span>
+      <h3 style="margin-top:16px;font-size:24px">Live diagnostics</h3>
+      <p>Real ping, tracert/traceroute, DNS lookups and TCP connects on this machine.</p>
+      <p><b style="color:var(--txt)">Cause is inferred</b>, so the best it can be is <span class="pill" style="--c:var(--signal)">Likely</span></p>
+    </div>
+    <div class="card accent" style="--c:var(--sand);padding:26px">
+      <span class="chip" style="--c:var(--sand)"><i></i>NS2 SIMULATION</span>
+      <h3 style="margin-top:16px;font-size:24px">ns-2.35 experiments</h3>
+      <p>Six-node topology. We inject a link failure or congestion and read the simulator's own trace.</p>
+      <p><b style="color:var(--txt)">Cause is known</b>, so it's <span class="pill" style="--c:var(--green)">Confirmed (injected)</span></p>
+    </div>
+    <div class="card accent" style="--c:var(--green);padding:26px">
+      <span class="chip" style="--c:var(--green)"><i></i>REAL SOCKETS · LOOPBACK</span>
+      <h3 style="margin-top:16px;font-size:24px">Transport lab</h3>
+      <p>TCP vs UDP, TLS 1.3 with certificate checks, SHA-256 integrity and six failure drills.</p>
+      <p><b style="color:var(--txt)">Fault is injected</b>, then recovery is re-tested.</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:28px">Every page and every row in the reports carries its source label, so a viewer always knows which kind of evidence they're looking at.</p>
+  <aside class="notes">Point to the source chips on each page during the demo: LIVE MEASUREMENT, NS2 SIMULATION, REAL SOCKETS · LOOPBACK.</aside>
+</section>
+
+<!-- 5 · Architecture -->
+<section class="slide">
+  <div class="kicker">Architecture</div>
+  <h2>The UI only presents stored evidence. All the logic is in testable Python modules.</h2>
+  <div class="spacer"></div>
+  <svg viewBox="0 0 1120 400" width="1120" height="400" style="font-family:Inter,system-ui,sans-serif">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#66788a"/></marker></defs>
+    <g stroke="#66788a" stroke-width="1.6" fill="none" marker-end="url(#ar)">
+      <path d="M560 62 L190 112"/><path d="M560 62 L560 112"/><path d="M560 62 L930 112"/>
+      <path d="M190 172 L190 202"/><path d="M560 172 L560 202"/><path d="M930 172 L930 202"/>
+      <path d="M190 262 L470 300"/><path d="M560 262 L560 296"/><path d="M930 262 L650 300"/>
+      <path d="M650 326 L762 326"/><path d="M930 326 L978 326"/>
+    </g>
+    <g font-size="15" text-anchor="middle">
+      <rect x="430" y="8" width="260" height="54" rx="10" fill="#132430" stroke="#4fb3c8"/><text x="560" y="32" fill="#e6edf3" font-weight="600">Streamlit UI · workflow rail</text><text x="560" y="51" fill="#97a6b5" font-size="12.5">guided demo · source labels</text>
+      <rect x="70" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="190" y="139" fill="#e6edf3" font-weight="600">diagnostics</text><text x="190" y="158" fill="#97a6b5" font-size="12.5">DNS · ping · trace · TCP</text>
+      <rect x="440" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="560" y="139" fill="#e6edf3" font-weight="600">simulation</text><text x="560" y="158" fill="#97a6b5" font-size="12.5">ns-2.35 runner · trace parser</text>
+      <rect x="810" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="930" y="139" fill="#e6edf3" font-weight="600">communication · security</text><text x="930" y="158" fill="#97a6b5" font-size="12.5">TCP · UDP · TLS · lab PKI</text>
+      <rect x="70" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#e0a957"/><text x="190" y="229" fill="#e6edf3" font-weight="600">failure_analysis</text><text x="190" y="248" fill="#97a6b5" font-size="12.5">17 rules · rule trace</text>
+      <rect x="440" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#c8a978"/><text x="560" y="229" fill="#e6edf3" font-weight="600">analysis</text><text x="560" y="248" fill="#97a6b5" font-size="12.5">packets · paths · recovery</text>
+      <rect x="810" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#58bd8c"/><text x="930" y="229" fill="#e6edf3" font-weight="600">verification</text><text x="930" y="248" fill="#97a6b5" font-size="12.5">cert chain · SHA-256 · drills</text>
+      <rect x="470" y="298" width="180" height="58" rx="10" fill="#101827" stroke="#6f9fe0"/><text x="560" y="323" fill="#e6edf3" font-weight="600">results/</text><text x="560" y="342" fill="#97a6b5" font-size="12.5">JSON · CSV · traces</text>
+      <rect x="764" y="298" width="180" height="58" rx="10" fill="#1d1a12" stroke="#e0a957"/><text x="854" y="323" fill="#e6edf3" font-weight="600">cause register</text><text x="854" y="342" fill="#97a6b5" font-size="12.5">cause + status</text>
+      <rect x="980" y="298" width="130" height="58" rx="10" fill="#10201a" stroke="#58bd8c"/><text x="1045" y="323" fill="#e6edf3" font-weight="600">reports</text><text x="1045" y="342" fill="#97a6b5" font-size="12.5">Markdown</text>
+    </g>
+    <path d="M650 326 L762 326" stroke="none"/>
+  </svg>
+  <p class="mono dim" style="font-size:13px;margin-top:4px">Same backend from the command line, the test suite and the UI · deployed on Streamlit Community Cloud with Debian ns2</p>
+  <aside class="notes">Key design choice: the Streamlit pages contain no networking logic. That's why 159 tests can cover the system and why the CLI gives identical results.</aside>
+</section>
+
+<!-- 6 · Detect -->
+<section class="slide">
+  <div class="kicker">01 · Detect</div>
+  <div class="grid" style="grid-template-columns:400px 1fr;gap:40px;flex:1;min-height:0">
+    <div>
+      <h2 style="font-size:38px">Live diagnostics on authorised hosts only</h2>
+      <div class="spacer"></div>
+      <ul class="ticks">
+        <li>DNS, default gateway, ping, tracert/traceroute and an optional TCP connect</li>
+        <li>Commands run as argument lists from an allow-list, <span>never through a shell</span></li>
+        <li>Only loopback, private or explicitly allowed targets. <span>The public app is restricted further.</span></li>
+        <li>Parsers handle Windows and Linux output, timeouts, partial loss and silent hops</li>
+        <li>Every run is saved to history with a baseline for comparison</li>
+      </ul>
+    </div>
+    <div class="shot" style="height:440px;align-self:center"><img src="assets/diagnostics.jpg" alt="Diagnostics page with a healthy localhost result"></div>
+  </div>
+  <aside class="notes">Demo: run localhost first (4/4 replies, 0% loss, one hop, Healthy / Reachable), then nonexistent.invalid to show a DNS failure.</aside>
+</section>
+
+<!-- 7 · Diagnose -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--amber)">02 · Diagnose</div>
+  <div class="grid" style="grid-template-columns:1fr 430px;gap:40px;flex:1;min-height:0">
+    <div class="shot" style="height:460px;align-self:center"><img src="assets/root_cause.jpg" alt="Evidence ladder and rule trace"></div>
+    <div>
+      <h2 style="font-size:36px">17 deterministic rules, every one traced</h2>
+      <div class="spacer"></div>
+      <ul class="ticks" style="--c:var(--amber)">
+        <li>Evidence ladder: <span>symptoms → measurements → possible explanations → limits</span></li>
+        <li>The trace shows why each rule fired <span>or didn't</span></li>
+        <li>Contradictions stay visible, <span>e.g. ping fails but TCP connects</span></li>
+        <li>Congestion needs <b>≥ 2</b> independent indicators. <span>One slow RTT isn't enough.</span></li>
+        <li>Thresholds live in <span class="mono" style="font-size:14px">config/thresholds.json</span></li>
+      </ul>
+      <div class="card" style="margin-top:22px;padding:14px 18px">
+        <div class="label">Example rule</div>
+        <p class="mono" style="font-size:13.5px;color:var(--txt);margin-top:6px">R-CONG-01 · fires if |indicators| ≥ 2 and replies &gt; 0</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Open the rule trace and expand one rule that did not fire to show the reason text. The status wording is deliberate; there are no confidence percentages anywhere.</aside>
+</section>
+
+<!-- 8 · Cause status -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--amber)">The core output</div>
+  <h2>The root-cause register: one cause and one honest status per failure</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:440px 1fr;gap:36px;align-items:start">
+    <div class="grid" style="gap:12px">
+      <div class="card" style="padding:16px 20px"><span class="pill" style="--c:var(--green)">Confirmed (injected)</span><p>We caused it in a controlled experiment, and the trace shows its effect.</p></div>
+      <div class="card" style="padding:16px 20px"><span class="pill" style="--c:var(--signal)">Likely</span><p>Live: exactly one explanation fits all the evidence.</p></div>
+      <div class="card" style="padding:16px 20px"><span class="pill" style="--c:var(--amber)">Not confirmed</span><p>Live: several explanations fit. We list them plus the checks that would decide.</p></div>
+      <div class="card" style="padding:16px 20px"><span class="pill" style="--c:var(--slate)">No failure detected</span><p>Nothing to explain.</p></div>
+    </div>
+    <div>
+      <table>
+        <tr><th>Subject</th><th>Status</th><th>Stated cause</th></tr>
+        <tr><td class="mono" style="font-size:14px">nonexistent.invalid</td><td><span class="pill" style="--c:var(--signal)">Likely</span></td><td class="mut">Name doesn't exist in DNS. The gateway answered, so the LAN is fine.</td></tr>
+        <tr><td class="mono" style="font-size:14px">192.0.2.1</td><td><span class="pill" style="--c:var(--amber)">Not confirmed</span></td><td class="mut">Host down, path beyond hop 2, or ICMP filtered. A TCP check would decide.</td></tr>
+        <tr><td>NS2 B1 / B2</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">Link n1–n2 taken down at 3 s, back at 6 s</td></tr>
+        <tr><td>NS2 C</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">2.5 Mb/s offered on a 2 Mb/s link</td></tr>
+        <tr><td>6 transport drills</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">Refused, timeout, reset, UDP gaps, two TLS errors</td></tr>
+      </table>
+      <div class="row" style="margin-top:22px;gap:30px">
+        <div><div class="num" style="font-size:54px;--c:var(--amber)">11<small>/ 13</small></div><div class="label" style="margin-top:6px">subjects with a stated cause</div></div>
+        <div class="mut" style="font-size:15px;max-width:330px">The other 2 subjects are healthy. Every row links back to its run, trace or drill record.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This is the slide that answers the project's main question. Show Reports → Root-cause report in the app.</aside>
+</section>
+
+<!-- 9 · NS2 setup -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--sand)">03 · Impact · NS2 2.35</div>
+  <h2>Same topology and traffic, one injected condition per scenario</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:600px 1fr;gap:40px;align-items:center">
+    <svg viewBox="0 0 600 300" width="600" height="300" style="font-family:Inter,sans-serif">
+      <g stroke-width="3" fill="none">
+        <line x1="36" y1="150" x2="196" y2="150" stroke="#58bd8c"/>
+        <line x1="196" y1="150" x2="300" y2="62" stroke="#e06b5d" stroke-dasharray="7 6"/>
+        <line x1="300" y1="62" x2="404" y2="150" stroke="#6f9fe0"/>
+        <line x1="196" y1="150" x2="300" y2="238" stroke="#c8a978"/>
+        <line x1="300" y1="238" x2="404" y2="150" stroke="#c8a978"/>
+        <line x1="404" y1="150" x2="564" y2="150" stroke="#58bd8c"/>
+      </g>
+      <g font-size="12" fill="#97a6b5" font-family="JetBrains Mono,monospace">
+        <text x="116" y="138" text-anchor="middle">10 Mb · 2 ms</text><text x="484" y="138" text-anchor="middle">10 Mb · 2 ms</text>
+        <text x="236" y="92" text-anchor="end">2 Mb · 10 ms</text><text x="364" y="92">2 Mb · 10 ms</text>
+        <text x="236" y="218" text-anchor="end">2 Mb · 15 ms</text><text x="364" y="218">2 Mb · 15 ms</text>
+        <text x="300" y="20" fill="#e06b5d" text-anchor="middle">B1/B2: n1–n2 down 3–6 s</text>
+        <text x="300" y="292" fill="#c8a978" text-anchor="middle">alternative path (cost 3)</text>
+      </g>
+      <g font-family="Space Grotesk,sans-serif" font-weight="700" font-size="17" text-anchor="middle">
+        <circle cx="36" cy="150" r="26" fill="#111922" stroke="#4fb3c8" stroke-width="2"/><text x="36" y="156" fill="#e6edf3">n0</text>
+        <circle cx="196" cy="150" r="26" fill="#111922" stroke="rgba(148,178,204,.5)" stroke-width="2"/><text x="196" y="156" fill="#e6edf3">n1</text>
+        <circle cx="300" cy="62" r="26" fill="#111922" stroke="rgba(148,178,204,.5)" stroke-width="2"/><text x="300" y="68" fill="#e6edf3">n2</text>
+        <circle cx="300" cy="238" r="26" fill="#111922" stroke="rgba(148,178,204,.5)" stroke-width="2"/><text x="300" y="244" fill="#e6edf3">n3</text>
+        <circle cx="404" cy="150" r="26" fill="#111922" stroke="rgba(148,178,204,.5)" stroke-width="2"/><text x="404" y="156" fill="#e6edf3">n4</text>
+        <circle cx="564" cy="150" r="26" fill="#111922" stroke="#58bd8c" stroke-width="2"/><text x="564" y="156" fill="#e6edf3">n5</text>
+      </g>
+    </svg>
+    <div class="grid" style="gap:10px">
+      <div class="card" style="padding:13px 18px;--c:var(--green)" ><div class="row" style="gap:12px"><span class="pill">A</span><b>Healthy baseline</b></div></div>
+      <div class="card" style="padding:13px 18px;--c:var(--steel)"><div class="row" style="gap:12px"><span class="pill">B1</span><b>Link failure · distance-vector routing</b></div></div>
+      <div class="card" style="padding:13px 18px;--c:var(--clay)"><div class="row" style="gap:12px"><span class="pill">B2</span><b>Link failure · static routing</b></div></div>
+      <div class="card" style="padding:13px 18px;--c:var(--amber)"><div class="row" style="gap:12px"><span class="pill">C</span><b>Congestion · extra 1.5 Mb/s flow, 3–6 s</b></div></div>
+      <p class="mut" style="font-size:15px;margin-top:6px">Monitored flow: 1 Mb/s CBR/UDP, 1000-byte packets, n0 → n5, 1–9 s. All queues are DropTail with 20 packets.</p>
+    </div>
+  </div>
+  <aside class="notes">Because we inject the fault ourselves, the cause is certain. The interesting question becomes what happened to the traffic.</aside>
+</section>
+
+<!-- 10 · NS2 results -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--sand)">03 · Impact · results from real traces</div>
+  <h2>Routing protocol choice decides whether a link failure is a blip or an outage</h2>
+  <div class="spacer"></div>
+  <div class="grid g2" style="gap:44px">
+    <div>
+      <div class="label" style="margin-bottom:16px">Packet loss (%)</div>
+      <div class="bars">
+        <div class="bar" style="--c:var(--green)"><span>A · healthy</span><div class="track"><div style="width:0%"></div></div><span class="v">0.00</span></div>
+        <div class="bar" style="--c:var(--steel)"><span>B1 · DV</span><div class="track"><div style="width:0.53%"></div></div><span class="v">0.20</span></div>
+        <div class="bar" style="--c:var(--clay)"><span>B2 · static</span><div class="track"><div style="width:100%"></div></div><span class="v">37.66</span></div>
+        <div class="bar" style="--c:var(--amber)"><span>C · congestion</span><div class="track"><div style="width:31%"></div></div><span class="v">11.69</span></div>
+      </div>
+      <div class="label" style="margin:30px 0 16px">Average delay (ms)</div>
+      <div class="bars">
+        <div class="bar" style="--c:var(--green)"><span>A · healthy</span><div class="track"><div style="width:61.6%"></div></div><span class="v">33.60</span></div>
+        <div class="bar" style="--c:var(--steel)"><span>B1 · DV</span><div class="track"><div style="width:68.5%"></div></div><span class="v">37.36</span></div>
+        <div class="bar" style="--c:var(--clay)"><span>B2 · static</span><div class="track"><div style="width:61.6%"></div></div><span class="v">33.60</span></div>
+        <div class="bar" style="--c:var(--amber)"><span>C · congestion</span><div class="track"><div style="width:100%"></div></div><span class="v">54.55</span></div>
+      </div>
+    </div>
+    <div class="grid" style="gap:12px;align-content:start">
+      <div class="card accent" style="--c:var(--steel);padding:16px 22px"><div class="label">B1 · distance-vector</div>
+        <div class="num" style="font-size:46px;margin-top:8px;--c:var(--steel)">43.6<small>ms</small></div>
+        <p style="font-size:14.5px">Failure to first delivery on n1→n3→n4. Only 2 packets lost; all 375 sent while the link was down arrived.</p></div>
+      <div class="card accent" style="--c:var(--clay);padding:16px 22px"><div class="label">B2 · static routing</div>
+        <div class="num" style="font-size:46px;margin-top:8px;--c:var(--clay)">3.024<small>s</small></div>
+        <p style="font-size:14.5px">Delivery gap: n1 kept forwarding into the dead link, so 0 of 375 packets arrived until it came back.</p></div>
+      <div class="card accent" style="--c:var(--amber);padding:16px 22px"><div class="label">C · congestion</div>
+        <p style="margin-top:6px;font-size:14.5px">Queue hit its 20-packet limit and delay rose to <b style="color:var(--txt)">102.75 ms</b> during overload, then returned to baseline.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Headline comparison: same failure, two routing setups. DV reroutes in 43.6 ms and loses 2 packets. Static loses everything for 3 s.</aside>
+</section>
+
+<!-- 11 · Recovery -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--green)">04 · Observe recovery</div>
+  <div class="grid" style="grid-template-columns:1fr 440px;gap:40px;flex:1;min-height:0">
+    <div class="grid" style="grid-template-rows:1fr 1fr;gap:16px;min-height:0">
+      <div class="shot"><img src="assets/recovery.jpg" alt="Recovery verdict page"></div>
+      <div class="shot"><img src="assets/simulation_charts.jpg" alt="B1 throughput and delay by path" style="object-position:center 60%"></div>
+    </div>
+    <div>
+      <h2 style="font-size:34px">Recovery is claimed only when the trace shows it</h2>
+      <div class="spacer"></div>
+      <div class="grid" style="gap:12px">
+        <div class="card" style="padding:14px 18px"><span class="pill" style="--c:var(--steel)">Rerouted</span><p>B1: traffic moved to the backup path, and after-phase throughput was 101.9% of before.</p></div>
+        <div class="card" style="padding:14px 18px"><span class="pill" style="--c:var(--clay)">Restored</span><p>B2: delivery resumes only after the trace logs the link coming back up.</p></div>
+        <div class="card" style="padding:14px 18px"><span class="pill" style="--c:var(--amber)">Drained</span><p>C: the queue empties after the extra flow stops, and delay and loss return to baseline.</p></div>
+      </div>
+      <p class="mut" style="font-size:15px;margin-top:16px">Timeline: configured fault → traced link-down → first drop → routing updates → first alternative delivery → link-up</p>
+    </div>
+  </div>
+  <aside class="notes">Three different kinds of recovery, which is why a single generic "recovered" status would hide what actually happened.</aside>
+</section>
+
+<!-- 12 · Transport -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--green)">Transport lab · real sockets</div>
+  <h2>TCP vs UDP, verified TLS, and six failures we break on purpose</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:420px 1fr;gap:36px">
+    <div class="grid" style="gap:14px;align-content:start">
+      <div class="shot" style="height:200px"><img src="assets/transport_tls.jpg" alt="Verified TLS transfer"></div>
+      <div class="grid g2" style="gap:12px">
+        <div class="card" style="padding:14px 16px"><div class="label">TCP · loopback</div><div class="num" style="font-size:30px;margin-top:6px;--c:var(--signal)">3067<small>Mb/s</small></div></div>
+        <div class="card" style="padding:14px 16px"><div class="label">UDP · loopback</div><div class="num" style="font-size:30px;margin-top:6px;--c:var(--amber)">840<small>Mb/s</small></div></div>
+      </div>
+      <p class="mut" style="font-size:14.5px">TLS 1.3 · AES-256-GCM · chain to lab CA · host name checked · SHA-256 matches on both ends</p>
+    </div>
+    <table>
+      <tr><th>Injected fault</th><th>What we observe</th><th>Recovery check</th></tr>
+      <tr><td>No listener on port</td><td class="mut">Connection refused</td><td class="mut">Start server → ACK</td></tr>
+      <tr><td>Server never replies</td><td class="mut">Read timeout, 1.5 s</td><td class="mut">Responsive server</td></tr>
+      <tr><td>Reset mid-transfer</td><td class="mut">Connection reset at ~300 kB</td><td class="mut">Resend · digest matches</td></tr>
+      <tr><td>UDP seq 50–54, 120, 199 skipped</td><td class="mut">Exact gaps reported</td><td class="mut">200/200 received</td></tr>
+      <tr><td>Untrusted CA</td><td class="mut">Certificate verify error</td><td class="mut">Lab-CA certificate</td></tr>
+      <tr><td>Wrong host name</td><td class="mut">Host-name mismatch</td><td class="mut">Valid localhost cert</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Loopback numbers describe this host, not a protocol ranking. UDP delivering everything here is not a guarantee, and the app says so.</aside>
+</section>
+
+<!-- 13 · Demo script -->
+<section class="slide">
+  <div class="kicker">Live demo · ~5 minutes</div>
+  <h2>What we'll show in the app</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:1fr 520px;gap:40px;flex:1;min-height:0">
+    <ol style="list-style:none;display:grid;gap:12px;counter-reset:s">
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--signal)">1</span><div><b>Overview</b> <span class="mut">· KPIs and the rail, all read from stored results</span></div></li>
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--signal)">2</span><div><b>Diagnostics</b> <span class="mut">· localhost, then nonexistent.invalid</span></div></li>
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--amber)">3</span><div><b>Root cause</b> <span class="mut">· evidence ladder, rule trace, status</span></div></li>
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--sand)">4</span><div><b>NS2</b> <span class="mut">· B1 vs B2 throughput and delay charts</span></div></li>
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--green)">5</span><div><b>Recovery + TCP · UDP · TLS</b> <span class="mut">· verdict, secure transfer, a drill</span></div></li>
+      <li class="card" style="padding:14px 20px;display:flex;gap:16px;align-items:baseline"><span class="mono" style="color:var(--steel)">6</span><div><b>Reports</b> <span class="mut">· root-cause register and downloads</span></div></li>
+    </ol>
+    <div>
+      <div class="shot" style="height:300px"><img src="assets/overview.jpg" alt="RouteResQ overview page"></div>
+      <div class="card accent" style="--c:var(--signal);margin-top:16px;padding:16px 20px">
+        <div class="label" style="color:var(--signal)">Shortcut · Guided demo button</div>
+        <p style="font-size:15px">Runs every stage in order and marks each one succeeded, partial or failed only after checking its fresh evidence.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">If time is short, press the Guided demo button in the top bar; it runs Detect → Report and verifies each stage.</aside>
+</section>
+
+<!-- 14 · Engineering -->
+<section class="slide">
+  <div class="kicker">Engineering &amp; responsibility</div>
+  <h2>Built to be tested, deployed and used safely</h2>
+  <div class="spacer"></div>
+  <div class="grid g4" style="gap:16px">
+    <div class="card"><div class="num" style="font-size:52px;--c:var(--signal)">159</div><div class="label" style="margin-top:10px">automated tests</div><p>Parsers, rules, NS2, sockets, UI via AppTest</p></div>
+    <div class="card"><div class="num" style="font-size:52px;--c:var(--amber)">17</div><div class="label" style="margin-top:10px">diagnostic rules</div><p>Configurable thresholds, full trace</p></div>
+    <div class="card"><div class="num" style="font-size:52px;--c:var(--sand)">4</div><div class="label" style="margin-top:10px">NS2 scenarios</div><p>Docker locally, Debian ns2 in the cloud</p></div>
+    <div class="card"><div class="num" style="font-size:52px;--c:var(--green)">6</div><div class="label" style="margin-top:10px">failure drills</div><p>Each with an explicit recovery check</p></div>
+  </div>
+  <div class="grid g2" style="gap:18px;margin-top:18px">
+    <div class="card accent" style="--c:var(--steel)"><h3>Object-oriented design</h3>
+      <ul class="ticks" style="margin-top:12px;--c:var(--steel)">
+        <li style="font-size:15.5px">Data classes composed into <span class="mono" style="font-size:13.5px">DiagnosticRun</span> → <span class="mono" style="font-size:13.5px">AnalysisReport</span></li>
+        <li style="font-size:15.5px"><span class="mono" style="font-size:13.5px">CommandRunner</span> protocol: <span>real runner live, fake runner in tests</span></li>
+        <li style="font-size:15.5px">Custom exceptions, context-managed servers, self-validating <span class="mono" style="font-size:13.5px">Scenario</span></li>
+      </ul></div>
+    <div class="card accent" style="--c:var(--green)"><h3>Ethics &amp; compliance</h3>
+      <ul class="ticks" style="margin-top:12px;--c:var(--green)">
+        <li style="font-size:15.5px">Probes only to allow-listed, private or loopback targets</li>
+        <li style="font-size:15.5px">No packet capture, no personal data, no custom crypto</li>
+        <li style="font-size:15.5px">SDG 9 infrastructure · SDG 4 education · SDG 12 reuse hardware</li>
+      </ul></div>
+  </div>
+  <aside class="notes">Mention the OOP points briefly; they're in report section 4.1 in detail.</aside>
+</section>
+
+<!-- 15 · Limits -->
+<section class="slide">
+  <div class="kicker" style="--k:var(--slate)">Limits &amp; next steps</div>
+  <h2>What RouteResQ can't claim, and where it goes next</h2>
+  <div class="spacer"></div>
+  <div class="grid g2" style="gap:24px">
+    <div class="card accent" style="--c:var(--clay);padding:26px"><h3>Limitations</h3>
+      <ul class="ticks" style="margin-top:16px;--c:var(--clay)">
+        <li>Live causes are at best <b>Likely</b>; the true cause isn't known to the tool</li>
+        <li>Devices that ignore ICMP hide part of the path</li>
+        <li>NS2's distance-vector reacts faster than many real protocols</li>
+        <li>Loopback throughput has no real propagation delay or loss</li>
+        <li>Explains recovery; it doesn't repair live networks</li>
+      </ul></div>
+    <div class="card accent" style="--c:var(--green);padding:26px"><h3>Future scope</h3>
+      <ul class="ticks" style="margin-top:16px;--c:var(--green)">
+        <li>Larger topologies and link-state routing with tunable timers</li>
+        <li>Two-computer lab experiments over a real switch</li>
+        <li>Trend analysis across repeated live runs</li>
+        <li>DNS and MTU failure drills, bandwidth limits</li>
+        <li>Signed experiment manifests for reproducibility</li>
+      </ul></div>
+  </div>
+  <aside class="notes">Being upfront about limits is part of the design. It's the same honesty as the Not confirmed status.</aside>
+</section>
+
+<!-- 16 · Thanks -->
+<section class="slide title-slide">
+  <div class="bgimg" style="opacity:.4"></div><div class="shade"></div>
+  <div class="title-inner">
+    <div class="kicker">Thank you</div>
+    <h1 style="font-size:84px">Questions?</h1>
+    <div class="grid" style="grid-template-columns:auto auto;gap:14px 40px;margin-top:40px;justify-content:start">
+      <div class="label">Live app</div><div class="mono" style="color:var(--signal);font-size:17px">routeresq.streamlit.app</div>
+      <div class="label">Source</div><div class="mono" style="color:var(--signal);font-size:17px">github.com/SaiGrover/RouteResQ</div>
+      <div class="label">Report</div><div class="mono mut" style="font-size:17px">report/RouteResQ_Mini_Project_Report.pdf</div>
+    </div>
+    <p class="mut" style="margin-top:44px;font-size:16px">Saanvi Grover · Aditya Sharma · Prankit Goel · Aaradhya Shankar Kulashri</p>
+  </div>
+  <aside class="notes">Likely questions: why NS2 rather than ns-3 (course toolchain; trace format is well documented). Why no ML (no labelled live data, and rules are explainable). How the public app stays safe (probe restrictions).</aside>
+</section>
+
+</div></div>
+
+<div id="notes"><span class="label">Speaker notes · N to hide</span><div id="notes-body"></div></div>
+<div id="help">← → navigate · F fullscreen · N notes</div>
+<div id="hud">
+  <button id="prev" aria-label="Previous slide">←</button>
+  <span id="count">1 / 16</span>
+  <button id="next" aria-label="Next slide">→</button>
+  <button id="fs" aria-label="Fullscreen">⛶</button>
+</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const count = document.getElementById('count');
+  const progress = document.getElementById('progress');
+  const notes = document.getElementById('notes');
+  const notesBody = document.getElementById('notes-body');
+  let i = 0;
+
+  // add footers
+  slides.forEach((s, n) => {
+    if (s.classList.contains('title-slide')) return;
+    const f = document.createElement('div');
+    f.className = 'foot';
+    f.innerHTML = '<span>Route<b>ResQ</b> · CN Lab · JIIT Noida</span><span>' + String(n + 1).padStart(2, '0') + ' / ' + slides.length + '</span>';
+    s.appendChild(f);
+  });
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    count.textContent = (i + 1) + ' / ' + slides.length;
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    const a = slides[i].querySelector('aside.notes');
+    notesBody.textContent = a ? a.textContent.trim() : '';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') fullscreen();
+    else if (e.key === 'n' || e.key === 'N') notes.classList.toggle('on');
+  });
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+  document.getElementById('fs').onclick = fullscreen;
+  document.getElementById('viewport').addEventListener('click', e => {
+    if (e.target.closest('a,button')) return;
+    show(e.clientX > window.innerWidth / 3 ? i + 1 : i - 1);
+  });
+  let tx = null;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (tx === null) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+    tx = null;
+  });
+  // controls appear while the mouse moves, then fade so they never cover a slide
+  let idle;
+  function wake() {
+    document.body.classList.add('awake');
+    clearTimeout(idle);
+    idle = setTimeout(() => document.body.classList.remove('awake'), 2500);
+  }
+  document.addEventListener('mousemove', wake);
+  wake();
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', () => show(parseInt(location.hash.slice(1), 10) - 1 || 0));
+
+  fit();
+  show((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>
