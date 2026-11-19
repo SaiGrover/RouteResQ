@@ -61,13 +61,15 @@ run_all = b[2].button("Run the full demo", type="primary", icon=":material/play_
 if b[3].button("Reset", icon=":material/restart_alt:", width="stretch"):
     st.session_state.wt = flow.new_state()
     st.rerun()
-b[4].caption("About a minute: three live probes, the selected NS2 scenarios, and the transport experiments.")
+b[4].caption("About a minute and a half: three live probes, the selected NS2 scenarios, the transport experiments "
+             "and the upload under link failure.")
 
 if run_all:
     with st.status("Running every stage with the real backend", expanded=True) as stt:
         for key, label, fn in [("detect", "Detect · probing the selected destinations", lambda: flow.run_detect(W)),
                                ("impact", "Analyse impact · NS2 scenarios", lambda: flow.run_impact(W, W["scenarios"], data.ns2_status())),
-                               ("transport", "Transport · TCP/UDP, TLS, failure drills", lambda: flow.run_transport(W))]:
+                               ("transport", "Transport · TCP/UDP, TLS, failure drills", lambda: flow.run_transport(W)),
+                               ("upload", "Upload under link failure · three real uploads", lambda: flow.run_upload(W, data.netlab_status()))]:
             st.write(f"{label} ...")
             try:
                 fn()
@@ -252,7 +254,41 @@ elif key == "transport":
                                         "observed": x["observed_error_kind"], "resumed": x["resumed"]} for x in drills["records"]]),
                          hide_index=True, alt="Failure drills", column_config={"resumed": st.column_config.CheckboxColumn()})
 
-# ================================================================== 6 report
+# ================================================================== 6 upload under link failure
+elif key == "upload":
+    st.markdown("A file upload is under way when a link fails. This stage uploads the same file three times across "
+                "an isolated test network: with no fault, with a **backup route**, and with **static forwarding**, "
+                "and measures whether the upload continued, stalled until the link returned, or needed a retry.")
+    nl = data.netlab_status()
+    if st.button("Retry the upload experiment" if W.get("upload") else "Run the upload experiment",
+                 icon=":material/upload_file:"):
+        with st.spinner("Building the test network and uploading three times ..." if nl["available"]
+                        else "No test-network backend here: loading the recorded run ..."):
+            flow.run_upload(W, nl)
+        st.rerun()
+    u = W.get("upload")
+    if not u:
+        empty("Not run yet", "Press <b>Run the upload experiment</b>." + ("" if nl["available"] else
+              " This server cannot build a test network, so the recorded run will be shown and labelled as stored."))
+    else:
+        if u.get("error"):
+            st.html(f'<div class="rr-note" style="--c:{T.AMBER}">{e(u["error"])}</div>')
+        run = flow.upload_result(W)
+        if run:
+            from netlab.report import rows as upload_rows
+
+            if u["source"] == "stored":
+                note("<b>Recorded run.</b> Captured locally with a real isolated test network and replayed here; it "
+                     "is not a fresh upload.", T.SAND)
+            for r in upload_rows(run):
+                verdict(f"{r['run']} · {r['outcome']}", r["summary"],
+                        {"completed": T.GREEN, "continued_on_backup": T.STEEL}.get(r["code"], T.AMBER))
+            chart(charts.upload_overlay(run), "Receiver progress", "server-confirmed % of the file",
+                  what="Share of the file the server had read, for each run. The shaded band is the outage.",
+                  why="Flat = stalled. Rising during the outage = the upload found the backup path.", key="wt_upl")
+            st.page_link("app_pages/upload_page.py", label="Open the full experiment page", icon=":material/upload_file:")
+
+# ================================================================== 7 report
 else:
     statuses = {k: status_of(k) for k, _ in flow.STEPS}
     if all(v == flow.NOT_STARTED for k, v in statuses.items() if k != "report"):
@@ -266,7 +302,8 @@ else:
                      hide_index=True, alt="Stage status")
         eyebrow("Root causes identified in this demo", "", T.AMBER)
         rows = cause_report.collect(flow.detect_records(W), flow.sim_results(W),
-                                    ((W.get("transport") or {}).get("parts", {}).get("drills") or {}).get("result"))
+                                    ((W.get("transport") or {}).get("parts", {}).get("drills") or {}).get("result"),
+                                    upload=flow.upload_result(W))
         cause_register(rows)
         md = flow.build_report(W)
         with st.expander("Full demo report"):

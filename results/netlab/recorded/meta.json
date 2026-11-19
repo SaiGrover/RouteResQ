@@ -1,0 +1,31 @@
+{
+ "run_id": "20261119T174021Z-d264",
+ "source": "recorded",
+ "backend": "docker",
+ "started": "2026-11-19T17:40:21+00:00",
+ "finished": "2026-11-19T17:40:37+00:00",
+ "file": {
+  "name": "routeresq-sample-2MiB.bin",
+  "size": 2097152
+ },
+ "config": {
+  "fault_at_pct": 30.0,
+  "outage_s": 3.0,
+  "rate_kib_s": 512.0,
+  "chunk_kib": 8,
+  "timeout_s": 10.0,
+  "retries": 1,
+  "sndbuf_kib": 64,
+  "primary_delay_ms": 5.0,
+  "backup_delay_ms": 10.0,
+  "sample_ms": 50,
+  "max_run_s": 60.0,
+  "runs": [
+   "baseline",
+   "failover",
+   "static"
+  ]
+ },
+ "command": "docker run --rm --name ...",
+ "recorded_from": "20261119T174021Z-d264"
+}

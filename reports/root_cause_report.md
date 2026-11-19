@@ -1,6 +1,6 @@
 # RouteResQ root-cause report
 
-*Generated 2026-11-04T12:41:36+00:00 from stored results. Live rows are measurements from the machine running RouteResQ; NS2 rows are simulations whose cause was injected; transport rows are drills on the loopback interface.*
+*Generated 2026-11-19T18:02:28+00:00 from stored results. Live rows are measurements from the machine running RouteResQ; NS2 rows are simulations whose cause was injected; transport rows are drills on the loopback interface.*
 
 ## Cause status
 
@@ -24,9 +24,12 @@
 | Transport drill | Invalid TLS certificate (host name mismatch) | tls_certificate | **Confirmed (injected)** | Server presents a lab-CA certificate issued for 'wrong-host.example' while the client connects to 'localhost' |
 | Transport drill | Invalid TLS certificate (untrusted issuer) | tls_certificate | **Confirmed (injected)** | Server presents a certificate signed by a CA the client does not trust |
 | Transport drill | Missing UDP datagrams | missing_datagrams | **Confirmed (injected)** | Sender deliberately skipped sequence numbers [50, 51, 52, 53, 54, 120, 199] (injected loss) |
-| Transport drill | Server unavailable | refused | **Confirmed (injected)** | No process listening on 127.0.0.1:51984 |
+| Transport drill | Server unavailable | refused | **Confirmed (injected)** | No process listening on 127.0.0.1:60931 |
+| Upload under link failure | Link failure · backup route (recorded run) | Continued on the backup path (same TCP connection) | **Confirmed (injected)** | Primary link taken down after 30% of the upload had reached the server, for 3 s; a backup route was installed. |
+| Upload under link failure | Link failure · static forwarding (recorded run) | Stalled until the link returned, then resumed (same TCP connection) | **Confirmed (injected)** | Primary link taken down after 30% of the upload had reached the server, for 3 s; no route to the backup path. |
+| Upload under link failure | Healthy baseline (recorded run) | none (control) | **No failure detected** | No fault introduced. |
 
-11 failure(s) explained out of 13 subject(s).
+13 failure(s) explained out of 16 subject(s).
 
 ## Details
 
@@ -48,7 +51,7 @@
 - **How it caused the failure:** Several explanations fit the evidence equally well; the checks listed would separate them.
 - **Evidence:**
   - default gateway 192.168.1.1 answered ping
-  - traceroute: last responding hop is TTL 2 (10.240.12.49), followed by 8 silent hop(s)
+  - traceroute: last responding hop is TTL 2 (10.240.12.49), followed by 6 silent hop(s)
 - **Other possible causes:** The destination host is down or offline; A downstream part of the path (beyond the last responding hop) is inaccessible; ICMP / traceroute probes are filtered by a firewall
 - **Checks needed to confirm:** Try a TCP connection to a known service port; Ask the host owner whether it is running; Re-run traceroute later and compare the last responding hop; Traceroute to a different host behind the same network; Test reachability with TCP to a port the host is expected to serve
 - **Outcome:** 192.0.2.1 could not be reached using the available diagnostic methods. No device reported an explicit error, so the precise cause is not confirmed.
@@ -96,7 +99,7 @@
 
 - **Failure:** timeout
 - **Root cause (Confirmed (injected)):** Server accepts the TCP connection but never replies; client read timeout 1.5s
-- **How it caused the failure:** TCP connected (0.318 ms) but no reply arrived within 1.5s, so the client gave up. A timeout alone cannot tell a slow server from a dead one.
+- **How it caused the failure:** TCP connected (14.911 ms) but no reply arrived within 1.5s, so the client gave up. A timeout alone cannot tell a slow server from a dead one.
 - **Evidence:**
   - Observed error: TimeoutError: timed out
 - **Outcome:** Replaced the silent server with a responsive one -> communication resumed
@@ -105,7 +108,7 @@
 
 - **Failure:** reset
 - **Root cause (Confirmed (injected)):** Server resets the connection (RST) after receiving about 300000 of 2000000 bytes
-- **How it caused the failure:** The transfer stopped: the client had written 589824 bytes when the error was raised and got no acknowledgement, so it cannot know how much the server kept.
+- **How it caused the failure:** The transfer stopped: the client had written 720896 bytes when the error was raised and got no acknowledgement, so it cannot know how much the server kept.
 - **Evidence:**
   - Observed error: ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
 - **Outcome:** Restarted a normal server and re-sent the whole file (no partial resume) -> communication resumed
@@ -140,11 +143,35 @@
 ### Transport drill: Server unavailable
 
 - **Failure:** refused
-- **Root cause (Confirmed (injected)):** No process listening on 127.0.0.1:51984
-- **How it caused the failure:** The connection was refused after 2.05 s: the OS answered the SYN with a TCP RST (Windows retries a refused SYN for about 2 s before reporting it). No data was sent.
+- **Root cause (Confirmed (injected)):** No process listening on 127.0.0.1:60931
+- **How it caused the failure:** The connection was refused after 2.04 s: the OS answered the SYN with a TCP RST (Windows retries a refused SYN for about 2 s before reporting it). No data was sent.
 - **Evidence:**
   - Observed error: ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
-- **Outcome:** Started the server on port 51984 -> communication resumed
+- **Outcome:** Started the server on port 60931 -> communication resumed
+
+### Upload under link failure: Link failure · backup route (recorded run)
+
+- **Failure:** Continued on the backup path (same TCP connection)
+- **Root cause (Confirmed (injected)):** Primary link taken down after 30% of the upload had reached the server, for 3 s; a backup route was installed.
+- **How it caused the failure:** The primary link went down after the server had received 30% of the file (0.60 MiB). The server stopped receiving bytes for 0.07 s. The same TCP connection then continued on the backup path (1.43 MiB left through the client's backup interface during the outage), and the file matched (SHA-256).
+- **Evidence:**
+  - Stall 0.07 s
+  - Backup interface carried 1,496,468 bytes
+  - 1 TCP connection(s)
+  - SHA-256 match
+- **Outcome:** Continued on the backup path (same TCP connection)
+
+### Upload under link failure: Link failure · static forwarding (recorded run)
+
+- **Failure:** Stalled until the link returned, then resumed (same TCP connection)
+- **Root cause (Confirmed (injected)):** Primary link taken down after 30% of the upload had reached the server, for 3 s; no route to the backup path.
+- **How it caused the failure:** The primary link went down after the server had received 30% of the file (0.60 MiB). The server stopped receiving bytes for 3.29 s. No upload traffic used the backup path, because forwarding had no route to it. The same TCP connection resumed 0.29 s after the link came back, and the file matched (SHA-256).
+- **Evidence:**
+  - Stall 3.29 s
+  - Backup interface carried 250 bytes
+  - 1 TCP connection(s)
+  - SHA-256 match
+- **Outcome:** Stalled until the link returned, then resumed (same TCP connection)
 
 ## Limits
 

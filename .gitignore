@@ -18,3 +18,6 @@ report/*.out
 report/*.toc
 report/*.lof
 report/*.lot
+
+# live upload-experiment runs (the committed demo is results/netlab/recorded)
+results/netlab/runs/

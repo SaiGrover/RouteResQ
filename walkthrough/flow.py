@@ -24,7 +24,8 @@ log = get_logger("walkthrough")
 
 NOT_STARTED, SUCCESS, PARTIAL, FAILED, STORED = "not_started", "success", "partial", "failed", "stored"
 STEPS = [("detect", "Detect"), ("diagnose", "Diagnose"), ("impact", "Analyse impact"),
-         ("recovery", "Observe recovery"), ("transport", "Transport"), ("report", "Report")]
+         ("recovery", "Observe recovery"), ("transport", "Transport"), ("upload", "Upload under link failure"),
+         ("report", "Report")]
 DEFAULT_TARGETS = ["8.8.8.8", "nonexistent.invalid", "192.0.2.1"]
 FAILURE_SCENARIOS = ("link_failure_dv", "link_failure_static", "congestion")
 HISTORY_ROOT: Path = DIAG_RESULTS_DIR   # tests point this elsewhere
@@ -32,7 +33,7 @@ HISTORY_ROOT: Path = DIAG_RESULTS_DIR   # tests point this elsewhere
 
 def new_state() -> dict:
     return {"step": 0, "targets": list(DEFAULT_TARGETS), "scenarios": None,
-            "detect": None, "impact": None, "transport": None, "started": utc_now_iso()}
+            "detect": None, "impact": None, "transport": None, "upload": None, "started": utc_now_iso()}
 
 
 def history():
@@ -186,6 +187,57 @@ def run_transport(state: dict) -> dict:
     return state["transport"]
 
 
+def verify_upload(run: dict) -> tuple[bool, str]:
+    """All three modes present; the fault hit an upload in progress; every completed upload matched."""
+    from netlab.config import RUN_MODES
+
+    missing = [m for m in RUN_MODES if m not in run["runs"]]
+    if missing:
+        return False, "missing runs: " + ", ".join(missing)
+    for m, r in run["runs"].items():
+        o = r["outcome"]
+        if m != "baseline" and not o.get("fault_during_transfer"):
+            return False, f"{m}: the fault did not hit the upload in progress"
+        if o["completed"] and not o["sha256_match"]:
+            return False, f"{m}: SHA-256 mismatch"
+    return True, "; ".join(f"{r['label']}: {r['outcome']['label']}" for r in run["runs"].values())
+
+
+def run_upload(state: dict, backend: dict | None = None) -> dict:
+    """Real upload under link failure if a test-network backend exists, otherwise the recorded run
+    (status ``stored``, never reported as fresh)."""
+    from netlab import runner
+
+    backend = backend if backend is not None else runner.backend_status()
+    entry = {"status": FAILED, "source": None, "run_dir": None, "verified": "", "error": None, "at": utc_now_iso()}
+    if backend.get("available"):
+        try:
+            d = runner.run_sample()
+            run = runner.load_run(d)
+            ok, why = verify_upload(run)
+            entry.update(status=SUCCESS if ok else FAILED, source="fresh", run_dir=str(d), verified=why)
+        except Exception as exc:  # noqa: BLE001
+            entry["error"] = _err(exc)
+    else:
+        entry["error"] = "no test-network backend here: " + str(backend.get("reason", ""))[:200]
+    if entry["status"] != SUCCESS:
+        rec = runner.recorded_run()
+        if rec:
+            ok, why = verify_upload(rec)
+            if ok:
+                entry.update(status=STORED, source="stored", run_dir=rec["dir"],
+                             verified=f"recorded run captured {rec['meta'].get('started', '?')[:10]} - {why}")
+    state["upload"] = entry
+    return entry
+
+
+def upload_result(state: dict) -> dict | None:
+    from netlab.runner import load_run
+
+    e = state.get("upload") or {}
+    return load_run(Path(e["run_dir"])) if e.get("run_dir") else None
+
+
 # ------------------------------------------------------------------ derived state
 def detect_records(state: dict) -> list[dict]:
     if not state.get("detect"):
@@ -207,7 +259,7 @@ def sim_results(state: dict) -> dict[str, dict]:
 
 
 def step_status(state: dict, key: str) -> str:
-    if key in ("detect", "impact", "transport"):
+    if key in ("detect", "impact", "transport", "upload"):
         return (state.get(key) or {}).get("status", NOT_STARTED)
     if key == "diagnose":
         d = state.get("detect")
@@ -261,6 +313,8 @@ def build_report(state: dict) -> str:
         if STORED in (statuses["impact"], statuses["recovery"]) or (state.get("impact") and any(
                 e["source"] == "stored" for e in state["impact"]["per_scenario"].values())):
             notes.append("some NS2 results are **stored runs**, not fresh simulations")
+        if statuses["upload"] == STORED:
+            notes.append("the upload-under-link-failure results are a **recorded run**, not a fresh upload")
         bad = [n for k, n in STEPS if statuses[k] in (FAILED, PARTIAL)]
         if bad:
             notes.append("these stages failed or completed partially: " + ", ".join(bad))
@@ -278,12 +332,16 @@ def build_report(state: dict) -> str:
                                for s, e in state["impact"]["per_scenario"].items())
         elif k == "transport" and state.get("transport"):
             detail = "; ".join(f"{p}: {v['verified'] or v['error']}" for p, v in state["transport"]["parts"].items())
+        elif k == "upload" and state.get("upload"):
+            u = state["upload"]
+            detail = f"{u['source'] or 'none'} - {u['verified'] or u['error']}"
         lines.append(f"| {name} | {statuses[k]} | {detail.replace('|', '/')} |")
 
     recs = detect_records(state)
     sims = sim_results(state)
     drills = ((state.get("transport") or {}).get("parts", {}).get("drills") or {}).get("result")
-    rows = cause_report.collect(recs, sims, drills, latest_per_target=True)
+    upload = upload_result(state)
+    rows = cause_report.collect(recs, sims, drills, latest_per_target=True, upload=upload)
     if rows:
         lines += ["", "## Root causes identified", "", "| Source | Subject | Failure | Cause status | Root cause |",
                   "|---|---|---|---|---|"]
@@ -305,7 +363,20 @@ def build_report(state: dict) -> str:
         for r in rows:
             if r["status"] == cause_report.CONFIRMED and r["mechanism"]:
                 lines.append(f"- **{r['subject']}:** {r['mechanism']}")
+    if upload:
+        from netlab.report import rows as upload_rows
+
+        lines += ["", "## Upload under link failure" + (" (recorded run)" if statuses["upload"] == STORED else ""), "",
+                  "| Run | Outcome | Total time | Stall | Retry | Backup path used | SHA-256 |", "|---|---|---|---|---|---|---|"]
+        for r in upload_rows(upload):
+            lines.append(f"| {r['run']} | {r['outcome']} | {r['total_s'] if r['total_s'] is not None else 'n/a'} s | "
+                         f"{r['stall_s'] if r['stall_s'] is not None else 'n/a'} s | {'yes' if r['retry_required'] else 'no'} | "
+                         f"{'n/a' if r['backup_used'] is None else ('yes' if r['backup_used'] else 'no')} | "
+                         f"{'match' if r['sha256_match'] else 'n/a'} |")
+        lines += ["", *[f"- **{r['run']}:** {r['summary']}" for r in upload_rows(upload)]]
     errors = []
+    if (state.get("upload") or {}).get("error"):
+        errors.append(f"upload: {state['upload']['error']}")
     for k in ("detect", "impact", "transport"):
         st_ = state.get(k) or {}
         items = st_.get("per_target") or st_.get("per_scenario") or st_.get("parts") or {}

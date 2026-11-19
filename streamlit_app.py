@@ -20,7 +20,7 @@ import streamlit as st
 # from the project, drop our own packages from sys.modules if any of their files changed since
 # they were loaded, so this run imports the current code.
 _PROJECT_PACKAGES = ("common", "diagnostics", "failure_analysis", "simulation", "analysis",
-                     "communication", "security", "ui", "walkthrough")
+                     "communication", "security", "ui", "walkthrough", "netlab")
 
 
 def _process_start() -> float:
@@ -70,13 +70,17 @@ PAGES = [
     ("diagnose", "02 · Diagnose", "Root cause", st.Page("app_pages/diagnose_page.py", title="Root cause", url_path="diagnose")),
     ("impact", "03 · Impact", "NS2 simulation", st.Page("app_pages/impact_page.py", title="NS2 simulation", url_path="simulate")),
     ("recovery", "04 · Recovery", "Recovery", st.Page("app_pages/recovery_page.py", title="Failure & recovery", url_path="recovery")),
+    ("upload", "Lab · Link failure", "Upload test", st.Page("app_pages/upload_page.py", title="Upload under link failure", url_path="upload")),
     ("transport", "Lab", "TCP · UDP · TLS", st.Page("app_pages/transport_page.py", title="TCP · UDP · TLS", url_path="transport")),
     ("report", "05 · Report", "Reports", st.Page("app_pages/report_page.py", title="Reports", url_path="reports")),
+    ("about", "Start here", "Problem & solution", st.Page("app_pages/about_page.py", title="Problem & solution", url_path="about")),
+    ("deck", "Slides", "Presentation", st.Page("app_pages/presentation_page.py", title="Presentation", url_path="presentation")),
     ("demo", "Showcase", "Guided demo", st.Page("app_pages/demo_page.py", title="Guided demo", url_path="demo")),
 ]
+_BY_KEY = {k: p for k, _s, _t, p in PAGES}
 
 current = st.navigation([p for *_r, p in PAGES], position="hidden")
 theme.inject()
-shell.brand_bar(demo_page=PAGES[-1][3])
-shell.rail([(k, s, t, p) for k, s, t, p in PAGES if k != "demo"], current.title)
+shell.brand_bar(demo_page=_BY_KEY["demo"], about_page=_BY_KEY["about"], deck_page=_BY_KEY["deck"])
+shell.rail([(k, s, t, p) for k, s, t, p in PAGES if k not in ("demo", "about", "deck")], current.title)
 current.run()

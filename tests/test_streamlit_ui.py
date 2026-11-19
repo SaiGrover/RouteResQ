@@ -6,7 +6,7 @@ from streamlit.testing.v1 import AppTest
 
 pytestmark = pytest.mark.ui
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["detect", "diagnose", "impact", "recovery", "transport", "report", "demo"]
+PAGES = ["detect", "diagnose", "impact", "recovery", "upload", "transport", "report", "demo", "about", "presentation"]
 
 
 @pytest.fixture()
@@ -25,8 +25,8 @@ def go(at: AppTest, page: str) -> AppTest:
 def test_overview_renders_with_rail_and_brand(app):
     # rail nodes are page links (client-side navigation, no rerun of the page being left)
     labels = {el.proto.label for el in app.get("page_link")}
-    assert {"Overview", "Diagnostics", "Root cause", "NS2 simulation", "Recovery", "TCP · UDP · TLS", "Reports",
-            "Guided demo"} <= labels
+    assert {"Overview", "Diagnostics", "Root cause", "NS2 simulation", "Recovery", "Upload test", "TCP · UDP · TLS",
+            "Reports", "Guided demo", "Problem & solution", "Presentation"} <= labels
 
 
 @pytest.mark.parametrize("page", PAGES)
@@ -92,3 +92,26 @@ def test_demo_transport_step_runs_real_backend(app):
     assert not at.exception, [e.message for e in at.exception]
     t = at.session_state["wt"]["transport"]
     assert t["status"] == flow.SUCCESS, {k: v["verified"] or v["error"] for k, v in t["parts"].items()}
+
+
+def test_upload_page_shows_the_three_runs(app):
+    """The upload page renders the stored three-run comparison and its plain-language verdicts."""
+    at = go(app, "upload")
+    text = " ".join(m.value for m in at.markdown) + " ".join(getattr(c, "value", "") for c in at.caption)
+    assert at.dataframe, "comparison table missing"
+    assert "Healthy baseline" in str(at.dataframe[0].value)
+
+
+def test_demo_upload_step_without_backend_uses_labelled_recording(app, monkeypatch):
+    """With no test-network backend the demo shows the recorded run and marks the stage 'stored'."""
+    from walkthrough import flow
+
+    at = go(app, "demo")
+    state = flow.new_state()
+    state["step"] = [k for k, _ in flow.STEPS].index("upload")
+    at.session_state["wt"] = state
+    at.run()
+    flow.run_upload(at.session_state["wt"], {"available": False, "reason": "test"})
+    at.run()
+    assert not at.exception, [e.message for e in at.exception]
+    assert at.session_state["wt"]["upload"]["status"] == flow.STORED

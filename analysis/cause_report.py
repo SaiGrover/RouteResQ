@@ -106,7 +106,46 @@ def transport_cause(rec: dict, when: str = "") -> dict:
     }
 
 
-SOURCE_ORDER = {"Live diagnostics": 0, "NS2 simulation": 1, "Transport drill": 2}
+def upload_cause(result: dict, meta: dict | None = None) -> dict:
+    """One run of the file-upload-under-link-failure experiment (netlab)."""
+    o, cfg = result["outcome"], result["config"]
+    fault = result["mode"] != "baseline"
+    valid = (not fault) or bool(o.get("fault_during_transfer"))
+    pct = (o["fault_at_bytes"] / result["file"]["size"] * 100) if o.get("fault_at_bytes") else None
+    if not fault:
+        failure, status, cause = "none (control)", NO_FAILURE, "No fault introduced."
+    elif not valid:
+        failure, status, cause = "fault missed the upload", NO_FAILURE, "The upload ended before the fault point."
+    else:
+        failure = o["label"]
+        status = CONFIRMED
+        cause = (f"Primary link taken down after {pct:.0f}% of the upload had reached the server, for "
+                 f"{cfg['outage_s']:g} s; " + ("a backup route was installed." if result["mode"] == "failover"
+                                                 else "no route to the backup path."))
+    evidence = [f"Stall {o['stall_s']:.2f} s" if o.get("stall_s") is not None else "Stall n/a",
+                f"Backup interface carried {o['backup_bytes']:,} bytes" if o.get("backup_bytes") is not None
+                else "Backup counters n/a",
+                f"{o['connections']} TCP connection(s)", f"SHA-256 {'match' if o.get('sha256_match') else 'n/a or mismatch'}"]
+    src = "recorded run" if (meta or {}).get("source") == "recorded" else "live run"
+    return {
+        "source": "Upload under link failure",
+        "subject": f"{result['label']} ({src})",
+        "when": (meta or {}).get("started", ""),
+        "ref": (meta or {}).get("run_id", ""),
+        "failure": failure,
+        "status": status,
+        "cause": cause,
+        "mechanism": result.get("summary", ""),
+        "evidence": evidence,
+        "alternatives": [],
+        "next_checks": [],
+        "observed": [],
+        "contradictions": [],
+        "conclusion": o["label"],
+    }
+
+
+SOURCE_ORDER = {"Live diagnostics": 0, "NS2 simulation": 1, "Transport drill": 2, "Upload under link failure": 3}
 
 
 def _current_analysis(rec: dict, previous: dict | None, baseline: dict | None) -> dict:
@@ -121,8 +160,9 @@ def _current_analysis(rec: dict, previous: dict | None, baseline: dict | None) -
 
 
 def collect(history: list[dict], sims: dict[str, dict], drills: dict | None, latest_per_target: bool = True,
-            baselines: dict[str, dict] | None = None, reanalyze: bool = True) -> list[dict]:
-    """baselines: target -> stored run dict of that target's baseline (optional)."""
+            baselines: dict[str, dict] | None = None, reanalyze: bool = True, upload: dict | None = None) -> list[dict]:
+    """baselines: target -> stored run dict of that target's baseline (optional).
+    upload: a loaded upload-experiment run (netlab.runner.load_run), optional."""
     rows: list[dict] = []
     baselines = baselines or {}
     prev_of: dict[int, dict | None] = {}
@@ -145,6 +185,8 @@ def collect(history: list[dict], sims: dict[str, dict], drills: dict | None, lat
     rows += [sim_cause(r) for r in sims.values()]
     if drills:
         rows += [transport_cause(x, drills.get("timestamp", "")) for x in drills["records"]]
+    if upload:
+        rows += [upload_cause(r, upload.get("meta")) for r in upload["runs"].values()]
     return sorted(rows, key=lambda r: (SOURCE_ORDER[r["source"]], STATUS_ORDER[r["status"]], r["subject"]))
 
 
@@ -228,7 +270,10 @@ def main(argv: list[str] | None = None) -> int:
     sims = {s: r for s in load_all_scenarios() if (r := latest_result(s))}
     drill_files = sorted(COMM_RESULTS_DIR.glob("failure_demo_*.json"), key=lambda p: p.stat().st_mtime) if COMM_RESULTS_DIR.exists() else []
     drills = read_json(drill_files[-1]) if drill_files else None
-    rows = collect(history, sims, drills, latest_per_target=not args.all_runs, baselines=_baselines(history))
+    from netlab.runner import latest as latest_upload
+
+    rows = collect(history, sims, drills, latest_per_target=not args.all_runs, baselines=_baselines(history),
+                   upload=latest_upload())
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(cause_report_markdown(rows), encoding="utf-8")
     print(f"{len(rows)} rows -> {args.out}")

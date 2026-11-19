@@ -19,6 +19,9 @@ cmp_ = data.latest_comm("tcp_vs_udp")
 last = recs[-1] if recs else None
 problem_runs = [r for r in recs if r.get("analysis") and any(c != "Healthy / Reachable" for c in r["analysis"]["classifications"])]
 b1, b2, c = sims.get("link_failure_dv"), sims.get("link_failure_static"), sims.get("congestion")
+upload = data.upload_latest()
+up_o = {m: r["outcome"] for m, r in upload["runs"].items()} if upload else {}
+up_rec = bool(upload and upload["meta"].get("source") == "recorded")
 
 tiles([
     ("Last live check", e(last["run"]["target"]) if last else "none", (", ".join(last["analysis"]["classifications"]) if last and last.get("analysis") else "run a diagnostic"), T.SIGNAL),
@@ -29,7 +32,11 @@ tiles([
      "first delivery on the alternative path", T.STEEL),
     ("Static-route outage (B2)", (fmt(max((g["duration_s"] for g in b2["delivery_gaps"]), default=0.0), "", 2) + "<small>s</small>") if b2 else "n/a",
      "no packets reached n5", T.CLAY),
-    ("Transport failures recovered", f"{sum(r['resumed'] for r in fails['records'])}<small>/{len(fails['records'])}</small>" if fails else "n/a",
+    ("Upload stall: backup vs static", (f"{fmt(up_o['failover']['stall_s'], '', 2)}<small>s</small> / "
+                                         f"{fmt(up_o['static']['stall_s'], '', 2)}<small>s</small>")
+     if "failover" in up_o and "static" in up_o else "n/a",
+     "real TCP upload, link down mid-transfer" + (" (recorded)" if up_rec else ""), T.UPLOAD),
+    ("Transport drills recovered", f"{sum(r['resumed'] for r in fails['records'])}<small>/{len(fails['records'])}</small>" if fails else "n/a",
      "after restoring the condition", T.GREEN),
 ])
 
@@ -87,10 +94,11 @@ else:
     empty("No live checks yet", "Open <b>Diagnostics</b> to measure a destination, or start the <b>Guided demo</b>.")
 
 eyebrow("Where to go next", "", T.SLATE)
-q = st.columns(4, gap="small")
+q = st.columns(5, gap="small")
 links = [("app_pages/demo_page.py", "Run the guided demo", ":material/play_circle:", "Every module, end to end, with real measurements."),
          ("app_pages/detect_page.py", "Diagnose a destination", ":material/troubleshoot:", "Ping, traceroute, DNS and TCP checks."),
          ("app_pages/recovery_page.py", "Compare failure scenarios", ":material/healing:", "Before, during and after each injected fault."),
+         ("app_pages/upload_page.py", "Upload while a link fails", ":material/upload_file:", "Reroute, stall or retry? Measured."),
          ("app_pages/transport_page.py", "Test TCP, UDP and TLS", ":material/lock:", "Transfers, integrity checks, failure drills.")]
 for col, (pth, label, icon, sub) in zip(q, links):
     with col, card("link"):

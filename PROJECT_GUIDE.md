@@ -2,7 +2,7 @@
 
 This guide explains how RouteResQ works, from the first click to the last line of a report. It covers every module, every rule, every formula, every file the project writes, and why each design choice was made. Read it top to bottom once; after that, use the table of contents to jump to whatever you need before a demo or viva.
 
-Where this guide quotes a number (43.6 ms, 3.024 s, 11 of 13 and so on), it comes from the results stored in this repository, not from memory.
+Where this guide quotes a number (43.6 ms, 3.024 s, 13 of 16 and so on), it comes from the results stored in this repository, not from memory.
 
 ---
 
@@ -19,6 +19,7 @@ Where this guide quotes a number (43.6 ms, 3.024 s, 11 of 13 and so on), it come
 9. [Module 3: NS2 simulation and trace analysis](#9-module-3-ns2-simulation-and-trace-analysis)
 10. [The NS2 results, explained number by number](#10-the-ns2-results-explained-number-by-number)
 11. [Module 4: the transport lab (TCP, UDP, TLS)](#11-module-4-the-transport-lab-tcp-udp-tls)
+11A. [File upload under link failure (isolated test network)](#11a-file-upload-under-link-failure-isolated-test-network)
 12. [The guided demo](#12-the-guided-demo)
 13. [The user interface](#13-the-user-interface)
 14. [Files the project writes](#14-files-the-project-writes)
@@ -112,7 +113,10 @@ app_pages/                One file per page of the app
   recovery_page.py          Stage 04: recovery verdict, before/during/after topology, timeline, comparison
   transport_page.py         Lab: TCP message/file, TCP vs UDP, TLS transfer, failure drills
   report_page.py            Stage 05: root-cause register, reports, history, files and ZIP export, log
-  demo_page.py              Guided demo: the whole story in six verified steps
+  demo_page.py              Guided demo: the whole story in seven verified steps
+  upload_page.py            Lab: file upload under link failure (three runs, progress, path evidence)
+  about_page.py             Problem & solution: one page for first-time visitors
+  presentation_page.py      The slide deck embedded in the app
 ui/                       Presentation only (no networking logic)
   theme.py                  Colour tokens, fonts and the stylesheet
   shell.py                  Brand bar (logo, NS2/tool chips, CN Lab badge, team, repo link) and the rail
@@ -166,7 +170,8 @@ config/
   thresholds.json           Rule thresholds
 results/                  Generated JSON, CSV and NS2 traces (the four NS2 runs are committed)
 reports/                  Generated Markdown reports
-tests/                    159 pytest tests, with real captured command outputs in tests/fixtures
+netlab/                   Upload under link failure: test network, lab, analysis, runner, report
+tests/                    186 pytest tests, with real captured command outputs in tests/fixtures
 docker/Dockerfile.ns2     Ubuntu 22.04 image with ns2 2.35, for Windows/macOS
 packages.txt              apt packages for Streamlit Cloud (ns2, tcl8.6, iputils-ping, traceroute, iproute2)
 requirements.txt          Python packages (streamlit, pandas, plotly, cryptography, pytest)
@@ -459,7 +464,7 @@ A live failure can never be *Confirmed*, because the tool cannot know the true c
 
 ### 8.4 The stored register
 
-13 subjects: 3 live (8.8.8.8, nonexistent.invalid, 192.0.2.1), 4 NS2 (A, B1, B2, C) and 6 transport drills. **11 failures have a stated cause**; the other 2 (8.8.8.8 and scenario A) are healthy.
+16 subjects: 3 live (8.8.8.8, nonexistent.invalid, 192.0.2.1), 4 NS2 (A, B1, B2, C), 6 transport drills and 3 upload runs. **13 failures have a stated cause**; the other 3 (8.8.8.8, scenario A and the upload baseline) are healthy.
 
 ---
 
@@ -813,11 +818,46 @@ An optional seventh drill connects to 192.0.2.1:80, where no host exists, to sho
 
 ---
 
+## 11A. File upload under link failure (isolated test network)
+
+**The question:** if a network link goes down halfway through a file upload, does the upload continue on a backup route, stall until the link returns, or fail and need a retry?
+
+**Code:** `netlab/` (`config.py` bounds, `topology.py` test network, `lab.py` one run, `analysis.py` outcomes, `runner.py` backends and stored runs, `report.py`). Page: **Lab · Link failure → Upload test** (`app_pages/upload_page.py`). Image: `docker/Dockerfile.netlab`.
+
+**Test network.** Three Linux network namespaces (client, router, server) inside a container, joined by veth links. The client and server are joined directly by the **primary link** (5 ms each end); the **backup path** runs through the router in two hops (10 ms each). The TCP connection runs between service addresses on loopback (`10.98.0.1` → `10.99.0.1`), so it survives a change of path. The host's network is never touched; namespaces are deleted after every run.
+
+**The fault.** When the **server** has received 30% of the file (receiver-confirmed), both ends of the primary link are taken down for 3 s, then brought back and the primary route re-installed.
+
+| Run | What differs |
+|---|---|
+| Healthy baseline | the primary link stays up |
+| Link failure · backup route | a backup route (metric 100, a floating static route) is pre-installed, so forwarding can fall back to it — **controlled failover**, no routing protocol |
+| Link failure · static forwarding | the same fault; the backup path is connected but no route points to it |
+
+Same file (bundled 2 MiB sample, or your own 64 KiB–8 MiB), pacing (512 KiB/s, 8 KiB chunks), 10 s socket timeout, 1 retry and topology in all three runs. Uploads use RouteResQ's framing (FILE_META, FILE_CHUNK, FILE_END) and the server's SHA-256 acknowledgement.
+
+**Measured (recorded run, 2026-11-19, Docker backend):**
+
+| Run | Outcome | Total | Stall | Retry | Same TCP connection | Backup path | SHA-256 |
+|---|---|---|---|---|---|---|---|
+| Healthy baseline | completed normally | 4.04 s | 0.017 s | no | yes | not used (336 B) | match |
+| Backup route | continued on the backup path | 4.07 s | 0.071 s | no | yes | used (1.43 MiB during the outage; first bytes 0.134 s after link down) | match |
+| Static forwarding | stalled until the link returned, then resumed | 4.72 s | 3.29 s | no | yes | not used (250 B); `ip route get` = *Network is unreachable* | match |
+
+* **Stall** = the longest time the server's received byte count did not grow (after the link went down; whole transfer for the baseline).
+* **Backup path used** = ≥ 16 KiB more left the client's backup interface during the outage (interface counters every 50 ms). A completed upload alone is never taken as proof of the path.
+* In the static run progress resumed 0.29 s after the link came back (the next TCP retransmission); the total time grew less than the stall because the paced client catches up at link speed afterwards.
+* A **retry** is a new TCP connection that re-sends the whole file; resuming from a byte offset is not implemented. With a 12 s outage and a 5 s timeout the first connection timed out and the retry (started while the link was still down) timed out too: classified *failed*.
+
+**Running it:** `python -m netlab.runner` (bundled sample) or `python -m netlab.runner --file my.bin`; `--record --report` also refreshes `results/netlab/recorded` and `reports/file_upload_link_failure.md`. Needs Linux with root, or Docker with the image built once: `docker build -f docker/Dockerfile.netlab -t routeresq-netlab:1 docker`. The hosted app has neither, so it shows the **recorded run**, labelled as recorded.
+
+---
+
 ## 12. The guided demo
 
 Logic: `walkthrough/flow.py` (independent of Streamlit). Page: `app_pages/demo_page.py`. Open it with the **Guided demo** button in the top bar.
 
-The demo tells one failure story in six steps: **Detect → Diagnose → Analyse impact → Observe recovery → Transport → Report**. Every step runs the real backend and shows a **verified status**: `not_started`, `success`, `partial`, `failed` or `stored`.
+The demo tells one failure story in seven steps: **Detect → Diagnose → Analyse impact → Observe recovery → Transport → Upload under link failure → Report**. Every step runs the real backend and shows a **verified status**: `not_started`, `success`, `partial`, `failed` or `stored`.
 
 | Step | What runs | How it is verified |
 |---|---|---|
@@ -826,6 +866,7 @@ The demo tells one failure story in six steps: **Detect → Diagnose → Analyse
 | Analyse impact | Runs the chosen NS2 scenarios fresh if NS2 is available | `verify_sim`: return code 0, packet events present, no malformed lines, the monitored flow sent packets. If a fresh run fails or NS2 is missing, the newest stored run is used and **labelled `stored`**. |
 | Observe recovery | Compares the baseline with the chosen failure scenario | success if all failure scenarios are fresh, `stored` if all are stored, `partial` if mixed |
 | Transport | TCP vs UDP (400 kB, one trial), the TLS secure transfer, and all drills | TCP integrity verified; TLS file transfer OK with SHA-256 match; every drill observed an error **and** resumed |
+| Upload under link failure | The three uploads (section 11A) with the bundled sample, if a test-network backend exists | `verify_upload`: all three runs present, the fault hit the upload in progress, every completed upload matched its SHA-256. Without a backend (or if the run fails) the recorded run is used and **labelled `stored`**. |
 | Report | Builds a Markdown report | It states exactly which results are fresh, stored or failed, includes the root-cause register for this demo, the evidence chains, the mechanism of each injected failure, and any errors |
 
 Stages keep their successful parts when a sibling fails, and each stage can be retried. The report never claims fresh results when stored ones were used.
@@ -892,7 +933,10 @@ Stages keep their successful parts when a sibling fails, and each stage can be r
 | **Failure & recovery** (04) | The recovery verdict, the five questions answered, a before/during/after topology triptych (edge width = delivered packets that used the link), the timeline of configured and observed events, phase comparison, cross-scenario comparison |
 | **TCP · UDP · TLS** (Lab) | Four sections: Connection (send a real TCP message or file), TCP vs UDP, Secure transfer (TLS handshake, certificate and SHA-256 details), Failure drills (fault → error → restore → resumed) |
 | **Reports** (05) | Five views: Root-cause report (the default), Reports (every generated Markdown report), Experiment history, Files & export (file browser and a ZIP of all results and reports), Log |
-| **Guided demo** | The six-step story with verified statuses (section 12) |
+| **Upload test** (Lab · Link failure) | Section 11A: the set-up, a run form (file, fault point, outage, pacing, timeout, retries), plain-language verdicts, the three-run comparison, progress and path-evidence charts, `ip route get` snapshots, the event log |
+| **Problem & solution** | One page that states the problem and the solution, with links to every stage |
+| **Presentation** | The slide deck, embedded and downloadable |
+| **Guided demo** | The seven-step story with verified statuses (section 12) |
 
 ---
 
@@ -941,7 +985,8 @@ streamlit run streamlit_app.py
 ## 16. Testing
 
 ```bash
-pytest                                  # everything (159 tests)
+pytest                                  # everything (186 tests)
+pytest -m netlab                        # real upload under link failure (skipped without a backend)
 pytest -m "not ns2 and not network"     # offline only
 pytest -m ns2                           # real NS2 runs
 pytest -m network                       # real ping / traceroute / DNS (loopback and reserved targets only)
@@ -970,6 +1015,7 @@ NS2 tests are skipped automatically when NS2 is not available.
 | Task | Command |
 |---|---|
 | Start the app | `streamlit run streamlit_app.py` |
+| Upload under link failure | `python -m netlab.runner [--file my.bin] [--record --report]` |
 | All four NS2 experiments + reports | `python -m simulation.experiments` |
 | Selected experiments | `python -m simulation.experiments healthy congestion` |
 | Re-analyse stored traces only | `python -m simulation.experiments --reanalyze` |
@@ -1010,7 +1056,7 @@ NS2 tests are skipped automatically when NS2 is not available.
 * **Abstraction and polymorphism:** the `CommandRunner` protocol hides how commands run; the real `SubprocessRunner` and the tests' fake runner are interchangeable.
 * **Inheritance:** domain errors specialise built-in exceptions: `TargetNotAllowed(ValueError)`, `ScenarioError(ValueError)`, `NS2UnavailableError(RuntimeError)`, `NS2ExecutionError(RuntimeError)`, `ConnectionClosed(ConnectionError)`, `ProtocolError(ValueError)`.
 * **Validation inside objects:** a `Scenario` validates itself in `__post_init__`; `TCPTransferServer` is a context manager that always releases its socket.
-* **Single responsibility:** parsers, rules, scenario execution, trace analysis, socket transfer, PKI and reporting are separate classes and modules, which made 159 targeted tests possible.
+* **Single responsibility:** parsers, rules, scenario execution, trace analysis, socket transfer, PKI and reporting are separate classes and modules, which made 186 targeted tests possible.
 
 ---
 
@@ -1022,6 +1068,7 @@ NS2 tests are skipped automatically when NS2 is not available.
 * **NS2 results describe the configured model**, not a real network. NS2's DV agents learn about a failure immediately and send triggered updates, so rerouting in B1 is almost instant; real protocols with hold-down timers (for example RIP) converge more slowly.
 * Both CBR flows use UDP and never back off, so scenario C does not show TCP congestion control.
 * Loopback communication has no propagation delay and almost no loss, and throughput depends on the host; use two lab PCs for path effects.
+* The upload test network is one Linux kernel with emulated delays; its failover is a pre-installed floating static route, not a routing protocol; a retry re-sends the whole file (no resume from an offset); the hosted app can only show the recorded run.
 * The lab PKI is for local demonstration only.
 * RouteResQ **explains** recovery; it does not repair live networks.
 * **Out of scope by design:** packet capture (Wireshark), intrusion detection, machine learning, automatic repair, custom cryptography, mock NS2.

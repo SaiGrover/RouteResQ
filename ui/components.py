@@ -64,7 +64,9 @@ def pills(items: list[tuple[str, str]]) -> None:
 
 def source_badge(kind: str) -> str:
     label, c = {"live": ("Live measurement", T.SIGNAL), "sim": ("NS2 simulation", T.SAND),
-                "loopback": ("Real sockets - loopback", T.STEEL), "stored": ("Stored NS2 run", T.SAND)}[kind]
+                "loopback": ("Real sockets - loopback", T.STEEL), "stored": ("Stored NS2 run", T.SAND),
+                "netlab": ("Real TCP upload - isolated test network", T.UPLOAD),
+                "recorded": ("Recorded run (captured locally)", T.SLATE)}[kind]
     return f'<span class="rr-src" style="--c:{c}">{label}</span>'
 
 

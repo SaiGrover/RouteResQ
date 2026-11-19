@@ -18,6 +18,7 @@ from walkthrough import flow
 ROOT = Path(__file__).resolve().parent.parent
 NS2_OK = {"available": True, "kind": "local", "detail": "/usr/bin/ns", "version": "2.35"}
 NS2_MISSING = {"available": False, "kind": None, "detail": "NS2 was not found", "version": None}
+NETLAB_OK = {"available": True, "backend": "docker", "reason": "test backend"}
 
 
 # ------------------------------------------------------------------ fakes
@@ -69,6 +70,25 @@ def fake_drills(**_kw):
          "restoration": "started server", "resumed": True, "resume_detail": "ok", "injected": True, "details": {}}]}
 
 
+def fake_upload_run(tmp_path):
+    """A copy of the recorded upload run stands in for a fresh one (marked live, like a real run)."""
+    import json
+    import shutil
+
+    from netlab import runner
+
+    def _run(*_a, **_k):
+        d = tmp_path / "netlab_live"
+        if d.exists():
+            shutil.rmtree(d)
+        shutil.copytree(runner.RECORDED_DIR, d)
+        meta = json.loads((d / "meta.json").read_text())
+        meta["source"] = "live"
+        (d / "meta.json").write_text(json.dumps(meta))
+        return d
+    return _run
+
+
 @pytest.fixture()
 def backends(monkeypatch, tmp_path):
     monkeypatch.setattr(flow, "HISTORY_ROOT", tmp_path / "diag")
@@ -77,6 +97,8 @@ def backends(monkeypatch, tmp_path):
     monkeypatch.setattr("communication.experiments.run_comparison", fake_comparison)
     monkeypatch.setattr("security.tls.run_secure_transfer", lambda **_k: _TLS())
     monkeypatch.setattr("communication.failures.run_all", fake_drills)
+    monkeypatch.setattr("netlab.runner.run_sample", fake_upload_run(tmp_path))
+    monkeypatch.setattr("netlab.runner.backend_status", lambda: NETLAB_OK)
     return monkeypatch
 
 
@@ -84,6 +106,7 @@ def run_everything(state, ns2=NS2_OK, targets=None, scenarios=None):
     flow.run_detect(state, targets)
     flow.run_impact(state, scenarios, ns2)
     flow.run_transport(state)
+    flow.run_upload(state, NETLAB_OK)
 
 
 # ------------------------------------------------------------------ flow logic
@@ -226,15 +249,17 @@ def test_cause_report_markdown_sections():
 @pytest.mark.ui
 def test_full_demo_through_ui_reports_verified_stages(backends):
     backends.setattr("ui.data.ns2_status", lambda: NS2_OK)
+    backends.setattr("ui.data.netlab_status", lambda: NETLAB_OK)
     at = AppTest.from_file(str(ROOT / "streamlit_app.py"), default_timeout=180).run()
     at.switch_page("app_pages/demo_page.py").run()
     next(b for b in at.button if b.label == "Run the full demo").click().run()
     assert not at.exception, [x.message for x in at.exception]
     w = at.session_state["wt"]
-    assert w["step"] == 5 and all(flow.step_status(w, k) == flow.SUCCESS for k, _ in flow.STEPS)
+    assert w["step"] == len(flow.STEPS) - 1 and all(flow.step_status(w, k) == flow.SUCCESS for k, _ in flow.STEPS)
     assert "Every stage completed with fresh, verified measurements" in flow.build_report(w)
-    assert any(d.value["status"].tolist() == ["verified"] * 6 for d in at.dataframe if "status" in d.value)
-    for i in range(6):                       # every completed step is directly reachable
+    n = len(flow.STEPS)
+    assert any(d.value["status"].tolist() == ["verified"] * n for d in at.dataframe if "status" in d.value)
+    for i in range(n):                       # every completed step is directly reachable
         at.button(key=f"wt_btn_{i}").click().run()
         assert not at.exception and at.session_state["wt"]["step"] == i
     next(b for b in at.button if b.label == "Reset").click().run()

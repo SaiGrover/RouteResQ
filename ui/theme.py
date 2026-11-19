@@ -28,6 +28,8 @@ GREEN = "#58bd8c"    # healthy, recovered, verified
 STEEL = "#6f9fe0"    # rerouting, reports
 SAND = "#c8a978"     # simulation
 SLATE = "#8a9bb0"    # neutral / not applicable
+UPLOAD = "#b48ce0"   # file upload under link failure (isolated test network)
+RUN_COLOR = {"baseline": GREEN, "failover": STEEL, "static": CLAY}   # the three upload runs
 ALT_PATH = SAND      # traffic on the alternative (backup) path n1-n3-n4
 
 HEAD = "'Space Grotesk','Inter',system-ui,sans-serif"
@@ -131,6 +133,15 @@ div[class*="st-key-nav_"] a::after {{ font-family:{MONO}; font-size:.67rem; colo
   text-decoration:none !important; white-space:nowrap; min-width:9.6rem; justify-content:center; }}
 .st-key-demo_link a p, .st-key-demo_link a span {{ color:{BG} !important; font-weight:700 !important; }}
 .st-key-demo_link a:hover {{ filter:brightness(1.08); }}
+.st-key-about_link, .st-key-deck_link {{ flex:0 0 auto; width:auto !important; min-width:max-content; }}
+.st-key-about_link a, .st-key-deck_link a, .st-key-about_link a p, .st-key-deck_link a p {{ overflow:visible !important;
+  text-overflow:clip !important; }}
+.st-key-about_link a, .st-key-deck_link a {{ border:1px solid {BORDER_HI} !important; border-radius:10px !important;
+  padding:.38rem .8rem !important; text-decoration:none !important; white-space:nowrap; justify-content:center;
+  background:rgba(255,255,255,.035) !important; }}
+.st-key-about_link a p, .st-key-about_link a span, .st-key-deck_link a p, .st-key-deck_link a span {{ color:{TXT} !important;
+  font-weight:600 !important; }}
+.st-key-about_link a:hover, .st-key-deck_link a:hover {{ border-color:{SIGNAL} !important; }}
 /* narrower windows: the rail becomes a horizontal scroll strip of fixed-width nodes */
 @media (max-width: 1180px) {{
   .st-key-rail [data-testid="stHorizontalBlock"] {{ grid-auto-flow:column; grid-auto-columns:152px;

@@ -84,4 +84,39 @@ def cause_rows(latest_per_target: bool = True) -> list[dict]:
     from analysis.cause_report import _baselines, collect
 
     hist = diag_records()
-    return collect(hist, latest_all(), latest_comm("failure_demo"), latest_per_target, baselines=_baselines(hist))
+    return collect(hist, latest_all(), latest_comm("failure_demo"), latest_per_target, baselines=_baselines(hist),
+                   upload=upload_latest())
+
+
+# ------------------------------------------------------------------ upload under link failure (netlab)
+@st.cache_data(ttl=600, show_spinner="Checking the test-network backend...")
+def netlab_status() -> dict:
+    from netlab.runner import backend_status
+
+    return backend_status()
+
+
+@st.cache_data(max_entries=16, show_spinner=False)
+def _upload_run(path: str, mtime: float) -> dict | None:
+    from netlab.runner import load_run
+
+    return load_run(Path(path))
+
+
+def upload_run(run_dir: Path) -> dict | None:
+    meta = run_dir / "meta.json"
+    return _upload_run(str(run_dir), meta.stat().st_mtime) if meta.exists() else None
+
+
+def upload_runs() -> list[Path]:
+    """Live runs (newest first), then the recorded run."""
+    from netlab.runner import RECORDED_DIR, list_runs
+
+    return list_runs() + ([RECORDED_DIR] if (RECORDED_DIR / "meta.json").exists() else [])
+
+
+def upload_latest() -> dict | None:
+    for d in upload_runs():
+        if r := upload_run(d):
+            return r
+    return None

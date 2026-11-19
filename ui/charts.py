@@ -358,3 +358,162 @@ def protocol_bars(rows: list[dict], key: str, label: str, h: int = 260, rng=None
     fig.update_layout(barmode="group", bargap=.3)
     fig.update_yaxes(title=label, range=rng)
     return fig
+
+
+# ------------------------------------------------------------------ upload under link failure (netlab)
+UPLOAD_POS = {"client": (0, 0), "router": (1.5, -.75), "server": (3, 0)}
+
+
+def upload_topology(result: dict | None = None, window: str = "outage", h: int = 230) -> go.Figure:
+    """Client, backup router and server. Edge width = bytes the client sent on that path in the window
+    (read from interface counters); the primary link is drawn down during the outage of a fault run."""
+    from netlab.analysis import delta
+
+    prim = back = None
+    down = False
+    if result:
+        o, c = result["outcome"], result["counters"]
+        t_end = max((x[0] for x in c), default=0)
+        t0, t1 = 0.0, t_end
+        if o.get("link_down_t") is not None:
+            if window == "before":
+                t1 = o["link_down_t"]
+            elif window == "outage":
+                t0, t1, down = o["link_down_t"], o.get("link_up_t") or t_end, True
+            else:
+                t0 = o.get("link_up_t") or t_end
+        prim, back = delta(c, "c_primary_tx", t0, t1), delta(c, "c_backup_tx", t0, t1)
+    mx = max(prim or 0, back or 0, 1)
+    fig = go.Figure()
+
+    def edge(a, b, n, base_color, label, dash="solid", dead=False):
+        (x0, y0), (x1, y1) = UPLOAD_POS[a], UPLOAD_POS[b]
+        if dead:
+            color, width, dash = T.CLAY, 3, "dash"
+        elif n:
+            color, width = base_color, 1.8 + 7 * n / mx
+        else:
+            color, width = "rgba(148,178,204,.28)", 1.6
+        fig.add_trace(go.Scatter(x=[x0, x1], y=[y0, y1], mode="lines", line=dict(color=color, width=width, dash=dash),
+                                 hoverinfo="skip", showlegend=False))
+        if label:
+            fig.add_annotation(x=(x0 + x1) / 2, y=(y0 + y1) / 2 + (.16 if y0 == y1 else -.2), text=label, showarrow=False,
+                               font=dict(size=10, color=T.DIM))
+
+    kb = (lambda n: "n/a" if n is None else f"{n / 1024:,.0f} KiB")
+    edge("client", "server", (prim or 0) if not down else 0, T.SIGNAL,
+         f"primary link · {kb(prim)}" if result else "primary link (direct)", dead=down)
+    edge("client", "router", back or 0, T.ALT_PATH, f"backup · {kb(back)}" if result else "backup hop 1")
+    edge("router", "server", back or 0, T.ALT_PATH, "" if result else "backup hop 2")
+    if down:
+        fig.add_trace(go.Scatter(x=[1.5], y=[0], mode="markers+text", text=["DOWN"], textposition="top center",
+                                 textfont=dict(color=T.CLAY, size=10),
+                                 marker=dict(symbol="x-thin", size=16, line=dict(color=T.CLAY, width=3)),
+                                 hoverinfo="skip", showlegend=False))
+    names = list(UPLOAD_POS)
+    fig.add_trace(go.Scatter(
+        x=[UPLOAD_POS[n][0] for n in names], y=[UPLOAD_POS[n][1] for n in names], mode="markers+text",
+        text=["client", "router", "server"], textposition="middle center",
+        textfont=dict(color=[T.BG, T.TXT, T.BG], size=10.5, family="JetBrains Mono"),
+        marker=dict(size=[50, 46, 50], color=[T.UPLOAD, "#1a2632", T.UPLOAD], line=dict(color=T.UPLOAD, width=1.5)),
+        hoverinfo="skip", showlegend=False))
+    fig.add_annotation(x=0, y=-.38, text="10.98.0.1", showarrow=False, font=dict(size=9.5, color=T.MUT))
+    fig.add_annotation(x=3, y=-.38, text="10.99.0.1", showarrow=False, font=dict(size=9.5, color=T.MUT))
+    style(fig, h=h, legend=False, margin_t=6)
+    fig.update_xaxes(visible=False, range=[-.45, 3.45])
+    fig.update_yaxes(visible=False, range=[-1.15, .45])
+    fig.update_layout(dragmode=False)
+    return fig
+
+
+def _fault_marks(fig: go.Figure, o: dict, ymax: float = 100) -> None:
+    if o.get("link_down_t") is None:
+        return
+    t0, t1 = o["link_down_t"], o.get("link_up_t")
+    fig.add_vrect(x0=t0, x1=t1 if t1 is not None else t0, fillcolor=T.CLAY, opacity=.08, line_width=0, layer="below")
+    fig.add_vline(x=t0, line=dict(color=T.CLAY, width=1.3, dash="dot"))
+    fig.add_annotation(x=t0, y=ymax, text="link down", showarrow=False, xanchor="left", yanchor="top", xshift=4,
+                       font=dict(size=10.5, color=T.CLAY), bgcolor="rgba(10,15,20,.75)")
+    if t1 is not None:
+        fig.add_vline(x=t1, line=dict(color=T.GREEN, width=1.3, dash="dot"))
+        fig.add_annotation(x=t1, y=ymax * .9, text="link up", showarrow=False, xanchor="left", yanchor="top", xshift=4,
+                           font=dict(size=10.5, color=T.GREEN), bgcolor="rgba(10,15,20,.75)")
+
+
+def upload_progress(result: dict, h: int = 330) -> go.Figure:
+    """Receiver-confirmed progress (% of the file the server has read) against time, per TCP connection,
+    with the fault window and the measured milestones."""
+    o, size = result["outcome"], result["file"]["size"]
+    fig = go.Figure()
+    conns = sorted({p[2] for p in result["progress"]})
+    for cid in conns:
+        pts = [p for p in result["progress"] if p[2] == cid]
+        fig.add_trace(go.Scatter(
+            x=[p[0] for p in pts], y=[p[1] / size * 100 for p in pts], mode="lines",
+            name=f"TCP connection {cid}" + (" (retry, from byte 0)" if cid > 1 else ""),
+            line=dict(color=T.RUN_COLOR.get(result["mode"], T.SIGNAL) if cid == 1 else T.AMBER, width=2.2, shape="hv"),
+            hovertemplate="t=%{x:.3f}s<br>%{y:.1f}% received<extra>connection " + str(cid) + "</extra>"))
+    _fault_marks(fig, o)
+
+    def mark(t, label, color, symbol="circle"):
+        if t is None:
+            return
+        y = 0
+        for p in result["progress"]:
+            if p[0] <= t:
+                y = p[1] / size * 100
+        fig.add_trace(go.Scatter(x=[t], y=[y], mode="markers", name=label,
+                                 marker=dict(size=10, color=color, symbol=symbol, line=dict(color=T.BG, width=1.5)),
+                                 hovertemplate=f"{label}<br>t=%{{x:.3f}}s<extra></extra>"))
+
+    mark(o.get("first_backup_traffic_t"), "first backup-path traffic", T.ALT_PATH, "diamond")
+    if o.get("link_down_t") is not None:
+        mark(o.get("stall_end"), "progress resumed", T.GREEN)
+    done = [e for e in result["events"] if e["kind"] == "server_complete"]
+    if done:
+        mark(done[-1]["t"], "upload complete (SHA-256 checked)", T.TXT, "star")
+    for e in result["events"]:
+        if e["kind"] == "client_failed":
+            mark(e["t"], f"attempt {e.get('attempt')} failed", T.CLAY, "x")
+    style(fig, h)
+    fig.update_xaxes(title="time since the upload started (s)")
+    fig.update_yaxes(title="% of the file received by the server", range=[0, 105])
+    return fig
+
+
+def upload_overlay(run: dict, h: int = 300) -> go.Figure:
+    fig = go.Figure()
+    for mode, r in run["runs"].items():
+        size = r["file"]["size"]
+        pts = r["progress"]
+        fig.add_trace(go.Scatter(x=[p[0] for p in pts], y=[p[1] / size * 100 for p in pts], mode="lines",
+                                 name=r["label"], line=dict(color=T.RUN_COLOR[mode], width=3.2 if mode == "baseline" else 2,
+                                                            dash="dot" if mode == "baseline" else "solid", shape="hv"),
+                                 hovertemplate="t=%{x:.2f}s<br>%{y:.1f}%<extra>" + r["label"] + "</extra>"))
+    fault = next((r["outcome"] for m, r in run["runs"].items() if m != "baseline" and r["outcome"].get("link_down_t")), None)
+    if fault:
+        _fault_marks(fig, fault)
+    style(fig, h)
+    fig.update_xaxes(title="time since the upload started (s)")
+    fig.update_yaxes(title="% received by the server", range=[0, 105])
+    return fig
+
+
+def path_bytes(result: dict, h: int = 260) -> go.Figure:
+    """Bytes the client sent on each path (interface tx counters, cumulative from the start)."""
+    rows = [(t, v) for t, v in result["counters"] if "c_primary_tx" in v]
+    fig = go.Figure()
+    if rows:
+        p0, b0 = rows[0][1]["c_primary_tx"], rows[0][1]["c_backup_tx"]
+        fig.add_trace(go.Scatter(x=[t for t, _ in rows], y=[(v["c_primary_tx"] - p0) / 1048576 for _, v in rows],
+                                 name="primary interface (cp0)", mode="lines", line=dict(color=T.SIGNAL, width=2),
+                                 hovertemplate="t=%{x:.2f}s<br>%{y:.2f} MiB<extra>primary</extra>"))
+        fig.add_trace(go.Scatter(x=[t for t, _ in rows], y=[(v["c_backup_tx"] - b0) / 1048576 for _, v in rows],
+                                 name="backup interface (cb0)", mode="lines", line=dict(color=T.ALT_PATH, width=2),
+                                 hovertemplate="t=%{x:.2f}s<br>%{y:.2f} MiB<extra>backup</extra>"))
+    top = max([(v["c_primary_tx"] - rows[0][1]["c_primary_tx"]) / 1048576 for _, v in rows] + [0.1]) if rows else 1
+    _fault_marks(fig, result["outcome"], ymax=top)
+    style(fig, h)
+    fig.update_xaxes(title="time since the upload started (s)")
+    fig.update_yaxes(title="MiB sent by the client", rangemode="tozero")
+    return fig

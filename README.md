@@ -140,9 +140,11 @@ The design adapts the strongest patterns of the team's Data Vortex Round 4 dashb
 | Root cause | reasoning ladder (symptoms → measurements → explanations → evidence limits), candidate causes with evidence for and against plus next checks, findings with evidence levels, rule map and full rule trace, re-analysis against any earlier run |
 | NS2 simulation | interactive topology showing the paths delivered packets actually took in each phase (from the trace), scenario configuration, throughput / delay / packet-fate / queue / DV-message charts, downloads |
 | Failure & recovery | recovery verdict, the five questions answered, before/during/after topology triptych, timeline of configured and observed events, phase comparison, cross-scenario comparison |
+| Upload test (Lab · Link failure) | real TCP upload across an isolated test network while the primary link fails: three-run comparison, receiver-progress charts with link down/up markers, interface-counter path evidence, `ip route get` snapshots, event log, plain-language verdicts |
+| Problem & solution · Presentation | top-bar links: a one-page summary of the problem and the solution, and the slide deck embedded in the app (downloadable as one HTML file) |
 | TCP · UDP · TLS | connection-state chain built only from stages the client actually completed, TCP vs UDP charts, TLS handshake / certificate / SHA-256 details, failure drills (fault → error → restore → resumed) |
 | Reports | generated reports, full experiment history, file browser with ZIP export, log viewer |
-| Guided demo | one failure story in six steps, each running the real backend: detect (choose the destinations), diagnose (evidence chain: symptom → measurement → explanation → limitations → next check), analyse impact (choose the NS2 experiments), observe recovery (baseline vs the chosen failure), transport, report. Every step shows its own **verified status** (verified / partial / failed / stored data / not run) and is clickable; each stage is error-guarded with a retry, keeps its successful parts, and verifies its own output (parsed measurements, a valid NS2 trace, TLS integrity, every drill detected and recovered). If NS2 fails or is missing, stored runs are used **and labelled as stored**, and the report never claims fresh results. |
+| Guided demo | one failure story in seven steps, each running the real backend: detect (choose the destinations), diagnose (evidence chain: symptom → measurement → explanation → limitations → next check), analyse impact (choose the NS2 experiments), observe recovery (baseline vs the chosen failure), transport, upload under link failure (the recorded run, labelled *stored*, where no test-network backend exists), report. Every step shows its own **verified status** (verified / partial / failed / stored data / not run) and is clickable; each stage is error-guarded with a retry, keeps its successful parts, and verifies its own output (parsed measurements, a valid NS2 trace, TLS integrity, every drill detected and recovered). If NS2 fails or is missing, stored runs are used **and labelled as stored**, and the report never claims fresh results. |
 
 Charts are Plotly and built only from backend results; nothing is drawn from made-up data.
 
@@ -160,6 +162,7 @@ streamlit run streamlit_app.py
 | Live diagnostics + report | `python -m diagnostics.cli 8.8.8.8 nonexistent.invalid 192.0.2.1 --report reports/live_diagnostics.md` |
 | Record a baseline | `python -m diagnostics.cli 8.8.8.8 --set-baseline` |
 | Communication experiments + report | `python -m communication.report` |
+| Upload under link failure (three runs) | `python -m netlab.runner` (needs Linux root or the `routeresq-netlab:1` Docker image) |
 | TCP server / client (two lab PCs) | `python -m communication.tcp_server --host 0.0.0.0 --port 5050` and `python -m communication.tcp_client --host <server-ip> --port 5050 --file data.bin` |
 | TLS server / client | add `--tls` to both (the client trusts `results/certs/lab-ca.pem`, so copy it to the client PC) |
 | UDP receiver / sender | `python -m communication.udp receive --host 0.0.0.0 --port 5051` and `python -m communication.udp send --host <ip> --port 5051 --count 1000 --size 1024` |
@@ -383,14 +386,48 @@ The same amount of data is sent over both protocols on loopback. The explanation
 
 Each demonstration then restores the condition and records whether communication resumed. See [reports/communication.md](reports/communication.md).
 
+## 7A. File upload under link failure (isolated test network)
+
+**The question:** if a network link goes down halfway through a file upload, does the upload continue on a backup route, stall until the link returns, or fail and need a retry?
+
+**Code:** `netlab/` (`config.py` bounds, `topology.py` test network, `lab.py` one run, `analysis.py` outcomes, `runner.py` backends and stored runs, `report.py`). Page: **Lab · Link failure → Upload test** (`app_pages/upload_page.py`). Image: `docker/Dockerfile.netlab`.
+
+**Test network.** Three Linux network namespaces (client, router, server) inside a container, joined by veth links. The client and server are joined directly by the **primary link** (5 ms each end); the **backup path** runs through the router in two hops (10 ms each). The TCP connection runs between service addresses on loopback (`10.98.0.1` → `10.99.0.1`), so it survives a change of path. The host's network is never touched; namespaces are deleted after every run.
+
+**The fault.** When the **server** has received 30% of the file (receiver-confirmed), both ends of the primary link are taken down for 3 s, then brought back and the primary route re-installed.
+
+| Run | What differs |
+|---|---|
+| Healthy baseline | the primary link stays up |
+| Link failure · backup route | a backup route (metric 100, a floating static route) is pre-installed, so forwarding can fall back to it — **controlled failover**, no routing protocol |
+| Link failure · static forwarding | the same fault; the backup path is connected but no route points to it |
+
+Same file (bundled 2 MiB sample, or your own 64 KiB–8 MiB), pacing (512 KiB/s, 8 KiB chunks), 10 s socket timeout, 1 retry and topology in all three runs. Uploads use RouteResQ's framing (FILE_META, FILE_CHUNK, FILE_END) and the server's SHA-256 acknowledgement.
+
+**Measured (recorded run, 2026-11-19, Docker backend):**
+
+| Run | Outcome | Total | Stall | Retry | Same TCP connection | Backup path | SHA-256 |
+|---|---|---|---|---|---|---|---|
+| Healthy baseline | completed normally | 4.04 s | 0.017 s | no | yes | not used (336 B) | match |
+| Backup route | continued on the backup path | 4.07 s | 0.071 s | no | yes | used (1.43 MiB during the outage; first bytes 0.134 s after link down) | match |
+| Static forwarding | stalled until the link returned, then resumed | 4.72 s | 3.29 s | no | yes | not used (250 B); `ip route get` = *Network is unreachable* | match |
+
+* **Stall** = the longest time the server's received byte count did not grow (after the link went down; whole transfer for the baseline).
+* **Backup path used** = ≥ 16 KiB more left the client's backup interface during the outage (interface counters every 50 ms). A completed upload alone is never taken as proof of the path.
+* In the static run progress resumed 0.29 s after the link came back (the next TCP retransmission); the total time grew less than the stall because the paced client catches up at link speed afterwards.
+* A **retry** is a new TCP connection that re-sends the whole file; resuming from a byte offset is not implemented. With a 12 s outage and a 5 s timeout the first connection timed out and the retry (started while the link was still down) timed out too: classified *failed*.
+
+**Running it:** `python -m netlab.runner` (bundled sample) or `python -m netlab.runner --file my.bin`; `--record --report` also refreshes `results/netlab/recorded` and `reports/file_upload_link_failure.md`. Needs Linux with root, or Docker with the image built once: `docker build -f docker/Dockerfile.netlab -t routeresq-netlab:1 docker`. The hosted app has neither, so it shows the **recorded run**, labelled as recorded.
+
 ## 8. Testing
 
 ```bash
-pytest                                  # everything (159 tests)
+pytest                                  # everything (186 tests)
 pytest -m "not ns2 and not network"     # mocked / offline only
 pytest -m ns2                           # real NS2 runs
 pytest -m network                       # real ping/traceroute/DNS (loopback + RFC-reserved targets only)
 pytest -m ui                            # Streamlit AppTest smoke tests
+pytest -m netlab                        # real upload under link failure (skipped without a backend)
 ```
 
 | File | Kind | Covers |

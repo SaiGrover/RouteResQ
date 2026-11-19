@@ -31,7 +31,7 @@ _GH = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill=
 GH_ICON = '<img alt="" width="15" height="15" src="data:image/svg+xml;base64,' + base64.b64encode(_GH.encode()).decode() + '">'
 
 
-def brand_bar(demo_page=None) -> None:
+def brand_bar(demo_page=None, about_page=None, deck_page=None) -> None:
     ns2 = data.ns2_status()
     tools = data.tools_status()
     chips = [
@@ -41,14 +41,21 @@ def brand_bar(demo_page=None) -> None:
     ]
     chip_html = "".join(f'<span class="rr-chip" style="--c:{c}"><i></i>{e(t)}</span>' for t, c in chips)
     with st.container(key="topbar"):
-        left, mid, right = st.columns([2.5, 2.3, 1.7], vertical_alignment="center")
+        left, mid, right = st.columns([2.2, 3.0, 1.3], vertical_alignment="center")
         left.html(f"""<div class="rr-brand"><div class="rr-mark">{MARK}</div><div>
           <div class="rr-wm">Route<b>ResQ</b></div>
           <div class="rr-tag">Network failure detection · root cause · recovery analytics</div></div></div>""")
-        with mid.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center", gap="small"):
+        with mid.container(horizontal=True, horizontal_alignment="right", gap="small"):
             st.html(f'<div class="rr-env">{chip_html}</div>')
+        with mid.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center", gap="small"):
+            # page_link navigates client-side: no rerun of the page being left
+            if about_page is not None:
+                with st.container(key="about_link"):
+                    st.page_link(about_page, label="Problem & solution", icon=":material/lightbulb:")
+            if deck_page is not None:
+                with st.container(key="deck_link"):
+                    st.page_link(deck_page, label="Presentation", icon=":material/slideshow:")
             if demo_page is not None:
-                # page_link navigates client-side: no rerun of the page being left
                 with st.container(key="demo_link"):
                     st.page_link(demo_page, label="Guided demo", icon=":material/play_circle:")
         right.html(f"""<div class="rr-who"><div class="rr-lab">{e(LAB)}</div>
@@ -78,7 +85,13 @@ def _headlines() -> dict[str, str]:
     tls = data.latest_comm("failure_demo")
     if tls:
         ok = sum(1 for r in tls["records"] if r["resumed"])
-        out["transport"] = f"{ok}/{len(tls['records'])} failures recovered"
+        out["transport"] = f"{ok}/{len(tls['records'])} drills recovered"
+    out["upload"] = "reroute · stall · retry?"
+    up = data.upload_latest()
+    if up:
+        o = {m: r["outcome"] for m, r in up["runs"].items()}
+        if o.get("failover", {}).get("stall_s") is not None and o.get("static", {}).get("stall_s") is not None:
+            out["upload"] = f"stall {o['failover']['stall_s']:.2f} s vs {o['static']['stall_s']:.2f} s"
     return out
 
 
@@ -97,7 +110,7 @@ def rail(nav: list[tuple[str, str, str, object]], current_title: str) -> None:
     """
     heads = _headlines()
     accents = {"overview": T.SLATE, "detect": T.SIGNAL, "diagnose": T.AMBER, "impact": T.CLAY,
-               "recovery": T.GREEN, "transport": T.STEEL, "report": T.SAND, "demo": T.SIGNAL}
+               "recovery": T.GREEN, "upload": T.UPLOAD, "transport": T.STEEL, "report": T.SAND, "demo": T.SIGNAL}
     css = []
     for key, stage, _title, page in nav:
         c = accents[key]
