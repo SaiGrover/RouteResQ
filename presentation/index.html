@@ -11,7 +11,7 @@
 :root{
   --bg:#0a0f14; --panel:#111922;
   --border:rgba(148,178,204,.14); --border-hi:rgba(148,178,204,.28);
-  --txt:#e6edf3; --mut:#97a6b5; --dim:#66788a;
+  --txt:#e6edf3; --mut:#a3b1bf; --dim:#6f8193;
   --signal:#4fb3c8; --amber:#e0a957; --clay:#e06b5d; --green:#58bd8c; --steel:#6f9fe0; --sand:#c8a978; --slate:#8a9bb0;
   --head:'Space Grotesk','Inter',system-ui,sans-serif;
   --body:'Inter','Segoe UI',system-ui,sans-serif;
@@ -24,7 +24,7 @@ html,body{height:100%;background:#05080b;color:var(--txt);font-family:var(--body
 #stage{width:1280px;height:720px;position:absolute;left:50%;top:50%;transform-origin:center center;transform:translate(-50%,-50%)}
 
 /* ---------- slide frame + transition ---------- */
-.slide{position:absolute;inset:0;background:var(--bg);overflow:hidden;padding:64px 80px 56px;
+.slide{position:absolute;inset:0;background:var(--bg);overflow:hidden;padding:56px 80px 60px;
   display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:scale(1.015);
   transition:opacity .5s var(--ease),transform .6s var(--ease),visibility .5s}
 .slide.active{opacity:1;visibility:visible;transform:none}
@@ -44,7 +44,6 @@ html,body{height:100%;background:#05080b;color:var(--txt);font-family:var(--body
 @keyframes march{to{stroke-dashoffset:-26}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes kenburns{from{transform:scale(1.08) translate(-1%,1%)}to{transform:scale(1) translate(0,0)}}
-@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(79,179,200,0)}50%{box-shadow:0 0 0 6px rgba(79,179,200,.12)}}
 
 .anim{opacity:0}
 .slide.active .anim{animation:rise .7s var(--ease) both;animation-delay:calc(var(--i,0) * 80ms + 120ms)}
@@ -63,22 +62,20 @@ html,body{height:100%;background:#05080b;color:var(--txt);font-family:var(--body
 }
 
 /* ---------- type ---------- */
-.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--k,var(--signal));margin-bottom:14px}
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--k,var(--signal));margin-bottom:12px}
 h1{font-family:var(--head);font-weight:700;letter-spacing:-.035em;line-height:1.02}
-h2{font-family:var(--head);font-weight:700;font-size:44px;letter-spacing:-.03em;line-height:1.08;max-width:1020px}
-h3{font-family:var(--head);font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.2}
-.lede{font-size:20px;color:var(--mut);line-height:1.5;margin-top:14px;max-width:960px}
+h2{font-family:var(--head);font-weight:700;font-size:42px;letter-spacing:-.03em;line-height:1.1;max-width:1100px}
+h3{font-family:var(--head);font-weight:600;font-size:22px;letter-spacing:-.01em;line-height:1.2}
+.lede{font-size:20px;color:var(--mut);line-height:1.5;margin-top:12px;max-width:1000px}
 p{line-height:1.5}
 .mut{color:var(--mut)} .dim{color:var(--dim)}
 .mono{font-family:var(--mono)}
 em{font-style:normal;color:var(--signal)}
 
 /* ---------- building blocks ---------- */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px 24px;position:relative;
-  transition:border-color .25s,transform .25s}
-.card:hover{border-color:var(--border-hi);transform:translateY(-2px)}
-.card.accent{box-shadow:inset 0 2px 0 0 var(--c,var(--signal))}
-.card p{color:var(--mut);font-size:15.5px;margin-top:8px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative}
+.card.accent{box-shadow:inset 0 3px 0 0 var(--c,var(--signal))}
+.card p{color:var(--mut);font-size:16.5px;margin-top:8px}
 .grid{display:grid;gap:18px}
 .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
 .chip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;border:1px solid var(--border-hi);
@@ -86,15 +83,29 @@ em{font-style:normal;color:var(--signal)}
 .chip i{width:7px;height:7px;border-radius:50%;background:var(--c,var(--signal));display:block}
 .num{font-family:var(--head);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--c,var(--txt));font-variant-numeric:tabular-nums}
 .num small{font-size:.42em;color:var(--mut);font-weight:500;letter-spacing:0;margin-left:4px}
-.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .shot{border-radius:12px;border:1px solid var(--border-hi);overflow:hidden;background:#000;box-shadow:0 30px 60px -30px rgba(0,0,0,.9)}
 .shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top}
-ul.ticks{list-style:none;display:grid;gap:12px}
-ul.ticks li{padding-left:26px;position:relative;font-size:17px;line-height:1.45;color:var(--txt)}
-ul.ticks li::before{content:"";position:absolute;left:2px;top:9px;width:10px;height:10px;border-radius:3px;background:var(--c,var(--signal));opacity:.9}
+ul.ticks{list-style:none;display:grid;gap:13px}
+ul.ticks li{padding-left:26px;position:relative;font-size:18px;line-height:1.45;color:var(--txt)}
+ul.ticks li::before{content:"";position:absolute;left:2px;top:10px;width:10px;height:10px;border-radius:3px;background:var(--c,var(--signal));opacity:.9}
 ul.ticks li span{color:var(--mut)}
 .row{display:flex;gap:18px;align-items:center}
-.spacer{height:26px}
+.spacer{height:24px}
+
+/* "in simple words" strip: the line to say out loud */
+.strip{margin-top:auto;display:flex;gap:22px;align-items:center;background:rgba(79,179,200,.07);
+  border:1px solid rgba(79,179,200,.32);border-radius:12px;padding:15px 22px;font-size:19px;line-height:1.4}
+.strip .label{color:var(--signal);white-space:nowrap;font-size:11.5px}
+.strip b{color:var(--signal);font-weight:600}
+
+/* step chain */
+.chain{display:flex;align-items:stretch;gap:0}
+.chain .lk{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 14px;text-align:center;position:relative;margin-right:28px}
+.chain .lk:last-child{margin-right:0}
+.chain .lk:not(:last-child)::after{content:"→";position:absolute;right:-22px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:20px}
+.chain .lk b{display:block;font-family:var(--head);font-size:19px}
+.chain .lk span{display:block;color:var(--mut);font-size:14px;margin-top:4px;line-height:1.35}
 
 /* pipeline */
 .pipe{display:grid;grid-template-columns:repeat(5,1fr);align-items:stretch}
@@ -104,20 +115,20 @@ ul.ticks li span{color:var(--mut)}
 .stage-box:not(:last-child)::after{content:"⟶";position:absolute;right:-27px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:20px}
 .stage-box .label{color:var(--c)}
 .stage-box h3{margin-top:8px}
-.stage-box p{font-size:14px;color:var(--mut);margin-top:8px}
+.stage-box p{font-size:15px;color:var(--mut);margin-top:8px}
 
 /* tables */
-table{width:100%;border-collapse:collapse;font-size:15.5px}
+table{width:100%;border-collapse:collapse;font-size:16.5px}
 th{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:left;font-weight:600;padding:0 14px 10px;border-bottom:1px solid var(--border-hi)}
 td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--txt);vertical-align:top}
 tr:last-child td{border-bottom:none}
-.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;font-family:var(--mono);
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;font-family:var(--mono);
   color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);white-space:nowrap}
 
 /* bars */
 .bars{display:grid;gap:14px}
-.bar{display:grid;grid-template-columns:150px 1fr 90px;gap:14px;align-items:center;font-size:15px}
-.bar .track{height:22px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.bar{display:grid;grid-template-columns:170px 1fr 100px;gap:14px;align-items:center;font-size:16.5px}
+.bar .track{height:24px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
 .bar .track div{height:100%;background:var(--c);border-radius:6px;min-width:3px}
 .bar .v{font-family:var(--mono);text-align:right;color:var(--c)}
 
@@ -153,8 +164,8 @@ body.awake #hud{opacity:1}
       <span class="chip"><i></i>Computer Networks · 24B15CS313</span>
     </div>
     <h1 class="wm anim">Route<b>ResQ</b></h1>
-    <p class="anim" style="font-family:var(--head);font-size:30px;font-weight:500;letter-spacing:-.01em;margin-top:14px;max-width:760px;line-height:1.25">
-      Find out <em>why</em> a network failed, what it did to the traffic, and whether it recovered.</p>
+    <p class="anim" style="font-family:var(--head);font-size:30px;font-weight:500;letter-spacing:-.01em;margin-top:14px;max-width:820px;line-height:1.25">
+      When a network fails, RouteResQ finds out <em>why</em>, what it did to the traffic, and whether it came back.</p>
     <div class="anim" style="margin-top:48px;display:grid;grid-template-columns:repeat(4,auto);gap:10px 36px;justify-content:start">
       <div><div class="label">Saanvi Grover</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030010</div></div>
       <div><div class="label">Aditya Sharma</div><div class="mono mut" style="font-size:13px;margin-top:4px">2408030019</div></div>
@@ -168,122 +179,135 @@ body.awake #hud{opacity:1}
 <!-- 2 · Problem -->
 <section class="slide">
   <div class="kicker anim" style="--k:var(--clay)">The problem</div>
-  <h2 class="anim">“The site is timing out.”<br><span class="mut">That one symptom has at least six different causes.</span></h2>
+  <h2 class="anim">“The website is not opening.”<br><span class="mut">But why? There are many possible reasons.</span></h2>
   <div class="spacer"></div>
   <div class="grid g3" style="gap:14px">
-    <div class="card accent anim" style="--c:var(--clay)"><h3>DNS failure</h3><p>The name never resolves, so no packet is ever sent.</p></div>
-    <div class="card accent anim" style="--c:var(--clay)"><h3>Host or path down</h3><p>Echo requests vanish somewhere beyond the last router that answers.</p></div>
-    <div class="card accent anim" style="--c:var(--amber)"><h3>Congestion</h3><p>Queues fill, delay climbs, the router drops packets.</p></div>
-    <div class="card accent anim" style="--c:var(--amber)"><h3>Link failure</h3><p>Routing has to find another path, or traffic stops until the link returns.</p></div>
-    <div class="card accent anim" style="--c:var(--steel)"><h3>Port closed / reset</h3><p>The host is alive but the service refuses or drops the connection.</p></div>
-    <div class="card accent anim" style="--c:var(--steel)"><h3>Bad certificate</h3><p>TLS rejects an untrusted issuer or the wrong host name.</p></div>
+    <div class="card accent anim" style="--c:var(--clay)"><h3>DNS failed</h3><p>The name could not be turned into an address.</p></div>
+    <div class="card accent anim" style="--c:var(--clay)"><h3>Host or path down</h3><p>Packets disappear somewhere on the way.</p></div>
+    <div class="card accent anim" style="--c:var(--amber)"><h3>Traffic jam</h3><p>Too much traffic; queues fill and packets drop.</p></div>
+    <div class="card accent anim" style="--c:var(--amber)"><h3>Link broke</h3><p>A wire failed; traffic needs a detour or stops.</p></div>
+    <div class="card accent anim" style="--c:var(--steel)"><h3>Port closed</h3><p>The computer is on, but the program is not.</p></div>
+    <div class="card accent anim" style="--c:var(--steel)"><h3>Bad certificate</h3><p>The secure connection refused the server's ID.</p></div>
   </div>
-  <p class="lede anim" style="margin-top:26px"><b style="color:var(--txt)">ping</b>, <b style="color:var(--txt)">tracert</b> and <b style="color:var(--txt)">nslookup</b> only show symptoms. Routers ignore ICMP, and a working TCP connection can contradict a failed ping. People end up guessing.</p>
+  <p class="lede anim" style="margin-top:22px">Tools like <b style="color:var(--txt)">ping</b> and <b style="color:var(--txt)">traceroute</b> only say “no reply”. Many servers ignore ping on purpose, so even that can mislead.</p>
+  <div class="strip anim"><span class="label">In simple words</span><span>A fever is a symptom, not a disease. Ping shows the <b>symptom</b>. RouteResQ looks for the <b>cause</b>, like a careful doctor.</span></div>
 </section>
 
-<!-- 3 · Goal -->
+<!-- 3 · What it does -->
 <section class="slide">
-  <div class="kicker anim">Our goal</div>
-  <h2 class="anim">Answer five questions for every failure, and only with evidence.</h2>
+  <div class="kicker anim">What RouteResQ does</div>
+  <h2 class="anim">Every failure goes through the same five questions</h2>
   <div class="spacer"></div>
   <div class="pipe">
-    <div class="stage-box anim" style="--c:var(--signal)"><div class="label">01 · Detect</div><h3>What failed?</h3><p>DNS, gateway, ping, traceroute and TCP checks against authorised hosts.</p></div>
-    <div class="stage-box anim" style="--c:var(--amber)"><div class="label">02 · Diagnose</div><h3>Why, and how sure?</h3><p>17 deterministic rules. Each cause gets a status, never a fake percentage.</p></div>
-    <div class="stage-box anim" style="--c:var(--clay)"><div class="label">03 · Impact</div><h3>What did it do to traffic?</h3><p>Loss, delay, jitter, throughput and paths from real NS2 traces.</p></div>
-    <div class="stage-box anim" style="--c:var(--green)"><div class="label">04 · Recovery</div><h3>Did it recover?</h3><p>Claimed only when the trace shows it: rerouted, restored or drained.</p></div>
-    <div class="stage-box anim" style="--c:var(--steel)"><div class="label">05 · Report</div><h3>Can we prove it?</h3><p>Root-cause register and reports, each linked to the raw evidence.</p></div>
+    <div class="stage-box anim" style="--c:var(--signal)"><div class="label">01 · Detect</div><h3>What failed?</h3><p>Run real checks: DNS, ping, traceroute, TCP.</p></div>
+    <div class="stage-box anim" style="--c:var(--amber)"><div class="label">02 · Diagnose</div><h3>Why, and how sure?</h3><p>17 simple if-then rules decide.</p></div>
+    <div class="stage-box anim" style="--c:var(--clay)"><div class="label">03 · Impact</div><h3>What did it do?</h3><p>Count every lost and late packet in NS2.</p></div>
+    <div class="stage-box anim" style="--c:var(--green)"><div class="label">04 · Recovery</div><h3>Did it come back?</h3><p>Detour, wait for repair, or never.</p></div>
+    <div class="stage-box anim" style="--c:var(--steel)"><div class="label">05 · Report</div><h3>Can we prove it?</h3><p>Every number saved in files anyone can open.</p></div>
   </div>
   <div class="spacer"></div>
   <div class="card anim" style="display:flex;gap:26px;align-items:center;padding:18px 24px">
-    <div class="label" style="color:var(--amber);white-space:nowrap">Ground rule</div>
-    <p style="margin:0;font-size:17px;color:var(--txt)">Live measurements, NS2 simulations and loopback sockets are labelled and kept apart. A simulated cause is <b>never</b> presented as the cause of a live problem.</p>
+    <div class="label" style="color:var(--amber);white-space:nowrap">Our rule</div>
+    <p style="margin:0;font-size:18px;color:var(--txt)">Only real evidence. <b>No guessing, no machine learning, no fake “90% sure” numbers.</b> Every answer says how sure we are, in plain words.</p>
   </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>These five stages are also the five buttons along the top of the app, so the demo follows the same order.</span></div>
 </section>
 
-<!-- 4 · Architecture -->
+<!-- 4 · Four parts -->
 <section class="slide">
-  <div class="kicker anim">Architecture</div>
-  <h2 class="anim">The UI only presents stored evidence. All the logic is in testable Python modules.</h2>
+  <div class="kicker anim">How it is built</div>
+  <h2 class="anim">Four working parts, joined by one table</h2>
   <div class="spacer"></div>
-  <svg viewBox="0 0 1120 400" width="1120" height="400" style="font-family:Inter,system-ui,sans-serif">
-    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#66788a"/></marker></defs>
-    <g class="draw" stroke="#66788a" stroke-width="1.6" fill="none" marker-end="url(#ar)" style="--len:420">
-      <path d="M560 62 L190 112" style="--d:300"/><path d="M560 62 L560 112" style="--d:300"/><path d="M560 62 L930 112" style="--d:300"/>
-      <path d="M190 172 L190 202" style="--d:650"/><path d="M560 172 L560 202" style="--d:650"/><path d="M930 172 L930 202" style="--d:650"/>
-      <path d="M190 262 L470 300" style="--d:950"/><path d="M560 262 L560 296" style="--d:950"/><path d="M930 262 L650 300" style="--d:950"/>
-      <path d="M650 326 L762 326" style="--d:1250"/><path d="M944 326 L978 326" style="--d:1450"/>
-    </g>
-    <g font-size="15" text-anchor="middle">
-      <g class="node" style="--d:0"><rect x="430" y="8" width="260" height="54" rx="10" fill="#132430" stroke="#4fb3c8"/><text x="560" y="32" fill="#e6edf3" font-weight="600">Streamlit UI · workflow rail</text><text x="560" y="51" fill="#97a6b5" font-size="12.5">guided demo · source labels</text></g>
-      <g class="node" style="--d:350"><rect x="70" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="190" y="139" fill="#e6edf3" font-weight="600">diagnostics</text><text x="190" y="158" fill="#97a6b5" font-size="12.5">DNS · ping · trace · TCP</text></g>
-      <g class="node" style="--d:420"><rect x="440" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="560" y="139" fill="#e6edf3" font-weight="600">simulation</text><text x="560" y="158" fill="#97a6b5" font-size="12.5">ns-2.35 runner · trace parser</text></g>
-      <g class="node" style="--d:490"><rect x="810" y="114" width="240" height="58" rx="10" fill="#111922" stroke="rgba(148,178,204,.28)"/><text x="930" y="139" fill="#e6edf3" font-weight="600">communication · security</text><text x="930" y="158" fill="#97a6b5" font-size="12.5">TCP · UDP · TLS · lab PKI</text></g>
-      <g class="node" style="--d:700"><rect x="70" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#e0a957"/><text x="190" y="229" fill="#e6edf3" font-weight="600">failure_analysis</text><text x="190" y="248" fill="#97a6b5" font-size="12.5">17 rules · rule trace</text></g>
-      <g class="node" style="--d:770"><rect x="440" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#c8a978"/><text x="560" y="229" fill="#e6edf3" font-weight="600">analysis</text><text x="560" y="248" fill="#97a6b5" font-size="12.5">packets · paths · recovery</text></g>
-      <g class="node" style="--d:840"><rect x="810" y="204" width="240" height="58" rx="10" fill="#111922" stroke="#58bd8c"/><text x="930" y="229" fill="#e6edf3" font-weight="600">verification</text><text x="930" y="248" fill="#97a6b5" font-size="12.5">cert chain · SHA-256 · drills</text></g>
-      <g class="node" style="--d:1050"><rect x="470" y="298" width="180" height="58" rx="10" fill="#101827" stroke="#6f9fe0"/><text x="560" y="323" fill="#e6edf3" font-weight="600">results/</text><text x="560" y="342" fill="#97a6b5" font-size="12.5">JSON · CSV · traces</text></g>
-      <g class="node" style="--d:1350"><rect x="764" y="298" width="180" height="58" rx="10" fill="#1d1a12" stroke="#e0a957"/><text x="854" y="323" fill="#e6edf3" font-weight="600">cause register</text><text x="854" y="342" fill="#97a6b5" font-size="12.5">cause + status</text></g>
-      <g class="node" style="--d:1550"><rect x="980" y="298" width="130" height="58" rx="10" fill="#10201a" stroke="#58bd8c"/><text x="1045" y="323" fill="#e6edf3" font-weight="600">reports</text><text x="1045" y="342" fill="#97a6b5" font-size="12.5">Markdown</text></g>
-    </g>
-  </svg>
-  <p class="mono dim anim" style="font-size:13px;margin-top:4px">Same backend from the command line, the test suite and the UI · deployed on Streamlit Community Cloud with Debian ns2</p>
-</section>
-
-<!-- 5 · Detect & Diagnose -->
-<section class="slide">
-  <div class="kicker anim" style="--k:var(--amber)">01 · Detect &nbsp;→&nbsp; 02 · Diagnose</div>
-  <div class="grid" style="grid-template-columns:1fr 440px;gap:40px;flex:1;min-height:0">
-    <div class="grid" style="grid-template-rows:1fr 1fr;gap:16px;min-height:0">
-      <div class="shot anim"><img src="assets/diagnostics.jpg" alt="Diagnostics page with a healthy localhost result"></div>
-      <div class="shot anim"><img src="assets/root_cause.jpg" alt="Evidence ladder and rule trace"></div>
-    </div>
-    <div>
-      <h2 class="anim" style="font-size:34px">Real measurements in, 17 traced rules out</h2>
-      <div class="spacer"></div>
-      <ul class="ticks">
-        <li class="anim">DNS, gateway, ping, tracert and TCP connect. <span>Allow-listed targets only, never through a shell.</span></li>
-        <li class="anim" style="--c:var(--amber)">Evidence ladder: <span>symptoms → measurements → explanations → limits</span></li>
-        <li class="anim" style="--c:var(--amber)">The rule trace shows why each rule fired <span>or didn't</span></li>
-        <li class="anim" style="--c:var(--amber)">Contradictions stay visible, <span>e.g. ping fails but TCP connects</span></li>
-        <li class="anim" style="--c:var(--amber)">Congestion needs <b>≥ 2</b> independent indicators. <span>One slow RTT isn't enough.</span></li>
-      </ul>
-    </div>
+  <div class="grid g4" style="gap:16px">
+    <div class="card accent anim" style="--c:var(--signal)"><div class="label" style="color:var(--signal)">Part 1</div><h3 style="margin-top:6px">Live checks</h3><p>Real DNS, ping, traceroute and TCP on the real computer.</p></div>
+    <div class="card accent anim" style="--c:var(--amber)"><div class="label" style="color:var(--amber)">Part 2</div><h3 style="margin-top:6px">Rule engine</h3><p>17 if-then rules turn results into possible causes.</p></div>
+    <div class="card accent anim" style="--c:var(--sand)"><div class="label" style="color:var(--sand)">Part 3</div><h3 style="margin-top:6px">NS2 experiments</h3><p>We break a link or jam it on purpose and count every packet.</p></div>
+    <div class="card accent anim" style="--c:var(--green)"><div class="label" style="color:var(--green)">Part 4</div><h3 style="margin-top:6px">Transport lab</h3><p>Real TCP, UDP and TLS, broken in 6 ways, then repaired.</p></div>
   </div>
-</section>
-
-<!-- 6 · Cause register -->
-<section class="slide">
-  <div class="kicker anim" style="--k:var(--amber)">The core output</div>
-  <h2 class="anim">The root-cause register: one cause and one honest status per failure</h2>
   <div class="spacer"></div>
-  <div class="grid" style="grid-template-columns:420px 1fr;gap:36px;align-items:start">
-    <div class="grid" style="gap:12px">
-      <div class="card anim" style="padding:15px 20px"><span class="pill" style="--c:var(--green)">Confirmed (injected)</span><p>We caused it in a controlled experiment, and the trace shows its effect.</p></div>
-      <div class="card anim" style="padding:15px 20px"><span class="pill" style="--c:var(--signal)">Likely</span><p>Live: exactly one explanation fits all the evidence.</p></div>
-      <div class="card anim" style="padding:15px 20px"><span class="pill" style="--c:var(--amber)">Not confirmed</span><p>Live: several explanations fit. We list them plus the checks that would decide.</p></div>
-      <div class="card anim" style="padding:15px 20px"><span class="pill" style="--c:var(--slate)">No failure detected</span><p>Nothing to explain.</p></div>
-    </div>
-    <div>
-      <table>
-        <tr class="anim"><th>Subject</th><th>Status</th><th>Stated cause</th></tr>
-        <tr class="anim"><td class="mono" style="font-size:14px">nonexistent.invalid</td><td><span class="pill" style="--c:var(--signal)">Likely</span></td><td class="mut">Name doesn't exist in DNS. The gateway answered, so the LAN is fine.</td></tr>
-        <tr class="anim"><td class="mono" style="font-size:14px">192.0.2.1</td><td><span class="pill" style="--c:var(--amber)">Not confirmed</span></td><td class="mut">Host down, path beyond hop 2, or ICMP filtered. A TCP check would decide.</td></tr>
-        <tr class="anim"><td>NS2 B1 / B2</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">Link n1–n2 taken down at 3 s, back at 6 s</td></tr>
-        <tr class="anim"><td>NS2 C</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">2.5 Mb/s offered on a 2 Mb/s link</td></tr>
-        <tr class="anim"><td>6 transport drills</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">Refused, timeout, reset, UDP gaps, two TLS errors</td></tr>
-      </table>
-      <div class="row anim" style="margin-top:22px;gap:30px">
-        <div><div class="num" style="font-size:54px;--c:var(--amber)"><span data-to="11">11</span><small>/ 13</small></div><div class="label" style="margin-top:6px">subjects with a stated cause</div></div>
-        <div class="mut" style="font-size:15px;max-width:330px">The other 2 subjects are healthy. Every row links back to its run, trace or drill record.</div>
-      </div>
-    </div>
+  <div class="chain anim">
+    <div class="lk"><b>Measure</b><span>parts 1, 3, 4</span></div>
+    <div class="lk"><b>Analyse</b><span>rules · packet counting</span></div>
+    <div class="lk"><b>Save to files</b><span>JSON · CSV · reports</span></div>
+    <div class="lk" style="border-color:rgba(224,169,87,.5)"><b>Root-cause register</b><span>one row per failure</span></div>
+    <div class="lk"><b>Website</b><span>shows saved results</span></div>
   </div>
+  <p class="mut anim" style="font-size:16px;margin-top:16px">Python · Streamlit website · NS2 2.35 simulator · 159 automatic tests · live online</p>
+  <div class="strip anim"><span class="label">In simple words</span><span>The website has <b>no networking logic</b>. It only shows what the Python code measured and saved, so every number can be checked.</span></div>
 </section>
 
-<!-- 7 · NS2 setup -->
+<!-- 5 · Live check -->
 <section class="slide">
-  <div class="kicker anim" style="--k:var(--sand)">03 · Impact · NS2 2.35</div>
-  <h2 class="anim">Same topology and traffic, one injected condition per scenario</h2>
+  <div class="kicker anim" style="--k:var(--signal)">Part 1 · The live check</div>
+  <h2 class="anim">Type a destination, press Run: six checks in order</h2>
+  <div class="spacer"></div>
+  <div class="chain anim">
+    <div class="lk"><b>My network</b><span>my IP, gateway, DNS server</span></div>
+    <div class="lk"><b>DNS</b><span>name → address</span></div>
+    <div class="lk"><b>Ping gateway</b><span>is my side OK?</span></div>
+    <div class="lk"><b>Ping target</b><span>replies, loss, delay</span></div>
+    <div class="lk"><b>Traceroute</b><span>where does it stop?</span></div>
+    <div class="lk"><b>TCP connect</b><span>is the service up?</span></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="grid g2" style="gap:18px">
+    <div class="card accent anim" style="--c:var(--green)"><h3>The gateway trick</h3><p>Gateway answers but the destination does not → the problem is <b style="color:var(--txt)">beyond your own network</b>. Gateway fails too → the problem is close to you.</p></div>
+    <div class="card accent anim" style="--c:var(--clay)"><h3>Safe by design</h3><p>Only allowed destinations (e.g. 8.8.8.8, localhost, two safe test targets). Only 7 programs can run, never through a shell. Parsers never guess a value.</p></div>
+  </div>
+  <div class="card anim" style="margin-top:16px;padding:14px 22px;display:flex;gap:24px;align-items:center">
+    <div class="label" style="color:var(--amber);white-space:nowrap">Real example</div>
+    <p style="margin:0;font-size:16.5px;color:var(--txt)"><span class="mono" style="color:var(--signal)">192.0.2.1</span> &nbsp;→&nbsp; gateway 4/4 ✓ &nbsp;·&nbsp; target 0/4 ✗ &nbsp;·&nbsp; traceroute silent after hop 2 &nbsp;·&nbsp; TCP timed out</p>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>Instead of trusting one test, we run <b>several small tests</b> and look at them together.</span></div>
+</section>
+
+<!-- 6 · Rules + honest words -->
+<section class="slide">
+  <div class="kicker anim" style="--k:var(--amber)">Part 2 · The rule engine</div>
+  <h2 class="anim">17 “if this, then that” rules, and honest words for how sure we are</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:1fr 470px;gap:36px;align-items:start">
+    <ul class="ticks" style="--c:var(--amber)">
+      <li class="anim">DNS failed → <b>DNS failure</b></li>
+      <li class="anim">0 ping replies → <b>Unreachable</b> <span>… unless TCP shows the host is alive: then “ping is probably blocked”</span></li>
+      <li class="anim">Loss ≥ 5% → <b>Packet loss</b>; delay &gt; 150 ms → <b>High latency</b></li>
+      <li class="anim">Congestion needs <b>2 signs together</b> <span>(one slow reply is not enough)</span></li>
+      <li class="anim">Every answer shows a <b>rule trace</b> <span>: which rules fired, and why</span></li>
+    </ul>
+    <div class="grid" style="gap:10px">
+      <div class="card anim" style="padding:13px 18px"><span class="pill" style="--c:var(--green)">Confirmed (injected)</span><p style="margin-top:6px;font-size:15.5px">We caused it ourselves, so we know.</p></div>
+      <div class="card anim" style="padding:13px 18px"><span class="pill" style="--c:var(--signal)">Likely</span><p style="margin-top:6px;font-size:15.5px">Live: only one explanation fits.</p></div>
+      <div class="card anim" style="padding:13px 18px"><span class="pill" style="--c:var(--amber)">Not confirmed</span><p style="margin-top:6px;font-size:15.5px">Live: several fit. We list them all.</p></div>
+      <div class="card anim" style="padding:13px 18px"><span class="pill" style="--c:var(--slate)">No failure detected</span><p style="margin-top:6px;font-size:15.5px">Everything is healthy.</p></div>
+    </div>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>A live failure is never “Confirmed”, because we did not cause it. Like a detective: if you hid the key, you <b>know</b>; if someone else lost it, it is only <b>likely</b>.</span></div>
+</section>
+
+<!-- 7 · Register -->
+<section class="slide">
+  <div class="kicker anim" style="--k:var(--amber)">The main output</div>
+  <h2 class="anim">The root-cause register: one row per failure, its cause, how sure we are</h2>
+  <div class="spacer"></div>
+  <table>
+    <tr class="anim"><th>What we checked</th><th>Status</th><th>Cause, in plain words</th></tr>
+    <tr class="anim"><td class="mono" style="font-size:15px">8.8.8.8</td><td><span class="pill" style="--c:var(--slate)">No failure</span></td><td class="mut">Replies came back. Healthy.</td></tr>
+    <tr class="anim"><td class="mono" style="font-size:15px">nonexistent.invalid</td><td><span class="pill" style="--c:var(--signal)">Likely</span></td><td class="mut">The name does not exist. The gateway worked, so our network was fine.</td></tr>
+    <tr class="anim"><td class="mono" style="font-size:15px">192.0.2.1</td><td><span class="pill" style="--c:var(--amber)">Not confirmed</span></td><td class="mut">Host off, path broken after hop 2, or a firewall. All three fit, so we list all three.</td></tr>
+    <tr class="anim"><td>NS2 B1 · B2 · C</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">We broke link n1–n2, or jammed it, on purpose.</td></tr>
+    <tr class="anim"><td>6 transport drills</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">Refused, timeout, reset, missing UDP, two certificate errors.</td></tr>
+  </table>
+  <div class="row anim" style="margin-top:18px;gap:30px">
+    <div><div class="num" style="font-size:52px;--c:var(--amber)"><span data-to="11">11</span><small>/ 13</small></div><div class="label" style="margin-top:6px">failures with a stated cause</div></div>
+    <div class="mut" style="font-size:16px;max-width:520px">The other 2 (8.8.8.8 and NS2 scenario A) are healthy. Live rows are re-checked with the current rules every time.</div>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>When we are sure, we say so. When we are not, we say <b>that</b>, and list what else it could be.</span></div>
+</section>
+
+<!-- 8 · NS2 setup -->
+<section class="slide">
+  <div class="kicker anim" style="--k:var(--sand)">Part 3 · NS2 experiments</div>
+  <h2 class="anim">A small practice network where we break things on purpose</h2>
   <div class="spacer"></div>
   <div class="grid" style="grid-template-columns:600px 1fr;gap:40px;align-items:center">
     <svg viewBox="0 0 600 300" width="600" height="300" style="font-family:Inter,sans-serif">
@@ -295,19 +319,18 @@ body.awake #hud{opacity:1}
         <line x1="404" y1="150" x2="564" y2="150" stroke="#58bd8c" style="--d:800"/>
       </g>
       <line class="failed" x1="196" y1="150" x2="300" y2="62" stroke="#e06b5d" stroke-width="3" stroke-dasharray="7 6"/>
-      <!-- live packets: the monitored flow taking the alternative path while n1-n2 is down -->
       <path id="altpath" d="M36 150 L196 150 L300 238 L404 150 L564 150" fill="none" stroke="none"/>
       <g fill="#c8a978">
         <circle r="5"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#altpath"/></animateMotion></circle>
         <circle r="5"><animateMotion dur="3s" begin="1s" repeatCount="indefinite"><mpath href="#altpath"/></animateMotion></circle>
         <circle r="5"><animateMotion dur="3s" begin="2s" repeatCount="indefinite"><mpath href="#altpath"/></animateMotion></circle>
       </g>
-      <g font-size="12" fill="#97a6b5" font-family="JetBrains Mono,monospace">
+      <g font-size="12" fill="#a3b1bf" font-family="JetBrains Mono,monospace">
         <text x="116" y="138" text-anchor="middle">10 Mb · 2 ms</text><text x="484" y="138" text-anchor="middle">10 Mb · 2 ms</text>
         <text x="236" y="92" text-anchor="end">2 Mb · 10 ms</text><text x="364" y="92">2 Mb · 10 ms</text>
         <text x="236" y="218" text-anchor="end">2 Mb · 15 ms</text><text x="364" y="218">2 Mb · 15 ms</text>
-        <text x="300" y="20" fill="#e06b5d" text-anchor="middle">B1/B2: n1–n2 down 3–6 s</text>
-        <text x="300" y="292" fill="#c8a978" text-anchor="middle">traffic rerouted over n3 (cost 3)</text>
+        <text x="300" y="20" fill="#e06b5d" text-anchor="middle">main road n1–n2 broken 3–6 s</text>
+        <text x="300" y="292" fill="#c8a978" text-anchor="middle">detour over the backup road (n3)</text>
       </g>
       <g font-family="Space Grotesk,sans-serif" font-weight="700" font-size="17" text-anchor="middle">
         <g class="node" style="--d:0"><circle cx="36" cy="150" r="26" fill="#111922" stroke="#4fb3c8" stroke-width="2"/><text x="36" y="156" fill="#e6edf3">n0</text></g>
@@ -319,125 +342,132 @@ body.awake #hud{opacity:1}
       </g>
     </svg>
     <div class="grid" style="gap:10px">
-      <div class="card anim" style="padding:13px 18px;--c:var(--green)"><div class="row" style="gap:12px"><span class="pill">A</span><b>Healthy baseline</b></div></div>
-      <div class="card anim" style="padding:13px 18px;--c:var(--steel)"><div class="row" style="gap:12px"><span class="pill">B1</span><b>Link failure · distance-vector routing</b></div></div>
-      <div class="card anim" style="padding:13px 18px;--c:var(--clay)"><div class="row" style="gap:12px"><span class="pill">B2</span><b>Link failure · static routing</b></div></div>
-      <div class="card anim" style="padding:13px 18px;--c:var(--amber)"><div class="row" style="gap:12px"><span class="pill">C</span><b>Congestion · extra 1.5 Mb/s flow, 3–6 s</b></div></div>
-      <p class="mut anim" style="font-size:15px;margin-top:6px">Monitored flow: 1 Mb/s CBR/UDP, 1000-byte packets, n0 → n5, 1–9 s. All queues are DropTail with 20 packets.</p>
+      <div class="card anim" style="padding:12px 18px"><div class="row" style="gap:12px"><span class="pill" style="--c:var(--green)">A</span><span><b>Nothing breaks</b> <span class="mut">· the normal reference</span></span></div></div>
+      <div class="card anim" style="padding:12px 18px"><div class="row" style="gap:12px"><span class="pill" style="--c:var(--steel)">B1</span><span><b>Road breaks</b> <span class="mut">· smart routing (DV)</span></span></div></div>
+      <div class="card anim" style="padding:12px 18px"><div class="row" style="gap:12px"><span class="pill" style="--c:var(--clay)">B2</span><span><b>Same break</b> <span class="mut">· fixed routes (static)</span></span></div></div>
+      <div class="card anim" style="padding:12px 18px"><div class="row" style="gap:12px"><span class="pill" style="--c:var(--amber)">C</span><span><b>Traffic jam</b> <span class="mut">· 2.5 Mb/s into a 2 Mb/s link</span></span></div></div>
+      <p class="mut anim" style="font-size:15.5px;margin-top:4px">n0 sends one packet every 8 ms to n5, from 1 s to 9 s: <b style="color:var(--txt)">1001 packets</b>. Each queue holds 20.</p>
     </div>
   </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>Like a flight simulator for networks. Because <b>we</b> cause the failure, we know the true cause and can measure its effect exactly.</span></div>
 </section>
 
-<!-- 8 · NS2 results -->
+<!-- 9 · NS2 results -->
 <section class="slide">
-  <div class="kicker anim" style="--k:var(--sand)">03 · Impact · results from real traces</div>
-  <h2 class="anim">Routing protocol choice decides whether a link failure is a blip or an outage</h2>
+  <div class="kicker anim" style="--k:var(--sand)">Part 3 · What happened</div>
+  <h2 class="anim">Same broken road: smart routing loses 2 packets, fixed routing loses 377</h2>
   <div class="spacer"></div>
   <div class="grid g2" style="gap:44px">
     <div>
-      <div class="label anim" style="margin-bottom:16px">Packet loss (%)</div>
+      <div class="label anim" style="margin-bottom:16px">Packets delivered (out of 1001)</div>
       <div class="bars">
-        <div class="bar anim" style="--c:var(--green)"><span>A · healthy</span><div class="track"><div style="width:0%"></div></div><span class="v">0.00</span></div>
-        <div class="bar anim" style="--c:var(--steel)"><span>B1 · DV</span><div class="track"><div style="width:0.53%"></div></div><span class="v">0.20</span></div>
-        <div class="bar anim" style="--c:var(--clay)"><span>B2 · static</span><div class="track"><div style="width:100%"></div></div><span class="v">37.66</span></div>
-        <div class="bar anim" style="--c:var(--amber)"><span>C · congestion</span><div class="track"><div style="width:31%"></div></div><span class="v">11.69</span></div>
+        <div class="bar anim" style="--c:var(--green)"><span>A · nothing breaks</span><div class="track"><div style="width:100%"></div></div><span class="v">1001</span></div>
+        <div class="bar anim" style="--c:var(--steel)"><span>B1 · smart routing</span><div class="track"><div style="width:99.8%"></div></div><span class="v">999</span></div>
+        <div class="bar anim" style="--c:var(--clay)"><span>B2 · fixed routes</span><div class="track"><div style="width:62.3%"></div></div><span class="v">624</span></div>
+        <div class="bar anim" style="--c:var(--amber)"><span>C · traffic jam</span><div class="track"><div style="width:88.3%"></div></div><span class="v">884</span></div>
       </div>
-      <div class="label anim" style="margin:30px 0 16px">Average delay (ms)</div>
-      <div class="bars">
-        <div class="bar anim" style="--c:var(--green)"><span>A · healthy</span><div class="track"><div style="width:61.6%"></div></div><span class="v">33.60</span></div>
-        <div class="bar anim" style="--c:var(--steel)"><span>B1 · DV</span><div class="track"><div style="width:68.5%"></div></div><span class="v">37.36</span></div>
-        <div class="bar anim" style="--c:var(--clay)"><span>B2 · static</span><div class="track"><div style="width:61.6%"></div></div><span class="v">33.60</span></div>
-        <div class="bar anim" style="--c:var(--amber)"><span>C · congestion</span><div class="track"><div style="width:100%"></div></div><span class="v">54.55</span></div>
+      <div class="card anim" style="margin-top:22px;padding:14px 18px">
+        <div class="label">Why is normal delay exactly 33.6 ms?</div>
+        <p style="font-size:16px;color:var(--txt);margin-top:6px">24 ms travel on the wires (2+10+10+2) <span class="mut">+</span> 9.6 ms to send the packet onto each link (0.8+4+4+0.8)</p>
       </div>
     </div>
     <div class="grid" style="gap:12px;align-content:start">
-      <div class="card accent anim" style="--c:var(--steel);padding:16px 22px"><div class="label">B1 · distance-vector</div>
-        <div class="num" style="font-size:46px;margin-top:8px;--c:var(--steel)"><span data-to="43.6" data-dec="1">43.6</span><small>ms</small></div>
-        <p style="font-size:14.5px">Failure to first delivery on n1→n3→n4. Only 2 packets lost; all 375 sent while the link was down arrived.</p></div>
-      <div class="card accent anim" style="--c:var(--clay);padding:16px 22px"><div class="label">B2 · static routing</div>
-        <div class="num" style="font-size:46px;margin-top:8px;--c:var(--clay)"><span data-to="3.024" data-dec="3">3.024</span><small>s</small></div>
-        <p style="font-size:14.5px">Delivery gap: n1 kept forwarding into the dead link, so 0 of 375 packets arrived until it came back.</p></div>
-      <div class="card accent anim" style="--c:var(--amber);padding:16px 22px"><div class="label">C · congestion</div>
-        <p style="margin-top:6px;font-size:14.5px">Queue hit its 20-packet limit and delay rose to <b style="color:var(--txt)">102.75 ms</b> during overload, then returned to baseline.</p></div>
+      <div class="card accent anim" style="--c:var(--steel);padding:15px 22px"><div class="label">B1 · smart routing · rerouted</div>
+        <div class="num" style="font-size:44px;margin-top:8px;--c:var(--steel)"><span data-to="43.6" data-dec="1">43.6</span><small>ms</small></div>
+        <p style="font-size:15.5px">to find the detour. Only 2 packets lost (already on the broken wire).</p></div>
+      <div class="card accent anim" style="--c:var(--clay);padding:15px 22px"><div class="label">B2 · fixed routes · waited for repair</div>
+        <div class="num" style="font-size:44px;margin-top:8px;--c:var(--clay)"><span data-to="3.024" data-dec="3">3.024</span><small>s</small></div>
+        <p style="font-size:15.5px">of silence. Nothing arrived until the link was fixed.</p></div>
+      <div class="card accent anim" style="--c:var(--amber);padding:15px 22px"><div class="label">C · traffic jam · recovered</div>
+        <p style="margin-top:6px;font-size:15.5px">Queue full, <b style="color:var(--txt)">170 drops</b>, delay 33.6 → <b style="color:var(--txt)">102.75 ms</b>. Back to normal once the jam cleared.</p></div>
     </div>
   </div>
+  <div class="strip anim"><span class="label">In simple words</span><span><b>Routing decides</b> whether a broken link is a small hiccup or a full outage.</span></div>
 </section>
 
-<!-- 9 · Recovery -->
+<!-- 10 · Packet counting -->
 <section class="slide">
-  <div class="kicker anim" style="--k:var(--green)">04 · Observe recovery</div>
-  <div class="grid" style="grid-template-columns:1fr 440px;gap:40px;flex:1;min-height:0">
-    <div class="grid" style="grid-template-rows:1fr 1fr;gap:16px;min-height:0">
-      <div class="shot anim"><img src="assets/recovery.jpg" alt="Recovery verdict page"></div>
-      <div class="shot anim"><img src="assets/simulation_charts.jpg" alt="B1 throughput and delay by path" style="object-position:center 60%"></div>
-    </div>
-    <div>
-      <h2 class="anim" style="font-size:34px">Recovery is claimed only when the trace shows it</h2>
-      <div class="spacer"></div>
-      <div class="grid" style="gap:12px">
-        <div class="card anim" style="padding:14px 18px"><span class="pill" style="--c:var(--steel)">Rerouted</span><p>B1: traffic moved to the backup path, and after-phase throughput was 101.9% of before.</p></div>
-        <div class="card anim" style="padding:14px 18px"><span class="pill" style="--c:var(--clay)">Restored</span><p>B2: delivery resumes only after the trace logs the link coming back up.</p></div>
-        <div class="card anim" style="padding:14px 18px"><span class="pill" style="--c:var(--amber)">Drained</span><p>C: the queue empties after the extra flow stops, and delay and loss return to baseline.</p></div>
-      </div>
-      <p class="mut anim" style="font-size:15px;margin-top:16px">Timeline: configured fault → traced link-down → first drop → routing updates → first alternative delivery → link-up</p>
-    </div>
-  </div>
-</section>
-
-<!-- 10 · Transport -->
-<section class="slide">
-  <div class="kicker anim" style="--k:var(--green)">Transport lab · real sockets</div>
-  <h2 class="anim">TCP vs UDP, verified TLS, and six failures we break on purpose</h2>
+  <div class="kicker anim" style="--k:var(--sand)">Part 3 · How we count</div>
+  <h2 class="anim">We follow every packet, like a parcel tracking number</h2>
   <div class="spacer"></div>
-  <div class="grid" style="grid-template-columns:420px 1fr;gap:36px">
-    <div class="grid" style="gap:14px;align-content:start">
-      <div class="shot anim" style="height:200px"><img src="assets/transport_tls.jpg" alt="Verified TLS transfer"></div>
-      <div class="grid g2 anim" style="gap:12px">
-        <div class="card" style="padding:14px 16px"><div class="label">TCP · loopback</div><div class="num" style="font-size:30px;margin-top:6px;--c:var(--signal)"><span data-to="3067">3067</span><small>Mb/s</small></div></div>
-        <div class="card" style="padding:14px 16px"><div class="label">UDP · loopback</div><div class="num" style="font-size:30px;margin-top:6px;--c:var(--amber)"><span data-to="840">840</span><small>Mb/s</small></div></div>
+  <div class="grid" style="grid-template-columns:1fr 460px;gap:40px;align-items:start">
+    <div>
+      <p class="anim" style="font-size:18px;color:var(--mut)">NS2 writes a diary: one line for every event of every packet.</p>
+      <div class="card anim" style="margin-top:14px;padding:14px 18px;font-family:var(--mono);font-size:15px">+ 1.0 0 1 cbr 1000 ------- 1 0.0 5.0 0 <b style="color:var(--signal)">0</b><div class="dim" style="font-size:12px;margin-top:6px">event · time · from · to · type · size · … · packet ID</div></div>
+      <div class="grid g4 anim" style="gap:10px;margin-top:14px">
+        <div class="card" style="padding:12px 14px;text-align:center"><div class="num" style="font-size:30px">+</div><p style="font-size:14px;margin-top:4px">joined queue</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center"><div class="num" style="font-size:30px">−</div><p style="font-size:14px;margin-top:4px">left queue</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center"><div class="num" style="font-size:30px;--c:var(--green)">r</div><p style="font-size:14px;margin-top:4px">received</p></div>
+        <div class="card" style="padding:12px 14px;text-align:center"><div class="num" style="font-size:30px;--c:var(--clay)">d</div><p style="font-size:14px;margin-top:4px">dropped</p></div>
       </div>
-      <p class="mut anim" style="font-size:14.5px">TLS 1.3 · AES-256-GCM · chain to lab CA · host name checked · SHA-256 matches on both ends</p>
+      <ul class="ticks anim" style="margin-top:18px">
+        <li>“Sent” only at n0, “received” only at n5 <span>: no double counting at routers</span></li>
+        <li>Each packet gets one fate <span>: delivered, dropped in a full queue, dropped on a broken link, or lost silently</span></li>
+      </ul>
+    </div>
+    <div class="card accent anim" style="--c:var(--clay);padding:22px 24px">
+      <div class="label" style="color:var(--clay)">Our key finding</div>
+      <div class="num" style="font-size:64px;margin-top:10px;--c:var(--clay)"><span data-to="375">375</span></div>
+      <p style="font-size:17px;color:var(--txt)">packets lost in B2 with <b>no drop line</b> in the diary.</p>
+      <p style="font-size:16px">NS2 silently throws them away at n1. A tool that only counts “d” lines would say B2 was almost fine. We noticed they reached n1 and were <b style="color:var(--txt)">never seen again</b>.</p>
+    </div>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>Tracking each packet by its ID is how we found the <b>hidden losses</b> in the worst failure.</span></div>
+</section>
+
+<!-- 11 · Transport lab -->
+<section class="slide">
+  <div class="kicker anim" style="--k:var(--green)">Part 4 · Transport lab · real sockets</div>
+  <h2 class="anim">Real TCP, UDP and TLS: break the connection six ways, then fix it</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:400px 1fr;gap:36px">
+    <div class="grid" style="gap:12px;align-content:start">
+      <div class="card anim" style="padding:14px 18px"><h3 style="font-size:19px">TCP vs UDP</h3><p style="font-size:15.5px;margin-top:6px">Same 1 MB sent both ways. TCP delivered everything, checked by SHA-256 (a data fingerprint).</p></div>
+      <div class="card anim" style="padding:14px 18px"><h3 style="font-size:19px">Secure transfer (TLS)</h3><p style="font-size:15.5px;margin-top:6px">TLS 1.3. Server's certificate and name checked. Same SHA-256 on both sides.</p></div>
+      <div class="card anim" style="padding:14px 18px"><h3 style="font-size:19px">All on one laptop</h3><p style="font-size:15.5px;margin-top:6px">Loopback (127.0.0.1), so we bother nobody else's network.</p></div>
     </div>
     <table>
-      <tr class="anim"><th>Injected fault</th><th>What we observe</th><th>Recovery check</th></tr>
-      <tr class="anim"><td>No listener on port</td><td class="mut">Connection refused</td><td class="mut">Start server → ACK</td></tr>
-      <tr class="anim"><td>Server never replies</td><td class="mut">Read timeout, 1.5 s</td><td class="mut">Responsive server</td></tr>
-      <tr class="anim"><td>Reset mid-transfer</td><td class="mut">Connection reset at ~300 kB</td><td class="mut">Resend · digest matches</td></tr>
-      <tr class="anim"><td>UDP seq 50–54, 120, 199 skipped</td><td class="mut">Exact gaps reported</td><td class="mut">200/200 received</td></tr>
-      <tr class="anim"><td>Untrusted CA</td><td class="mut">Certificate verify error</td><td class="mut">Lab-CA certificate</td></tr>
-      <tr class="anim"><td>Wrong host name</td><td class="mut">Host-name mismatch</td><td class="mut">Valid localhost cert</td></tr>
+      <tr class="anim"><th>We break it</th><th>Program sees</th><th>We fix it</th></tr>
+      <tr class="anim"><td>No server on the port</td><td class="mut">refused</td><td class="mut">Start the server</td></tr>
+      <tr class="anim"><td>Server never replies</td><td class="mut">timeout (1.5 s)</td><td class="mut">Use a replying server</td></tr>
+      <tr class="anim"><td>Reset in mid-file</td><td class="mut">reset</td><td class="mut">Resend · fingerprint matches</td></tr>
+      <tr class="anim"><td>Skip UDP 50–54, 120, 199</td><td class="mut">exactly those missing</td><td class="mut">Resend · 200/200</td></tr>
+      <tr class="anim"><td>Untrusted certificate</td><td class="mut">certificate error</td><td class="mut">Valid certificate</td></tr>
+      <tr class="anim"><td>Wrong name on certificate</td><td class="mut">certificate error</td><td class="mut">Correct certificate</td></tr>
     </table>
   </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>Every drill: <b>break → record the real error → fix → check it works again</b>. All 6 of 6 recovered.</span></div>
 </section>
 
-<!-- 11 · Engineering & limits -->
+<!-- 12 · Tested & limits -->
 <section class="slide">
-  <div class="kicker anim">Engineering &amp; honesty</div>
-  <h2 class="anim">Tested, deployed, and upfront about its limits</h2>
+  <div class="kicker anim">Quality &amp; honesty</div>
+  <h2 class="anim">Tested, online, and honest about what it cannot do</h2>
   <div class="spacer"></div>
   <div class="grid g4" style="gap:16px">
-    <div class="card anim"><div class="num" style="font-size:52px;--c:var(--signal)"><span data-to="159">159</span></div><div class="label" style="margin-top:10px">automated tests</div><p>Parsers, rules, NS2, sockets, UI</p></div>
-    <div class="card anim"><div class="num" style="font-size:52px;--c:var(--amber)"><span data-to="17">17</span></div><div class="label" style="margin-top:10px">diagnostic rules</div><p>Configurable, fully traced</p></div>
-    <div class="card anim"><div class="num" style="font-size:52px;--c:var(--sand)"><span data-to="4">4</span></div><div class="label" style="margin-top:10px">NS2 scenarios</div><p>Docker locally, ns2 in the cloud</p></div>
-    <div class="card anim"><div class="num" style="font-size:52px;--c:var(--green)"><span data-to="6">6</span></div><div class="label" style="margin-top:10px">failure drills</div><p>Each with a recovery check</p></div>
+    <div class="card anim"><div class="num" style="font-size:50px;--c:var(--signal)"><span data-to="159">159</span></div><div class="label" style="margin-top:10px">automatic tests</div><p>incl. real NS2 and real sockets</p></div>
+    <div class="card anim"><div class="num" style="font-size:50px;--c:var(--amber)"><span data-to="17">17</span></div><div class="label" style="margin-top:10px">rules</div><p>every decision traceable</p></div>
+    <div class="card anim"><div class="num" style="font-size:50px;--c:var(--sand)"><span data-to="4">4</span></div><div class="label" style="margin-top:10px">NS2 experiments</div><p>A, B1, B2, C</p></div>
+    <div class="card anim"><div class="num" style="font-size:50px;--c:var(--green)"><span data-to="6">6</span></div><div class="label" style="margin-top:10px">failure drills</div><p>all recovered</p></div>
   </div>
   <div class="grid g2" style="gap:18px;margin-top:18px">
-    <div class="card accent anim" style="--c:var(--steel)"><h3>Design &amp; safety</h3>
+    <div class="card accent anim" style="--c:var(--steel)"><h3>Safe</h3>
       <ul class="ticks" style="margin-top:12px;--c:var(--steel)">
-        <li style="font-size:15.5px">OOP: data classes, a <span class="mono" style="font-size:13.5px">CommandRunner</span> protocol <span>(fake runner in tests)</span>, custom exceptions</li>
-        <li style="font-size:15.5px">Probes only to allow-listed, private or loopback targets</li>
-        <li style="font-size:15.5px">No packet capture, no personal data, no custom crypto</li>
+        <li style="font-size:16.5px">Only allowed destinations can be tested</li>
+        <li style="font-size:16.5px">No shell, only 7 programs, strict input checks</li>
+        <li style="font-size:16.5px">Standard TLS only, no home-made crypto</li>
       </ul></div>
-    <div class="card accent anim" style="--c:var(--clay)"><h3>Limits &amp; next steps</h3>
+    <div class="card accent anim" style="--c:var(--clay)"><h3>Limits</h3>
       <ul class="ticks" style="margin-top:12px;--c:var(--clay)">
-        <li style="font-size:15.5px">Live causes are at best <b>Likely</b>; <span>ICMP-silent devices hide part of the path</span></li>
-        <li style="font-size:15.5px">NS2's DV reacts faster than many real protocols</li>
-        <li style="font-size:15.5px">Next: link-state routing, two-PC lab runs, trend analysis</li>
+        <li style="font-size:16.5px">Live checks only see what devices answer <span>(at best “Likely”)</span></li>
+        <li style="font-size:16.5px">NS2 is our model, not a real network</li>
+        <li style="font-size:16.5px">It explains failures; it does not repair them</li>
       </ul></div>
   </div>
+  <div class="strip anim"><span class="label">Next</span><span>Bigger networks, link-state routing, tests between two real lab PCs, and trends over many live runs.</span></div>
 </section>
 
-<!-- 12 · Thanks -->
+<!-- 13 · Thanks -->
 <section class="slide title-slide">
   <div class="bgimg" style="opacity:.4"></div><div class="shade"></div>
   <div class="title-inner">
@@ -456,7 +486,7 @@ body.awake #hud{opacity:1}
 
 <div id="hud">
   <button id="prev" aria-label="Previous slide">←</button>
-  <span id="count">1 / 12</span>
+  <span id="count">1 / 13</span>
   <button id="next" aria-label="Next slide">→</button>
   <button id="fs" aria-label="Fullscreen">⛶</button>
 </div>
