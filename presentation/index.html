@@ -52,7 +52,21 @@ html,body{height:100%;background:#05080b;color:var(--txt);font-family:var(--body
 .failed{animation:march 1.2s linear infinite,pulse 1.6s ease-in-out infinite}
 .slide.active .bgimg{animation:kenburns 9s ease-out both}
 .live-dot{animation:pulse 1.4s ease-in-out infinite}
+/* upload under link failure: what the user sees */
+.upbar{height:30px;background:rgba(255,255,255,.05);border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+.upbar div{height:100%;width:0;border-radius:9px;background:var(--c)}
+.slide.active .upbar .uf{animation:upfail 6.5s linear infinite}
+.slide.active .upbar .us{animation:upstat 6.5s linear infinite}
+.slide.active .linkdown{animation:linkdown 6.5s linear infinite}
+@keyframes upfail{0%{width:0}62.6%{width:100%}100%{width:100%}}
+@keyframes upstat{0%{width:0}22%{width:30%}72.4%{width:30%}72.6%{width:100%}100%{width:100%}}
+@keyframes linkdown{0%,21.9%{opacity:.15}22%,68%{opacity:1}68.1%,100%{opacity:.15}}
+.linkdown{display:inline-block;padding:4px 12px;border-radius:999px;font:600 13px var(--mono);color:var(--clay);
+  border:1px solid color-mix(in srgb,var(--clay) 50%,transparent);background:color-mix(in srgb,var(--clay) 12%,transparent);opacity:.15}
+
 @media (prefers-reduced-motion:reduce){
+  .upbar div{animation:none!important;width:100%!important}
+  .linkdown{animation:none!important;opacity:1}
   .anim,.draw path,.draw line{opacity:1!important;animation:none!important;stroke-dashoffset:0!important}
   .slide.active .bar .track div,.slide.active .node,.failed,.slide.active .bgimg,.live-dot{animation:none!important}
   .slide{transition:opacity .2s}
@@ -201,13 +215,14 @@ body.awake #hud{opacity:1}
 <!-- 4 · Four parts -->
 <section class="slide">
   <div class="kicker anim">How it is built</div>
-  <h2 class="anim">Four parts</h2>
+  <h2 class="anim">Five parts</h2>
   <div class="spacer"></div>
-  <div class="grid g2" style="gap:18px">
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);gap:16px">
     <div class="card accent anim" style="--c:var(--signal)"><h3>1 · Live checks</h3><p>Test a real network</p></div>
     <div class="card accent anim" style="--c:var(--amber)"><h3>2 · Rules</h3><p>Decide the cause</p></div>
     <div class="card accent anim" style="--c:var(--sand)"><h3>3 · NS2 simulation</h3><p>Break a network on purpose</p></div>
-    <div class="card accent anim" style="--c:var(--green)"><h3>4 · Transport lab</h3><p>Break TCP, UDP and TLS, then fix them</p></div>
+    <div class="card accent anim" style="--c:#b48ce0"><h3>4 · Upload test</h3><p>Cut a link during a real upload</p></div>
+    <div class="card accent anim" style="--c:var(--green)"><h3>5 · Drills</h3><p>Break TCP, UDP and TLS, then fix them</p></div>
   </div>
   <div class="strip anim"><span class="label">In simple words</span><span>All answers go into <b>one table</b>: the root-cause register.</span></div>
 </section>
@@ -262,11 +277,11 @@ body.awake #hud{opacity:1}
     <tr class="anim"><th>Checked</th><th>Status</th><th>Cause</th></tr>
     <tr class="anim"><td class="mono" style="font-size:18px">nonexistent.invalid</td><td><span class="pill" style="--c:var(--signal)">Likely</span></td><td class="mut">Name does not exist</td></tr>
     <tr class="anim"><td class="mono" style="font-size:18px">192.0.2.1</td><td><span class="pill" style="--c:var(--amber)">Not confirmed</span></td><td class="mut">Host off, path broken, or firewall</td></tr>
-    <tr class="anim"><td>NS2 + 6 drills</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">We broke it on purpose</td></tr>
+    <tr class="anim"><td>NS2, upload test, 6 drills</td><td><span class="pill" style="--c:var(--green)">Confirmed</span></td><td class="mut">We broke it on purpose</td></tr>
   </table>
   <div class="row anim" style="margin-top:28px">
-    <div class="num" style="font-size:60px;--c:var(--amber)"><span data-to="11">11</span><small>/ 13</small></div>
-    <div class="big">failures explained · the other 2 were healthy</div>
+    <div class="num" style="font-size:60px;--c:var(--amber)"><span data-to="13">13</span><small>/ 16</small></div>
+    <div class="big">failures explained · the other 3 were healthy</div>
   </div>
   <div class="strip anim"><span class="label">In simple words</span><span>Every row shows <b>the cause</b> and <b>how sure we are</b>.</span></div>
 </section>
@@ -359,9 +374,82 @@ body.awake #hud{opacity:1}
   <div class="strip anim"><span class="label">In simple words</span><span>Without tracking, the worst failure would <b>look fine</b>.</span></div>
 </section>
 
-<!-- 11 · Transport lab -->
+<!-- 11 · Upload under link failure: set-up -->
 <section class="slide">
-  <div class="kicker anim" style="--k:var(--green)">Part 4 · Transport lab</div>
+  <div class="kicker anim" style="--k:#b48ce0">Part 4 · Real upload, link fails</div>
+  <h2 class="anim">We upload a real file. Halfway, we cut the link.</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:560px 1fr;gap:50px;align-items:center">
+    <svg viewBox="0 0 560 270" width="560" height="270" style="font-family:Inter,sans-serif">
+      <g class="draw" stroke-width="3" fill="none" style="--len:260">
+        <line x1="70" y1="80" x2="280" y2="215" stroke="#c8a978" style="--d:300"/>
+        <line x1="280" y1="215" x2="490" y2="80" stroke="#c8a978" style="--d:500"/>
+      </g>
+      <line class="failed" x1="70" y1="80" x2="490" y2="80" stroke="#e06b5d" stroke-width="3" stroke-dasharray="7 6"/>
+      <path id="uppath" d="M70 80 L280 215 L490 80" fill="none" stroke="none"/>
+      <g fill="#c8a978">
+        <circle r="6"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#uppath"/></animateMotion></circle>
+        <circle r="6"><animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite"><mpath href="#uppath"/></animateMotion></circle>
+        <circle r="6"><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite"><mpath href="#uppath"/></animateMotion></circle>
+      </g>
+      <g font-size="15" text-anchor="middle">
+        <text x="280" y="66" fill="#e06b5d">primary link · cut at 30% for 3 s</text>
+        <text x="280" y="258" fill="#c8a978">backup path (through a router)</text>
+      </g>
+      <g font-family="Space Grotesk,sans-serif" font-weight="700" font-size="16" text-anchor="middle">
+        <g class="node" style="--d:0"><circle cx="70" cy="80" r="40" fill="#1d1630" stroke="#b48ce0" stroke-width="2"/><text x="70" y="86" fill="#e6edf3">client</text></g>
+        <g class="node" style="--d:120"><circle cx="490" cy="80" r="40" fill="#1d1630" stroke="#b48ce0" stroke-width="2"/><text x="490" y="86" fill="#e6edf3">server</text></g>
+        <g class="node" style="--d:240"><circle cx="280" cy="215" r="30" fill="#111922" stroke="rgba(148,178,204,.5)" stroke-width="2"/><text x="280" y="221" fill="#e6edf3" font-size="14">router</text></g>
+      </g>
+    </svg>
+    <div class="grid" style="gap:20px">
+      <div class="row anim" style="justify-content:space-between"><span class="label">What the user sees</span><span class="linkdown">LINK DOWN</span></div>
+      <div class="anim"><div style="font-size:19px;margin-bottom:8px">With a backup route</div><div class="upbar"><div class="uf" style="--c:var(--steel)"></div></div></div>
+      <div class="anim"><div style="font-size:19px;margin-bottom:8px">Without a backup route</div><div class="upbar"><div class="us" style="--c:var(--clay)"></div></div></div>
+      <p class="mut anim" style="font-size:16px">Real TCP upload of a 2 MiB file in an isolated test network. Same file and settings, three times: no failure, backup route, no backup route.</p>
+    </div>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>Does the upload <b>take the detour</b>, <b>freeze until the link is back</b>, or <b>fail and start again</b>?</span></div>
+</section>
+
+<!-- 12 · Upload under link failure: results -->
+<section class="slide">
+  <div class="kicker anim" style="--k:#b48ce0">Part 4 · What happened</div>
+  <h2 class="anim">With a backup route, the upload barely noticed</h2>
+  <div class="spacer"></div>
+  <div class="grid" style="grid-template-columns:580px 1fr;gap:44px;align-items:center">
+    <div class="anim">
+      <div class="label" style="margin-bottom:10px">% of the file received by the server, over time</div>
+      <svg viewBox="0 0 560 230" width="580" height="238" style="font-family:Inter,sans-serif">
+        <rect x="180.1" y="10" width="294.3" height="190" fill="rgba(224,107,93,.10)"/>
+        <line x1="40" y1="200" x2="550" y2="200" stroke="rgba(148,178,204,.35)"/>
+        <line x1="40" y1="10" x2="40" y2="200" stroke="rgba(148,178,204,.35)"/>
+        <g font-size="12" fill="#6f8193" font-family="JetBrains Mono,monospace">
+          <text x="34" y="14" text-anchor="end">100</text><text x="34" y="105" text-anchor="end">50</text><text x="34" y="204" text-anchor="end">0</text>
+          <text x="40" y="220" text-anchor="middle">0 s</text><text x="235.4" y="220" text-anchor="middle">2 s</text><text x="430.8" y="220" text-anchor="middle">4 s</text>
+          <text x="186" y="26" fill="#e06b5d" font-family="Inter,sans-serif" font-size="13">link down</text>
+          <text x="468" y="26" fill="#58bd8c" font-family="Inter,sans-serif" font-size="13" text-anchor="end">link up</text>
+        </g>
+        <path d="M63.5 199.3 H64.5 V199.3 H65.1 V198.6 H65.5 V198.5 H66.6 V197.8 H68.1 V197.0 H69.7 V196.3 H71.2 V195.5 H72.8 V194.8 H74.3 V194.1 H75.8 V193.3 H77.3 V192.6 H78.9 V191.8 H80.4 V191.1 H81.9 V190.4 H83.5 V189.6 H85.0 V188.9 H86.5 V188.1 H88.1 V187.4 H89.6 V186.6 H91.1 V185.9 H92.7 V185.2 H94.2 V184.4 H95.7 V183.7 H97.3 V182.9 H98.8 V182.2 H100.3 V181.4 H101.9 V180.7 H103.4 V180.0 H104.9 V179.2 H106.5 V178.5 H108.0 V177.7 H109.5 V177.0 H111.1 V176.2 H112.6 V175.5 H114.1 V174.8 H115.7 V174.0 H117.2 V173.3 H118.7 V172.5 H120.3 V171.8 H121.8 V171.1 H123.3 V170.3 H124.8 V169.6 H126.4 V168.8 H127.9 V168.1 H129.4 V167.3 H131.0 V166.6 H132.5 V165.9 H134.0 V165.1 H135.6 V164.4 H137.1 V163.6 H138.6 V162.9 H140.2 V162.1 H141.7 V161.4 H143.2 V160.7 H144.8 V159.9 H146.3 V159.2 H147.8 V158.4 H149.4 V157.7 H150.9 V157.0 H152.4 V156.2 H154.0 V155.5 H155.5 V154.7 H157.0 V154.0 H158.6 V153.2 H160.1 V152.5 H161.6 V151.8 H163.2 V151.0 H164.7 V150.3 H166.2 V149.5 H167.7 V148.8 H169.3 V148.0 H170.8 V147.3 H172.4 V146.6 H173.9 V145.8 H175.4 V145.1 H176.9 V144.3 H178.5 V143.6 H180.0 V142.9 H181.6 V142.1 H183.1 V141.4 H184.6 V140.6 H186.1 V139.9 H187.7 V139.1 H189.2 V138.4 H190.7 V137.7 H192.3 V136.9 H193.8 V136.2 H195.3 V135.4 H196.9 V134.7 H198.4 V133.9 H199.9 V133.2 H201.5 V132.5 H203.0 V131.7 H204.5 V131.0 H206.1 V130.2 H207.6 V129.5 H209.1 V128.8 H210.7 V128.0 H212.2 V127.3 H213.7 V126.5 H215.3 V125.8 H216.8 V125.0 H218.3 V124.3 H219.9 V123.6 H221.4 V122.8 H222.9 V122.1 H224.4 V121.3 H226.0 V120.6 H227.5 V119.8 H229.1 V119.1 H230.6 V118.4 H232.1 V117.6 H233.6 V116.9 H235.2 V116.1 H236.7 V115.4 H238.2 V114.6 H239.8 V113.9 H241.3 V113.2 H242.8 V112.4 H244.4 V111.7 H245.9 V110.9 H247.4 V110.2 H249.0 V109.5 H250.5 V108.7 H252.0 V108.0 H253.6 V107.2 H255.1 V106.5 H256.6 V105.7 H258.2 V105.0 H259.7 V104.3 H261.2 V103.5 H262.8 V102.8 H264.3 V102.0 H265.8 V101.3 H267.4 V100.5 H268.9 V99.8 H270.4 V99.1 H272.0 V98.3 H273.5 V97.6 H275.0 V96.8 H276.6 V96.1 H278.1 V95.4 H279.6 V94.6 H281.2 V93.9 H282.7 V93.1 H284.2 V92.4 H285.7 V91.6 H287.3 V90.9 H288.8 V90.2 H290.4 V89.4 H291.9 V88.7 H293.4 V87.9 H295.0 V87.2 H296.5 V86.4 H298.0 V85.7 H299.5 V85.0 H301.1 V84.2 H302.6 V83.5 H304.1 V82.7 H305.7 V82.0 H307.2 V81.2 H308.8 V80.5 H310.3 V79.8 H311.8 V79.0 H313.3 V78.3 H314.9 V77.5 H316.4 V76.8 H317.9 V76.1 H319.5 V75.3 H321.0 V74.6 H322.5 V73.8 H324.1 V73.1 H325.6 V72.3 H327.1 V71.6 H328.7 V70.9 H330.2 V70.1 H331.7 V69.4 H333.3 V68.6 H334.8 V67.9 H336.3 V67.1 H337.8 V66.4 H339.4 V65.7 H340.9 V64.9 H342.5 V64.2 H344.0 V63.4 H345.5 V62.7 H347.1 V62.0 H348.6 V61.2 H350.1 V60.5 H351.6 V59.7 H353.2 V59.0 H354.7 V58.2 H356.2 V57.5 H357.8 V56.8 H359.3 V56.0 H360.8 V55.3 H362.4 V54.5 H363.9 V53.8 H365.4 V53.0 H367.0 V52.3 H368.5 V51.6 H370.0 V50.8 H371.6 V50.1 H373.1 V49.3 H374.6 V48.6 H376.2 V47.9 H377.7 V47.1 H379.2 V46.4 H380.8 V45.6 H382.3 V44.9 H383.8 V44.1 H385.4 V43.4 H386.9 V42.7 H388.4 V41.9 H390.0 V41.2 H391.5 V40.4 H393.0 V39.7 H394.6 V38.9 H396.1 V38.2 H397.6 V37.5 H399.2 V36.7 H400.7 V36.0 H402.2 V35.2 H403.7 V34.5 H405.3 V33.8 H406.8 V33.0 H408.4 V32.3 H409.9 V31.5 H411.4 V30.8 H412.9 V30.0 H414.5 V29.3 H416.0 V28.6 H417.5 V27.8 H419.1 V27.1 H420.6 V26.3 H422.1 V25.6 H423.7 V24.8 H425.2 V24.1 H426.7 V23.4 H428.3 V22.6 H429.8 V21.9 H431.3 V21.1 H432.9 V20.4 H434.4 V19.6 H435.9 V18.9 H437.5 V18.2 H439.0 V17.4 H440.6 V16.7 H442.1 V15.9 H443.6 V15.2 H445.1 V14.5 H446.7 V13.7 H448.2 V13.0 H449.7 V12.2 H451.2 V11.5 H452.8 V10.7 H454.3 V10.0" fill="none" stroke="#58bd8c" stroke-width="3.2" stroke-dasharray="2 4"/>
+        <path d="M63.5 199.3 H64.5 V199.3 H65.1 V198.6 H65.5 V198.5 H66.6 V197.8 H68.1 V197.0 H69.6 V196.3 H71.2 V195.5 H72.7 V194.8 H74.3 V194.1 H75.8 V193.3 H77.3 V192.6 H78.8 V191.8 H80.4 V191.1 H81.9 V190.4 H83.4 V189.6 H85.0 V188.9 H86.5 V188.1 H88.0 V187.4 H89.6 V186.6 H91.1 V185.9 H92.6 V185.2 H94.2 V184.4 H95.7 V183.7 H97.2 V182.9 H98.8 V182.2 H100.3 V181.4 H101.8 V180.7 H103.4 V180.0 H104.9 V179.2 H106.4 V178.5 H108.0 V177.7 H109.5 V177.0 H111.0 V176.2 H112.6 V175.5 H114.1 V174.8 H115.6 V174.0 H117.2 V173.3 H118.7 V172.5 H120.2 V171.8 H121.8 V171.1 H123.3 V170.3 H124.8 V169.6 H126.3 V168.8 H127.9 V168.1 H129.4 V167.3 H131.0 V166.6 H132.5 V165.9 H134.0 V165.1 H135.5 V164.4 H137.1 V163.6 H138.6 V162.9 H140.1 V162.1 H141.7 V161.4 H143.2 V160.7 H144.7 V159.9 H146.3 V159.2 H147.8 V158.4 H149.4 V157.7 H150.9 V157.0 H152.4 V156.2 H153.9 V155.5 H155.5 V154.7 H157.0 V154.0 H158.5 V153.2 H160.1 V152.5 H161.6 V151.8 H163.1 V151.0 H164.7 V150.3 H166.2 V149.5 H167.7 V148.8 H169.3 V148.0 H170.8 V147.3 H172.3 V146.6 H173.9 V145.8 H175.4 V145.1 H176.9 V144.3 H178.5 V143.6 H180.0 V142.9 H187.0 V142.1 H187.0 V141.9 H188.4 V141.8 H192.9 V141.4 H192.9 V140.6 H192.9 V139.9 H192.9 V139.1 H192.9 V138.4 H192.9 V138.3 H196.8 V137.7 H196.8 V136.9 H196.8 V136.2 H196.8 V135.4 H198.3 V134.8 H199.8 V134.7 H199.8 V134.0 H200.7 V133.9 H201.4 V133.3 H202.9 V133.2 H202.9 V132.5 H204.5 V132.5 H204.5 V131.8 H204.7 V131.7 H206.0 V131.1 H207.5 V131.0 H207.5 V130.3 H208.6 V130.2 H209.1 V129.6 H210.6 V129.5 H210.6 V128.8 H212.1 V128.8 H212.1 V128.1 H212.6 V128.0 H213.6 V127.4 H215.2 V127.3 H215.2 V126.6 H216.5 V126.5 H216.7 V125.9 H218.2 V125.8 H218.2 V125.1 H219.8 V125.0 H219.8 V124.4 H220.4 V124.3 H221.3 V123.6 H222.8 V123.6 H222.8 V122.9 H224.4 V122.8 H224.4 V122.2 H225.9 V122.1 H225.9 V121.4 H227.4 V121.3 H227.4 V120.7 H228.3 V120.6 H229.0 V119.9 H230.6 V119.8 H230.6 V119.1 H232.0 V119.1 H232.0 V118.5 H232.5 V118.4 H233.6 V117.7 H235.1 V117.6 H235.1 V116.9 H236.5 V116.9 H236.6 V116.2 H238.2 V116.1 H238.2 V115.4 H239.7 V115.4 H239.7 V114.8 H240.4 V114.6 H241.2 V114.0 H242.8 V113.9 H242.8 V113.2 H244.3 V113.2 H244.3 V112.6 H244.4 V112.4 H245.8 V111.8 H247.3 V111.7 H247.3 V111.0 H248.3 V110.9 H248.9 V110.3 H250.4 V110.2 H250.4 V109.5 H252.0 V109.5 H252.0 V108.8 H252.3 V108.7 H253.5 V108.1 H255.0 V108.0 H255.0 V107.3 H256.2 V107.2 H256.5 V106.6 H258.1 V106.5 H258.1 V105.8 H259.6 V105.7 H259.6 V105.1 H260.2 V105.0 H261.1 V104.3 H262.8 V104.3 H262.8 V103.6 H264.1 V103.5 H264.2 V102.9 H265.8 V102.8 H265.8 V102.1 H267.3 V102.0 H267.3 V101.4 H268.0 V101.3 H268.8 V100.6 H270.3 V100.5 H270.3 V99.8 H271.9 V99.8 H271.9 V99.2 H272.0 V99.1 H273.4 V98.4 H274.9 V98.3 H274.9 V97.6 H275.9 V97.6 H276.5 V96.9 H278.0 V96.8 H278.0 V96.1 H279.5 V96.1 H279.5 V95.5 H279.9 V95.4 H281.1 V94.7 H282.6 V94.6 H282.6 V93.9 H283.8 V93.9 H284.1 V93.2 H285.7 V93.1 H285.7 V92.4 H287.2 V92.4 H287.2 V91.8 H287.8 V91.6 H288.7 V91.0 H290.3 V90.9 H290.3 V90.2 H291.7 V90.2 H291.8 V89.5 H293.3 V89.4 H293.3 V88.7 H294.9 V88.7 H294.9 V88.1 H295.7 V87.9 H296.4 V87.3 H297.9 V87.2 H297.9 V86.5 H299.5 V86.4 H299.5 V85.8 H299.6 V85.7 H301.2 V85.0 H302.5 V85.0 H302.5 V84.3 H303.5 V84.2 H304.1 V83.6 H305.6 V83.5 H305.6 V82.8 H307.1 V82.7 H307.1 V82.1 H307.5 V82.0 H308.6 V81.3 H310.2 V81.2 H310.2 V80.6 H311.4 V80.5 H311.7 V79.9 H313.3 V79.8 H313.3 V79.1 H314.8 V79.0 H314.8 V78.4 H315.4 V78.3 H316.3 V77.6 H317.9 V77.5 H317.9 V76.8 H319.3 V76.8 H319.4 V76.1 H320.9 V76.1 H320.9 V75.4 H322.4 V75.3 H322.4 V74.7 H323.2 V74.6 H324.0 V73.9 H325.5 V73.8 H325.5 V73.1 H327.0 V73.1 H327.0 V72.5 H327.2 V72.3 H328.6 V71.7 H330.1 V71.6 H330.1 V70.9 H331.1 V70.9 H331.6 V70.2 H333.2 V70.1 H333.2 V69.4 H334.7 V69.4 H334.7 V68.8 H335.1 V68.6 H336.2 V68.0 H337.8 V67.9 H337.8 V67.2 H339.0 V67.1 H339.3 V66.5 H340.8 V66.4 H340.8 V65.7 H342.4 V65.7 H342.4 V65.1 H343.0 V64.9 H343.9 V64.3 H345.4 V64.2 H345.4 V63.5 H346.9 V63.4 H347.0 V62.8 H348.5 V62.7 H348.5 V62.0 H350.0 V62.0 H350.0 V61.3 H350.9 V61.2 H351.6 V60.6 H353.1 V60.5 H353.1 V59.8 H354.6 V59.7 H354.6 V59.1 H354.8 V59.0 H356.2 V58.3 H357.7 V58.2 H357.7 V57.5 H358.7 V57.5 H359.2 V56.8 H360.8 V56.8 H360.8 V56.1 H362.3 V56.0 H362.3 V55.4 H362.7 V55.3 H363.8 V54.6 H365.4 V54.5 H365.4 V53.8 H366.6 V53.8 H366.9 V53.1 H368.4 V53.0 H368.4 V52.3 H370.0 V52.3 H370.0 V51.7 H370.6 V51.6 H371.5 V50.9 H373.0 V50.8 H373.0 V50.1 H374.5 V50.1 H374.5 V49.4 H376.1 V49.3 H376.1 V48.6 H377.6 V48.6 H377.6 V48.0 H378.4 V47.9 H379.2 V47.2 H380.7 V47.1 H380.7 V46.4 H382.2 V46.4 H382.2 V45.8 H382.4 V45.6 H383.7 V45.0 H385.3 V44.9 H385.3 V44.2 H386.3 V44.1 H386.8 V43.5 H388.4 V43.4 H388.4 V42.7 H389.9 V42.7 H389.9 V42.0 H390.3 V41.9 H391.4 V41.3 H392.9 V41.2 H392.9 V40.5 H394.2 V40.4 H394.5 V39.8 H396.0 V39.7 H396.0 V39.0 H397.5 V38.9 H397.5 V38.3 H398.1 V38.2 H399.1 V37.5 H400.6 V37.5 H400.6 V36.8 H402.1 V36.7 H402.1 V36.1 H403.7 V36.0 H403.7 V35.3 H405.2 V35.2 H405.2 V34.6 H406.0 V34.5 H406.7 V33.8 H408.3 V33.8 H408.3 V33.1 H409.8 V33.0 H409.8 V32.4 H410.0 V32.3 H411.3 V31.6 H412.9 V31.5 H412.9 V30.8 H413.9 V30.8 H414.4 V30.1 H415.9 V30.0 H415.9 V29.3 H417.5 V29.3 H417.5 V28.7 H417.9 V28.6 H419.0 V27.9 H420.5 V27.8 H420.5 V27.1 H421.8 V27.1 H422.1 V26.4 H423.6 V26.3 H423.6 V25.6 H425.1 V25.6 H425.1 V25.0 H425.8 V24.8 H426.7 V24.2 H428.2 V24.1 H428.2 V23.4 H429.7 V23.4 H429.7 V22.7 H431.2 V22.6 H431.2 V21.9 H432.8 V21.9 H432.8 V21.3 H433.7 V21.1 H434.3 V20.5 H435.8 V20.4 H435.8 V19.7 H437.4 V19.6 H437.4 V19.0 H437.6 V18.9 H438.9 V18.3 H440.4 V18.2 H440.4 V17.5 H441.6 V17.4 H442.0 V16.8 H443.5 V16.7 H443.5 V16.0 H445.0 V15.9 H445.0 V15.3 H445.5 V15.2 H446.6 V14.5 H448.1 V14.5 H448.1 V13.8 H449.4 V13.7 H449.6 V13.1 H451.2 V13.0 H451.2 V12.3 H452.7 V12.2 H452.7 V11.6 H453.4 V11.5 H454.2 V10.8 H455.8 V10.7 H455.8 V10.0 H457.3 V10.0" fill="none" stroke="#6f9fe0" stroke-width="2.4"/>
+        <path d="M63.5 199.3 H64.5 V199.3 H65.0 V198.6 H65.5 V198.5 H66.6 V197.8 H68.1 V197.0 H69.6 V196.3 H71.2 V195.5 H72.7 V194.8 H74.2 V194.1 H75.8 V193.3 H77.3 V192.6 H78.8 V191.8 H80.4 V191.1 H81.9 V190.4 H83.4 V189.6 H85.0 V188.9 H86.5 V188.1 H88.0 V187.4 H89.6 V186.6 H91.1 V185.9 H92.6 V185.2 H94.1 V184.4 H95.7 V183.7 H97.2 V182.9 H98.7 V182.2 H100.3 V181.4 H101.8 V180.7 H103.3 V180.0 H104.9 V179.2 H106.4 V178.5 H107.9 V177.7 H109.5 V177.0 H111.0 V176.2 H112.5 V175.5 H114.1 V174.8 H115.6 V174.0 H117.1 V173.3 H118.7 V172.5 H120.2 V171.8 H121.7 V171.1 H123.3 V170.3 H124.8 V169.6 H126.3 V168.8 H127.9 V168.1 H129.4 V167.3 H130.9 V166.6 H132.5 V165.9 H134.0 V165.1 H135.5 V164.4 H137.1 V163.6 H138.6 V162.9 H140.1 V162.1 H141.7 V161.4 H143.2 V160.7 H144.7 V159.9 H146.3 V159.2 H147.8 V158.4 H149.3 V157.7 H150.8 V157.0 H152.4 V156.2 H153.9 V155.5 H155.4 V154.7 H157.0 V154.0 H158.5 V153.2 H160.0 V152.5 H161.6 V151.8 H163.1 V151.0 H164.6 V150.3 H166.2 V149.5 H167.7 V148.8 H169.2 V148.0 H170.8 V147.3 H172.3 V146.6 H173.8 V145.8 H175.4 V145.1 H176.9 V144.3 H178.5 V143.6 H180.0 V142.9 H502.4 V142.1 H502.4 V141.4 H502.4 V141.1 H503.4 V140.6 H503.4 V139.9 H503.4 V139.1 H503.4 V138.4 H503.4 V137.7 H504.4 V137.7 H504.4 V136.9 H504.4 V136.2 H504.4 V135.4 H504.4 V134.7 H504.4 V133.9 H504.4 V133.2 H504.4 V132.5 H504.4 V131.8 H505.4 V131.7 H505.4 V131.0 H505.4 V130.2 H505.4 V129.5 H505.4 V128.8 H505.4 V128.0 H505.4 V127.3 H505.4 V126.5 H505.4 V125.8 H505.4 V125.2 H506.3 V125.0 H506.3 V124.3 H506.3 V123.6 H506.3 V122.8 H506.3 V122.1 H506.3 V121.3 H506.3 V120.6 H506.3 V119.8 H506.3 V119.1 H506.3 V118.9 H507.3 V118.4 H507.3 V117.6 H507.3 V116.9 H507.3 V116.1 H507.3 V115.4 H507.3 V114.7 H507.3 V114.6 H507.3 V113.9 H507.3 V113.2 H507.4 V112.4 H507.4 V111.7 H508.3 V111.7 H508.3 V110.9 H508.3 V110.2 H508.3 V109.5 H508.3 V108.7 H508.3 V108.0 H508.3 V107.2 H508.3 V106.5 H508.3 V105.7 H508.3 V105.0 H508.3 V104.3 H509.3 V104.3 H509.3 V103.5 H509.3 V102.8 H509.3 V102.0 H509.3 V101.3 H509.3 V100.5 H509.3 V99.9 H509.3 V99.8 H509.3 V99.1 H509.3 V98.3 H509.3 V97.6 H509.3 V96.9 H510.3 V96.8 H510.3 V96.1 H510.3 V95.4 H510.3 V94.6 H510.3 V93.9 H510.3 V93.1 H510.3 V92.5 H510.3 V92.4 H510.3 V91.6 H510.3 V90.9 H510.3 V90.2 H510.3 V89.5 H511.3 V89.4 H511.3 V88.7 H511.3 V87.9 H511.3 V87.2 H511.3 V86.4 H511.3 V85.7 H511.3 V85.0 H511.3 V84.2 H511.3 V83.5 H511.3 V82.7 H511.3 V82.1 H512.3 V82.0 H512.3 V81.2 H512.3 V80.5 H512.3 V79.8 H512.3 V79.0 H512.3 V78.3 H512.3 V77.5 H512.3 V76.8 H512.3 V76.1 H512.3 V75.3 H512.3 V74.7 H513.2 V74.6 H513.3 V73.8 H513.3 V73.1 H513.3 V72.3 H513.3 V71.6 H513.3 V70.9 H513.3 V70.1 H513.3 V69.4 H513.3 V68.6 H513.3 V67.9 H513.3 V67.2 H514.2 V67.1 H514.2 V66.4 H514.3 V65.7 H514.3 V64.9 H514.3 V64.2 H514.3 V63.4 H514.3 V62.7 H514.3 V62.0 H514.3 V61.2 H514.3 V61.2 H514.3 V60.5 H514.3 V59.8 H515.2 V59.7 H515.2 V59.0 H515.2 V58.2 H515.2 V57.5 H515.2 V56.8 H515.2 V56.0 H515.2 V55.4 H515.2 V55.3 H515.2 V54.5 H515.2 V53.8 H515.2 V53.0 H515.2 V52.4 H516.2 V52.3 H516.2 V51.6 H516.2 V50.8 H516.2 V50.1 H516.2 V49.3 H516.2 V48.6 H516.2 V48.0 H516.2 V47.9 H516.2 V47.1 H516.2 V46.4 H516.2 V45.6 H516.2 V45.0 H517.2 V44.9 H517.2 V44.1 H517.2 V43.4 H517.2 V42.7 H517.2 V41.9 H517.2 V41.2 H517.2 V40.4 H517.2 V39.7 H517.2 V38.9 H517.2 V38.2 H517.2 V37.5 H518.2 V37.5 H518.2 V36.7 H518.2 V36.0 H518.2 V35.2 H518.2 V34.5 H518.2 V33.8 H518.2 V33.1 H518.2 V33.0 H518.2 V32.3 H518.2 V31.6 H518.2 V31.5 H518.2 V30.8 H518.2 V30.1 H519.2 V30.0 H519.2 V29.3 H519.2 V28.6 H519.2 V27.8 H519.2 V27.1 H519.2 V26.3 H519.2 V25.7 H519.2 V25.6 H519.2 V24.8 H519.2 V24.1 H519.2 V24.1 H519.2 V23.4 H519.2 V22.7 H520.2 V22.6 H520.2 V21.9 H520.2 V21.1 H520.2 V20.4 H520.2 V19.6 H520.2 V18.9 H520.2 V18.3 H520.2 V18.2 H520.2 V17.4 H520.2 V16.7 H520.2 V16.7 H520.2 V15.9 H520.2 V15.3 H521.2 V15.2 H521.2 V14.5 H521.2 V13.7 H521.2 V13.0 H521.2 V12.2 H521.2 V11.5 H521.2 V10.7 H521.2 V10.1 H522.2 V10.0" fill="none" stroke="#e06b5d" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div class="grid" style="gap:14px">
+      <div class="card accent anim" style="--c:var(--green);padding:14px 20px"><div class="row" style="justify-content:space-between"><b style="font-size:18px">No failure</b><span class="num" style="font-size:30px;--c:var(--green)">4.04<small>s</small></span></div><p style="font-size:16px;margin-top:4px">normal upload, no pause</p></div>
+      <div class="card accent anim" style="--c:var(--steel);padding:14px 20px"><div class="row" style="justify-content:space-between"><b style="font-size:18px">Backup route</b><span class="num" style="font-size:30px;--c:var(--steel)">0.07<small>s pause</small></span></div><p style="font-size:16px;margin-top:4px">kept going on the backup path (1.43 MiB)</p></div>
+      <div class="card accent anim" style="--c:var(--clay);padding:14px 20px"><div class="row" style="justify-content:space-between"><b style="font-size:18px">No backup route</b><span class="num" style="font-size:30px;--c:var(--clay)">3.29<small>s pause</small></span></div><p style="font-size:16px;margin-top:4px">froze, then resumed 0.29 s after the link came back</p></div>
+      <div class="anim" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <span class="pill" style="--c:var(--green)">same TCP connection ✓</span><span class="pill" style="--c:var(--green)">no retry ✓</span><span class="pill" style="--c:var(--green)">file matched (SHA-256) ✓</span>
+      </div>
+    </div>
+  </div>
+  <div class="strip anim"><span class="label">In simple words</span><span>A backup route turns a broken link into a <b>0.07 s blip</b>. Without one, the upload <b>freezes</b> until the link returns.</span></div>
+</section>
+
+<!-- 13 · Transport lab -->
+<section class="slide">
+  <div class="kicker anim" style="--k:var(--green)">Part 5 · Transport drills (supporting)</div>
   <h2 class="anim">Break the connection, then fix it</h2>
   <div class="spacer"></div>
   <table>
@@ -372,7 +460,7 @@ body.awake #hud{opacity:1}
     <tr class="anim"><td>UDP packets skipped</td><td class="mut">exact gaps found</td><td><span class="pill" style="--c:var(--green)">yes</span></td></tr>
     <tr class="anim"><td>Fake or wrong certificate</td><td class="mut">certificate error</td><td><span class="pill" style="--c:var(--green)">yes</span></td></tr>
   </table>
-  <div class="strip anim"><span class="label">In simple words</span><span><b>Break → see the error → fix → check.</b> 6 of 6 recovered.</span></div>
+  <div class="strip anim"><span class="label">In simple words</span><span><b>Break → see the error → fix → check.</b> 6 of 6 drills recovered.</span></div>
 </section>
 
 <!-- 12 · Quality & limits -->
@@ -381,13 +469,14 @@ body.awake #hud{opacity:1}
   <h2 class="anim">Tested, online, and honest</h2>
   <div class="spacer"></div>
   <div class="grid g3" style="gap:20px">
-    <div class="card anim"><div class="num" style="font-size:60px;--c:var(--signal)"><span data-to="159">159</span></div><p>automatic tests</p></div>
+    <div class="card anim"><div class="num" style="font-size:60px;--c:var(--signal)"><span data-to="186">186</span></div><p>automatic tests</p></div>
     <div class="card anim"><div class="num" style="font-size:60px;--c:var(--amber)"><span data-to="17">17</span></div><p>rules</p></div>
     <div class="card anim"><div class="num" style="font-size:60px;--c:var(--green)"><span data-to="6">6</span></div><p>drills recovered</p></div>
   </div>
   <ul class="ticks anim" style="--c:var(--clay);margin-top:34px">
     <li>Limit: live checks only see what devices answer</li>
     <li>Limit: NS2 is a model, not a real network</li>
+    <li>Limit: the upload test needs Linux or Docker; the website shows a recorded run</li>
   </ul>
   <div class="strip anim"><span class="label">Next</span><span>Bigger networks and tests between two real lab PCs.</span></div>
 </section>
@@ -409,7 +498,7 @@ body.awake #hud{opacity:1}
 
 <div id="hud">
   <button id="prev" aria-label="Previous slide">←</button>
-  <span id="count">1 / 13</span>
+  <span id="count">1 / 15</span>
   <button id="next" aria-label="Next slide">→</button>
   <button id="fs" aria-label="Fullscreen">⛶</button>
 </div>
@@ -459,7 +548,8 @@ body.awake #hud{opacity:1}
     count.textContent = (i + 1) + ' / ' + slides.length;
     progress.style.width = ((i + 1) / slides.length * 100) + '%';
     if (changed) countUp(slides[i]);
-    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+    // embedded in the app (about:srcdoc) the URL cannot be changed; the deck still works without it
+    try { if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
   }
   function fullscreen() {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();

@@ -149,7 +149,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <span class="chip">Computer Networks Lab <b>24B15CS313</b></span>
   <span class="chip">Python <b>3.13</b> · Streamlit · <b>NS2 2.35</b></span>
   <span class="chip"><b>17</b> diagnostic rules</span>
-  <span class="chip"><b>159</b> automated tests</span>
+  <span class="chip"><b>186</b> automated tests</span>
   <span class="chip">Live at <b>routeresq.streamlit.app</b></span>
 </div>
 
@@ -157,7 +157,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
 <p class="sub">Memorise this. It is your opening answer to "Tell us about your project".</p>
 <div class="say">
   <div class="lbl">SAY THIS</div>
-  RouteResQ is a network failure lab. When a connection fails, normal tools like ping only show the symptom. RouteResQ finds the <em>cause</em>. It runs real DNS, ping, traceroute and TCP checks, and seventeen rules turn the output into possible causes, each marked confirmed, likely, possible or not enough evidence. We also run the real NS2 simulator: we break a link or overload it on purpose and measure, packet by packet, what happened to the traffic and whether it recovered. And we test real TCP, UDP and TLS connections, breaking them in six controlled ways. A root-cause register brings it all together: one row per failure, with its cause and an honest status. It is built in Python with a Streamlit interface, it is deployed online, and it has 159 automated tests.
+  RouteResQ is a network failure lab. When a connection fails, normal tools like ping only show the symptom. RouteResQ finds the <em>cause</em>. It runs real DNS, ping, traceroute and TCP checks, and seventeen rules turn the output into possible causes, each marked confirmed, likely, possible or not enough evidence. We also run the real NS2 simulator: we break a link or overload it on purpose and measure, packet by packet, what happened to the traffic and whether it recovered. We also upload a real file across an isolated test network and cut the link halfway: with a backup route the upload pauses for 0.07 s and carries on; without one it freezes for 3.29 s until the link returns. And we test real TCP, UDP and TLS connections, breaking them in six controlled ways. A root-cause register brings it all together: one row per failure, with its cause and an honest status. It is built in Python with a Streamlit interface, it is deployed online, and it has 186 automated tests.
 </div>
 <div class="callout"><span class="k">Key idea</span><span>If you remember one sentence: <em>we never guess the cause, we show the evidence and say how sure we are.</em> A live cause can be <strong>Likely</strong> at best; only a fault we injected ourselves is <strong>Confirmed</strong>.</span></div>
 
@@ -214,7 +214,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <div class="step"><div class="c">8</div><div><h4>Transport lab <span class="tag">SOCKETS</span></h4>
     <p>Send real data over TCP and UDP, send a file over TLS and check its SHA-256 on both ends, then run six failure drills: no server, silent server, reset mid-transfer, missing UDP packets, untrusted certificate, wrong host name. Each drill is then fixed and re-tested.</p></div></div>
   <div class="step"><div class="c hi">9</div><div><h4>Report <span class="tag">REPORT</span></h4>
-    <p>The root-cause register lists all 13 subjects; 11 have a stated cause. The demo report says exactly which results are fresh, which came from stored runs, and which failed.</p></div></div>
+    <p>The root-cause register lists all 16 subjects; 13 have a stated cause. The demo report says exactly which results are fresh, which came from stored runs, and which failed.</p></div></div>
 </div>
 
 <div class="fig">
@@ -263,7 +263,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <div class="card"><div class="lbl">Security</div><h4>ssl + cryptography</h4><p>Python's standard TLS (OpenSSL) for encryption, and the <code>cryptography</code> library to create our lab certificates. No home-made crypto.</p></div>
   <div class="card"><div class="lbl">Charts</div><h4>Plotly + pandas</h4><p>Interactive charts for throughput, delay, queues and RTT; pandas for tables. Every chart reads a stored result.</p></div>
   <div class="card"><div class="lbl">Storage</div><h4>JSON, CSV, Markdown</h4><p>No database. Every result is a file anyone can open and check, which suits a lab project where evidence matters.</p></div>
-  <div class="card"><div class="lbl">Testing</div><h4>pytest + AppTest</h4><p>159 automated tests: parsers, rules, real NS2 runs, real sockets, real commands and every page of the app.</p></div>
+  <div class="card"><div class="lbl">Testing</div><h4>pytest + AppTest</h4><p>186 automated tests: parsers, rules, real NS2 runs, real sockets, real commands and every page of the app.</p></div>
 </div>
 
 <h3>How a request travels</h3>
@@ -289,7 +289,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
     <tr><td class="mono">security</td><td>Lab certificates, TLS settings, SHA-256 checks.</td><td class="r">195</td></tr>
     <tr><td class="mono">walkthrough</td><td>The guided demo: runs each stage and verifies it.</td><td class="r">316</td></tr>
     <tr><td class="mono">app_pages, ui</td><td>The eight pages, the theme, charts and the navigation bar. Presentation only.</td><td class="r">2,434</td></tr>
-    <tr><td class="mono">tests</td><td>159 tests, with real captured Windows and Linux command output.</td><td class="r">1,596</td></tr>
+    <tr><td class="mono">tests</td><td>186 tests, with real captured Windows and Linux command output.</td><td class="r">1,596</td></tr>
   </tbody>
 </table>
 
@@ -478,6 +478,18 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
 </table>
 <p>After each fault we fix the condition and try again. All six recovered, so the register shows them as <span class="pill p-conf">Confirmed (injected)</span>.</p>
 
+<h2><span class="n">10a</span>Upload under link failure: a real file, a real broken link</h2>
+<p class="sub">The newest experiment. Know the question, the set-up and the three results.</p>
+<p><strong>Question:</strong> if a link goes down halfway through a file upload, does the upload continue on a backup route, stall until the link returns, or fail and need a retry?</p>
+<p><strong>Set-up:</strong> three Linux network namespaces (client, router, server) inside a Docker container. A direct <strong>primary link</strong> joins client and server; a <strong>backup path</strong> goes through the router. A paced TCP client uploads the real file bytes (2 MiB sample) with RouteResQ's framing; when the <strong>server</strong> has received 30%, the primary link is taken down for 3 s. Same file and settings three times; only the forwarding changes.</p>
+<table>
+<thead><tr><th>Run</th><th>What differs</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Healthy baseline</td><td>primary link stays up</td><td>4.04 s, no pause</td></tr>
+<tr><td>Backup route</td><td>a higher-metric backup route is pre-installed (controlled failover, no routing protocol)</td><td>paused <strong>0.07 s</strong>, same TCP connection continued on the backup path (1.43 MiB)</td></tr>
+<tr><td>Static forwarding</td><td>backup path connected but no route to it</td><td>paused <strong>3.29 s</strong>, resumed 0.29 s after the link came back</td></tr>
+</tbody></table>
+<p>All three: same TCP connection, no retry, SHA-256 matched. <strong>Proof of the path</strong> comes from interface byte counters and <code>ip route get</code>, not from the upload completing. <strong>Stall</strong> = the longest time the server's received byte count did not grow.</p>
 <h2><span class="n">11</span>Security and safety</h2>
 <table>
   <thead><tr><th style="width:36%">Risk</th><th>What we did</th></tr></thead>
@@ -521,7 +533,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <li><strong>Real commands:</strong> loopback, the reserved DNS name and the documentation address.</li>
   <li><strong>Interface tests:</strong> every page and the full guided demo, through Streamlit's AppTest.</li>
 </ul>
-<p><strong>Result:</strong> 159 tests. NS2 tests skip themselves automatically on a computer without NS2.</p>
+<p><strong>Result:</strong> 186 tests. NS2 tests skip themselves automatically on a computer without NS2.</p>
 
 <h2><span class="n">14</span>Limitations and future scope</h2>
 <p class="sub">Be honest here. Admitting limits clearly is a strength in a viva.</p>
@@ -556,8 +568,8 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <div class="num"><b>375</b><span>silent losses found in B2</span></div>
   <div class="num"><b>20</b><span>packet queue limit</span></div>
   <div class="num"><b>6</b><span>transport failure drills</span></div>
-  <div class="num"><b>11 / 13</b><span>failures with a stated cause</span></div>
-  <div class="num"><b>159</b><span>automated tests</span></div>
+  <div class="num"><b>13 / 16</b><span>failures with a stated cause</span></div>
+  <div class="num"><b>186</b><span>automated tests</span></div>
   <div class="num"><b>TLS 1.3</b><span>AES-256-GCM negotiated</span></div>
 </div>
 
@@ -569,12 +581,20 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
   <div class="step"><div class="c">3</div><div><h4>Root cause</h4><p>Walk through the evidence ladder and open the rule trace. Point out the status is a word, never a percentage.</p></div></div>
   <div class="step"><div class="c">4</div><div><h4>NS2 simulation</h4><p>Pick B1, switch the topology to "during" to show traffic on the backup path. Then B2: the throughput drops to zero for 3 s.</p></div></div>
   <div class="step"><div class="c">5</div><div><h4>Recovery</h4><p>Show the verdict and the timeline of configured and observed events.</p></div></div>
+  <div class="step"><div class="c">5b</div><div><h4>Upload test</h4><p>Open <strong>Lab · Link failure</strong>: three uploads, link cut at 30%. Point at the stall: 0.07 s with a backup route, 3.29 s without. Show the path-evidence chart.</p></div></div>
   <div class="step"><div class="c">6</div><div><h4>TCP · UDP · TLS</h4><p>Run the secure transfer (matching SHA-256), then one failure drill.</p></div></div>
   <div class="step"><div class="c">7</div><div><h4>Reports</h4><p>Open the root-cause report and show a downloadable file. If short on time, press <strong>Guided demo</strong> instead: it runs every stage and verifies it.</p></div></div>
 </div>
 
 <!-- ============================================================ Q&A -->
 <h2 class="newpage"><span class="n">17</span>Likely viva questions</h2>
+
+<div class="qa-group"><h3>Upload under link failure</h3>
+<div class="qa"><div class="q">Why not test the upload on loopback?</div><div class="a">On loopback there is no link to fail. The test network has a real primary link and a backup path, so taking the link down really cuts the upload's path.</div></div>
+<div class="qa"><div class="q">How do you know the upload used the backup path?</div><div class="a">The client's backup interface sent 1.43 MiB while the primary link was down, and <code>ip route get</code> named the backup interface during the outage. A finished upload alone would not prove the path.</div></div>
+<div class="qa"><div class="q">Is the failover distance-vector routing?</div><div class="a">No. It is a pre-installed backup route with a higher metric (a floating static route), so we call it controlled failover. No routing protocol runs in the test network.</div></div>
+<div class="qa"><div class="q">Why didn't the static run need a retry?</div><div class="a">The 3 s outage was shorter than the 10 s socket timeout, so TCP's retransmissions kept the same connection alive and it resumed 0.29 s after the link returned. A longer outage than the timeout would fail the connection and need a retry, which re-sends the whole file.</div></div>
+</div>
 
 <div class="qa-group"><h3>Basics</h3>
 <div class="qa"><div class="q">What problem does RouteResQ solve?</div><div class="a">Network tools show symptoms, not causes, and people guess. RouteResQ collects evidence from real checks, simulations and socket tests, states the cause of each failure, and says honestly how sure it is.</div></div>
@@ -612,7 +632,7 @@ td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
 
 <div class="qa-group"><h3>Code, testing and process</h3>
 <div class="qa"><div class="q">How is object-oriented design used?</div><div class="a">Measurements are data classes combined into one DiagnosticRun; a CommandRunner interface lets tests swap in a fake runner; custom exceptions extend Python's built-in ones; a Scenario checks itself when created; the TCP server is a context manager that always closes its socket.</div></div>
-<div class="qa"><div class="q">How did you test it?</div><div class="a">159 automated tests: parsers with real captured output, rules with fake measurements, traces with known answers, real NS2 runs, real sockets, real commands and every page of the app.</div></div>
+<div class="qa"><div class="q">How did you test it?</div><div class="a">186 automated tests: parsers with real captured output, rules with fake measurements, traces with known answers, real NS2 runs, real sockets, real commands and every page of the app.</div></div>
 <div class="qa"><div class="q">What happens if NS2 is not installed?</div><div class="a">The guided demo uses the newest saved NS2 runs, marks them as stored, and the final report says so. It never claims fresh results it did not produce.</div></div>
 <div class="qa"><div class="q">What would you do with more time?</div><div class="a">Bigger networks, link-state routing with realistic timers, experiments between two real lab computers, trend analysis of repeated live runs, and DNS and MTU failure drills.</div></div>
 </div>

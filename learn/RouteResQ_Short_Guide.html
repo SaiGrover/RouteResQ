@@ -213,6 +213,16 @@ Why 43.6 ms?  backup road travel 2 + 15 + 15 + 2 = 34 ms   +   9.6 ms sending
 </div>
 <p><strong>B1 vs B2 lesson:</strong> same failure, different routing. Smart routing = a hiccup; fixed routing = an outage.</p>
 
+<h2><span class="n">08a</span>Upload test: a real file while a link breaks</h2>
+<p>Client, server and a router in a tiny test network. Main road = direct primary link; detour = backup path through the router. We upload a real 2 MiB file and cut the main road for 3 s when the <strong>server</strong> has 30% of it.</p>
+<table>
+<thead><tr><th>Run</th><th>What happened</th></tr></thead>
+<tbody>
+<tr><td>No failure</td><td>4.04 s, no pause</td></tr>
+<tr><td>Backup route</td><td>paused <strong>0.07 s</strong>, kept going on the detour (1.43 MiB on the backup path)</td></tr>
+<tr><td>No backup route</td><td>froze <strong>3.29 s</strong>, resumed 0.29 s after the link came back</td></tr>
+</tbody></table>
+<p>Same TCP connection every time, no retry, SHA-256 matched. The path is proven by byte counters on each road, not by the file arriving.</p>
 <h2><span class="n">09</span>Part 4: the transport lab</h2>
 <ul>
   <li><strong>Framing:</strong> TCP is a stream with no message borders, so every message gets a header: type (1 byte) + length (4 bytes).</li>
@@ -232,14 +242,14 @@ Why 43.6 ms?  backup road travel 2 + 15 + 15 + 2 = 34 ms   +   9.6 ms sending
 <p>All <strong>6/6</strong> drills recovered.</p>
 
 <h2><span class="n">10</span>The root-cause register</h2>
-<p><strong>13 rows</strong>: 3 live checks + 4 NS2 scenarios + 6 drills. <strong>11 failures</strong> have a stated cause; 2 are healthy (8.8.8.8 and A). Live rows are re-checked with the current rules every time.</p>
+<p><strong>16 rows</strong>: 3 live checks + 4 NS2 scenarios + 6 drills + 3 upload runs. <strong>13 failures</strong> have a stated cause; 3 are healthy (8.8.8.8, A and the upload baseline). Live rows are re-checked with the current rules every time.</p>
 
 <h2><span class="n">11</span>The app, the code, the tests</h2>
 <ul>
-  <li><strong>App:</strong> Streamlit website with 8 pages: Overview, Diagnostics, Root cause, NS2 simulation, Recovery, TCP·UDP·TLS lab, Reports, and a Guided demo that runs the whole story in 6 steps.</li>
+  <li><strong>App:</strong> Streamlit website with 11 pages: Overview, Diagnostics, Root cause, NS2 simulation, Recovery, Upload test, TCP·UDP·TLS lab, Reports, Problem &amp; solution, Presentation, and a Guided demo that runs the whole story in 7 steps.</li>
   <li><strong>Golden rule:</strong> the website has no networking logic. Pages call the backend, the backend saves files (JSON, CSV, Markdown), pages read them back. No database.</li>
   <li><strong>Code:</strong> about 9,900 lines of Python in folders with one job each: <code>diagnostics/</code>, <code>failure_analysis/</code>, <code>simulation/</code>, <code>analysis/</code>, <code>communication/</code>, <code>security/</code>, <code>app_pages/</code>, <code>ui/</code>.</li>
-  <li><strong>Tests:</strong> 159 pytest tests, including real NS2 runs, real sockets and every app page.</li>
+  <li><strong>Tests:</strong> 186 pytest tests, including real NS2 runs, real sockets and every app page.</li>
   <li><strong>Online:</strong> Streamlit Cloud installs real NS2 via <code>packages.txt</code>. On Windows, NS2 runs in Docker.</li>
   <li><strong>Safety:</strong> allow-list of destinations, no shell, only 7 programs, strict checks on NS2 settings, standard TLS only.</li>
 </ul>
@@ -254,7 +264,7 @@ Why 43.6 ms?  backup road travel 2 + 15 + 15 + 2 = 34 ms   +   9.6 ms sending
 <h2><span class="n">13</span>Numbers to remember</h2>
 <div class="nums">
   <div class="num"><b>17</b><span>rules</span></div>
-  <div class="num"><b>159</b><span>tests</span></div>
+  <div class="num"><b>186</b><span>tests</span></div>
   <div class="num"><b>1001</b><span>packets per run</span></div>
   <div class="num"><b>33.6 ms</b><span>normal delay</span></div>
   <div class="num"><b>43.6 ms</b><span>B1 detour</span></div>

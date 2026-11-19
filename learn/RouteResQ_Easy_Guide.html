@@ -151,7 +151,7 @@ td.mono { font-family: var(--mono); font-size: 8.8pt; font-weight: 600; white-sp
   <span class="chip">Computer Networks Lab <b>24B15CS313</b> · JIIT Noida</span>
   <span class="chip">Python · Streamlit · <b>NS2 2.35</b></span>
   <span class="chip"><b>17</b> rules</span>
-  <span class="chip"><b>159</b> tests</span>
+  <span class="chip"><b>186</b> tests</span>
   <span class="chip">Live at <b>routeresq.streamlit.app</b></span>
 </div>
 
@@ -873,10 +873,29 @@ Total                                                  = 33.6 ms
 </tbody></table>
 <p>The "reset" drill uses a small trick: the server sets <code>SO_LINGER</code> to zero before closing, which makes the computer send a hard <strong>RST</strong> instead of a polite goodbye (FIN). All six drills recovered (<strong>6/6</strong>).</p>
 
+<h2><span class="n">26a</span>Part 4b: a real upload while a link breaks</h2>
+<p class="sub">This lives in <code>netlab/</code> and on the <b>Upload test</b> page. It is the newest experiment.</p>
+<p><strong>The question:</strong> you are uploading a file and, halfway through, a cable breaks. Does the upload take a detour, freeze until the cable is fixed, or fail and start again?</p>
+<p>We build a tiny network inside a container: a <strong>client</strong>, a <strong>server</strong> and a <strong>router</strong>. The client and server have a direct <strong>main road</strong> (the primary link), and a longer <strong>detour</strong> through the router (the backup path). We upload a real 2 MiB file. When the <strong>server</strong> has received 30% of it, we cut the main road for 3 seconds. We do this three times with the same file and settings:</p>
+<table>
+<thead><tr><th>Run</th><th>What is different</th><th>What happened</th></tr></thead>
+<tbody>
+<tr><td>No failure</td><td>Nothing breaks</td><td>Done in 4.04 s, no pause</td></tr>
+<tr><td>Backup route</td><td>A sign for the detour is already up</td><td>Paused only <strong>0.07 s</strong>, then kept going on the detour</td></tr>
+<tr><td>No backup route</td><td>The detour exists but no sign points to it</td><td>Froze for <strong>3.29 s</strong>, then carried on 0.29 s after the road reopened</td></tr>
+</tbody></table>
+<div class="box like">
+  <div class="lbl">THINK OF IT LIKE</div>
+  <p>A delivery van on a highway. If the GPS already knows a side road, the van barely slows down. If not, it waits at the closed road until it reopens.</p>
+</div>
+<div class="box rem">
+  <div class="lbl">REMEMBER</div>
+  <p>We prove which road was used by counting the bytes on each road (interface counters), not by the fact that the file arrived. In all three runs the same connection finished the job, no retry was needed, and the file's SHA-256 fingerprint matched.</p>
+</div>
 <h2><span class="n">27</span>The root-cause register</h2>
 <p>This is the project's main answer, in one table (<code>analysis/cause_report.py</code>, saved as <code>reports/root_cause_report.md</code>). One row per thing we checked:</p>
 <ul class="dot">
-  <li><strong>13 rows</strong>: 3 live checks (8.8.8.8, nonexistent.invalid, 192.0.2.1) + 4 NS2 scenarios (A, B1, B2, C) + 6 transport drills.</li>
+  <li><strong>16 rows</strong>: 3 live checks (8.8.8.8, nonexistent.invalid, 192.0.2.1) + 4 NS2 scenarios (A, B1, B2, C) + 6 transport drills + 3 upload runs.</li>
   <li><strong>11 failures</strong> have a stated cause. The other 2 (8.8.8.8 and scenario A) are healthy.</li>
   <li>Live rows are <strong>re-checked with the current rules</strong> every time, so the table never shows an answer from an older version of the rules.</li>
   <li>By default it shows the latest run for each destination. A switch on the Reports page shows every run.</li>
@@ -893,7 +912,7 @@ Total                                                  = 33.6 ms
 </tbody></table>
 
 <h2><span class="n">28</span>The guided demo</h2>
-<p>The <strong>Guided demo</strong> button (top of the app) tells the whole story in six steps, running the real code each time: <strong>Detect → Diagnose → Analyse impact → Observe recovery → Transport → Report</strong>.</p>
+<p>The <strong>Guided demo</strong> button (top of the app) tells the whole story in seven steps, running the real code each time: <strong>Detect → Diagnose → Analyse impact → Observe recovery → Transport → Report</strong>.</p>
 <p>Every step shows a checked status: <code>not_started</code>, <code>success</code>, <code>partial</code>, <code>failed</code> or <code>stored</code>. For example, if NS2 is not installed, the demo uses the newest saved NS2 runs and labels them <strong>stored</strong>, and the final report says so. If one destination fails, the others are kept. Each step can be retried on its own.</p>
 
 <h2><span class="n">29</span>A tour of the app</h2>
@@ -910,7 +929,10 @@ Total                                                  = 33.6 ms
 <tr><td>04 Recovery</td><td>The recovery verdict, the five questions answered, three maps side by side, the timeline, comparisons.</td></tr>
 <tr><td>Lab TCP · UDP · TLS</td><td>Send a real message or file, compare TCP and UDP, run the TLS transfer, run the six drills.</td></tr>
 <tr><td>05 Reports</td><td>The register, every report, experiment history, file browser with ZIP download, the log.</td></tr>
-<tr><td>Guided demo</td><td>The six-step story with checked statuses.</td></tr>
+<tr><td>Upload test</td><td>Upload a real file while a link breaks; compare backup route vs no backup route.</td></tr>
+<tr><td>Problem &amp; solution</td><td>One page that explains the problem and our solution.</td></tr>
+<tr><td>Presentation</td><td>The slide deck, inside the app.</td></tr>
+<tr><td>Guided demo</td><td>The seven-step story with checked statuses.</td></tr>
 </tbody></table>
 <div class="shot"><img src="../presentation/assets/simulation_charts.jpg" alt=""></div>
 <div class="shotcap">NS2 simulation page: charts built from the trace, with the failure window shaded.</div>
@@ -942,7 +964,7 @@ Total                                                  = 33.6 ms
 <tr><td class="mono">security/</td><td>Certificates, TLS, SHA-256</td><td class="r">195</td></tr>
 <tr><td class="mono">walkthrough/</td><td>The guided demo logic</td><td class="r">316</td></tr>
 <tr><td class="mono">app_pages/ + ui/</td><td>The website: pages, theme, charts</td><td class="r">2,434</td></tr>
-<tr><td class="mono">tests/</td><td>159 automatic tests</td><td class="r">1,596</td></tr>
+<tr><td class="mono">tests/</td><td>186 automatic tests</td><td class="r">1,596</td></tr>
 </tbody></table>
 <p>About <strong>9,900 lines</strong> of Python in total. Other important files: <code>streamlit_app.py</code> (the front door of the app), <code>config/</code> (allowed targets and rule limits), <code>results/</code> and <code>reports/</code> (everything the project writes).</p>
 <div class="box rem">
@@ -980,7 +1002,7 @@ Total                                                  = 33.6 ms
 </tbody></table>
 
 <h2><span class="n">32</span>Testing: how we know it works</h2>
-<p>A <strong>test</strong> is a small program that checks another piece of code gives the right answer. RouteResQ has <strong>159 tests</strong>, run with <code>pytest</code>.</p>
+<p>A <strong>test</strong> is a small program that checks another piece of code gives the right answer. RouteResQ has <strong>186 tests</strong>, run with <code>pytest</code>.</p>
 <table>
 <thead><tr><th>Test file</th><th>What it checks</th></tr></thead>
 <tbody>
@@ -1064,7 +1086,7 @@ streamlit run streamlit_app.py
 <h2><span class="n">36</span>Numbers to remember</h2>
 <div class="nums">
   <div class="num"><b>17</b><span>rules in the engine</span></div>
-  <div class="num"><b>159</b><span>automatic tests</span></div>
+  <div class="num"><b>186</b><span>automatic tests</span></div>
   <div class="num"><b>6</b><span>nodes in the NS2 map</span></div>
   <div class="num"><b>4</b><span>NS2 scenarios: A, B1, B2, C</span></div>
   <div class="num"><b>1001</b><span>packets per run, one every 8 ms</span></div>
@@ -1077,12 +1099,13 @@ streamlit run streamlit_app.py
   <div class="num"><b>170</b><span>C queue drops (117 ours)</span></div>
   <div class="num"><b>20</b><span>packets per queue</span></div>
   <div class="num"><b>6/6</b><span>drills recovered</span></div>
-  <div class="num"><b>13 / 11</b><span>register rows / with a cause</span></div>
+  <div class="num"><b>16 / 13</b><span>register rows / with a cause</span></div>
   <div class="num"><b>~9,900</b><span>lines of Python</span></div>
 </div>
 
 <h2><span class="n">37</span>Questions with easy answers</h2>
 <div class="qa"><div class="q">What does RouteResQ do, in one line?</div><div class="a">It finds why a network failed, what that did to the traffic, and whether service came back, and it says honestly how sure it is.</div></div>
+<div class="qa"><div class="q">What happens to an upload when a link breaks?</div><div class="a">With a backup route the server paused only 0.07 s and the same connection kept going on the backup path. Without one it froze for 3.29 s until the link came back. Every file matched its SHA-256.</div></div>
 <div class="qa"><div class="q">Why not just use ping?</div><div class="a">Ping only shows a symptom. "No reply" could mean the computer is off, the path is broken, or ping is simply blocked. RouteResQ combines DNS, gateway, ping, traceroute and TCP checks to tell these apart.</div></div>
 <div class="qa"><div class="q">What is the difference between a symptom and a cause?</div><div class="a">A symptom is what you see (100% loss). A cause is why it happened (a broken link). Many causes can give the same symptom.</div></div>
 <div class="qa"><div class="q">How does the project decide a live cause?</div><div class="a">17 if-then rules turn the results into findings and possible causes. If exactly one cause fits all the evidence, it is "Likely". If several fit, it is "Not confirmed", and the checks that would separate them are listed.</div></div>
@@ -1103,7 +1126,7 @@ streamlit run streamlit_app.py
 <div class="qa"><div class="q">What is framing and why do you need it?</div><div class="a">TCP is a stream of bytes with no message borders. Each message gets a small header with its type and length, so the receiver knows exactly where it ends.</div></div>
 <div class="qa"><div class="q">How do you stop misuse of the tool?</div><div class="a">Only allowed destinations, no shell, only 7 programs, input starting with "-" refused, and the public app blocks private addresses and new hosts.</div></div>
 <div class="qa"><div class="q">What happens in the demo if NS2 is not installed?</div><div class="a">It uses the newest saved runs, labels them "stored", and the report says so.</div></div>
-<div class="qa"><div class="q">How do you know the code is correct?</div><div class="a">159 tests: real saved command outputs, small traces with known answers, real NS2 runs, real sockets and every page of the website.</div></div>
+<div class="qa"><div class="q">How do you know the code is correct?</div><div class="a">186 tests: real saved command outputs, small traces with known answers, real NS2 runs, real sockets and every page of the website.</div></div>
 <div class="qa"><div class="q">What would you add next?</div><div class="a">Bigger maps, link-state routing with real timers, tests between two lab PCs, trends over many runs, and DNS/MTU drills.</div></div>
 
 <h2><span class="n">38</span>Word list</h2>
@@ -1158,9 +1181,10 @@ streamlit run streamlit_app.py
   <p><strong>Part 1, live checks.</strong> DNS, gateway ping, ping, traceroute and TCP on allowed destinations only, run safely without a shell.</p>
   <p><strong>Part 2, rule engine.</strong> 17 if-then rules give findings, possible causes with evidence for and against, contradictions, and a rule trace. Live causes are at best "Likely".</p>
   <p><strong>Part 3, NS2.</strong> A 6-node map with a main and a backup road. A: healthy, 33.6 ms. B1: link breaks, DV reroutes in 43.6 ms, 2 lost. B2: same break with static routes, 377 lost, 3.024 s gap. C: 2.5 Mb/s into 2 Mb/s, queue full, 170 drops, delay 102.75 ms, then recovered. Packets are followed by ID, which finds 375 silent losses in B2.</p>
+  <p><strong>Upload test.</strong> A real 2 MiB upload with the link cut at 30%: backup route = 0.07 s pause, no backup route = 3.29 s freeze; same connection, file matched.</p>
   <p><strong>Part 4, transport lab.</strong> Real TCP, UDP and TLS on loopback. Framing for TCP, gap detection for UDP, TLS 1.3 with certificate and SHA-256 checks, and six drills that break and repair the connection (6/6 recovered).</p>
-  <p><strong>Joining it up.</strong> The root-cause register: 13 rows, 11 failures with a cause, each with a status: Confirmed (injected), Likely, Not confirmed or No failure detected.</p>
-  <p><strong>Built with</strong> Python, Streamlit, Plotly and NS2 2.35; 159 tests; live at routeresq.streamlit.app.</p>
+  <p><strong>Joining it up.</strong> The root-cause register: 16 rows, 13 failures with a cause, each with a status: Confirmed (injected), Likely, Not confirmed or No failure detected.</p>
+  <p><strong>Built with</strong> Python, Streamlit, Plotly and NS2 2.35; 186 tests; live at routeresq.streamlit.app.</p>
 </div>
 
 </div>

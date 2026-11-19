@@ -30,6 +30,8 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric,shapes.multipart,fit,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xurl}
 \usepackage{eso-pic}
@@ -78,6 +80,10 @@
 
 \newcommand{\asset}[1]{routeresq_assets/#1}
 \newcommand{\tighttable}{\renewcommand{\arraystretch}{1.18}}
+% Upload-under-link-failure numbers, chart data and table, generated from results/netlab/recorded
+% by report/make_upload_assets.py, so the report always matches the app and the slides.
+\input{routeresq_assets/upload_results.tex}
+\newcommand{\testCount}{186}
 
 \begin{document}
 
@@ -147,13 +153,15 @@ Dr. Kirti Aggarwal\hspace{0.70in}Dr. Kapil Madan
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-RouteResQ is an integrated Computer Networks laboratory platform whose central goal is to identify the cause of a network failure, measure what the failure did to traffic, and observe whether and how service recovered. The completed system combines live diagnostics, a deterministic root-cause rule engine, four NS2 2.35 experiments, TCP and UDP socket communication, TLS certificate validation, SHA-256 integrity checking, controlled failure drills, a root-cause register, and generated reports in one Streamlit application, deployed publicly at \url{https://routeresq.streamlit.app}. Live measurements, simulations, and loopback socket experiments are deliberately kept separate so that a simulated cause is never presented as the cause of a live problem.
+RouteResQ is an integrated Computer Networks laboratory platform whose central goal is to identify the cause of a network failure, measure what the failure did to traffic, and observe whether and how service recovered. The completed system combines live diagnostics, a deterministic root-cause rule engine, four NS2 2.35 experiments, a real file upload under link failure in an isolated test network, TCP and UDP socket communication, TLS certificate validation, SHA-256 integrity checking, controlled failure drills, a root-cause register, and generated reports in one Streamlit application, deployed publicly at \url{https://routeresq.streamlit.app}. Live measurements, simulations, and loopback socket experiments are deliberately kept separate so that a simulated cause is never presented as the cause of a live problem.
 
 The live diagnostics module executes allow-listed DNS, gateway, ping, traceroute or tracert, and optional TCP-connect checks. Seventeen deterministic rules convert the measurements into findings, keep contradictory evidence visible, and label every conclusion as confirmed, likely, possible, or insufficient evidence. The root-cause register then gives every detected failure one cause status: \emph{Confirmed (injected)}, \emph{Likely}, \emph{Not confirmed}, or \emph{No failure detected}. The NS2 module analyses a six-node topology under a healthy baseline, a distance-vector link failure, a static-routing link failure, and congestion. Real NS2 traces show that distance-vector routing moved traffic to the alternative path with only two packet losses and a first alternative delivery 43.6 ms after the failure, whereas static routing produced a 3.024 s delivery gap and 37.66\% overall loss. Congestion filled a 20-packet DropTail queue and raised delay and loss until the competing flow stopped.
 
-The communication module demonstrates framed TCP, sequenced UDP, TLS 1.3, certificate and host-name validation, and payload integrity. Six controlled drills cover refusal, timeout, reset, missing datagrams, an untrusted certificate, and a host-name mismatch, each followed by an explicit restoration check. A guided demonstration runs the whole Detect, Diagnose, Analyse impact, Observe recovery and Report sequence and verifies each stage against stored evidence. A suite of 159 automated tests validates the parsers, rules, simulations, sockets and user interface.
+A further experiment asks what happens to a real file upload when a link fails halfway through it. A paced TCP client uploads a \upFileMiB{} MiB file through an isolated Linux test network (network namespaces and virtual links inside a container) that has a primary link and a backup path; once the server has received \upFaultPct\% of the file, the primary link is taken down for \upOutage{} s. With a pre-installed backup route the server paused for only \upFailStall{} s and the same TCP connection continued over the backup path, which carried \upFailBackupMiB{} MiB during the outage; with static forwarding it paused for \upStatStall{} s and the same connection resumed \upStatResume{} s after the link returned. Every file matched its SHA-256 digest and no retry was needed.
 
-\textbf{Keywords:} network diagnostics, root-cause analysis, NS2, distance-vector routing, TCP, UDP, TLS, SHA-256, Streamlit.
+The communication module demonstrates framed TCP, sequenced UDP, TLS 1.3, certificate and host-name validation, and payload integrity. Six controlled drills cover refusal, timeout, reset, missing datagrams, an untrusted certificate, and a host-name mismatch, each followed by an explicit restoration check. A guided demonstration runs the whole Detect, Diagnose, Analyse impact, Observe recovery, Transport, Upload and Report sequence and verifies each stage against stored evidence. A suite of \testCount{} automated tests validates the parsers, rules, simulations, sockets and user interface.
+
+\textbf{Keywords:} network diagnostics, root-cause analysis, NS2, distance-vector routing, link failover, network namespaces, TCP, UDP, TLS, SHA-256, Streamlit.
 
 \clearpage
 \setcounter{tocdepth}{1}
@@ -178,7 +186,7 @@ The communication module demonstrates framed TCP, sequenced UDP, TLS 1.3, certif
 \section{Background}
 Modern applications depend on several network layers working together. The same visible symptom, such as a timeout, may arise from a DNS failure, an unreachable destination, packet loss, congestion, a closed service port, or an application fault. In current practice a student or administrator runs \texttt{ping}, \texttt{traceroute}/\texttt{tracert} and \texttt{nslookup} one after another and interprets the raw output by hand. Each tool exposes only part of the path: routers may ignore ICMP, four echo requests give only coarse loss resolution, and a successful TCP connection can contradict a failed ping. Routing behaviour and recovery are usually studied separately in a simulator such as NS2 \cite{ns2book}, and socket programming and TLS \cite{tcp,udp,tls13} in yet another exercise.
 
-RouteResQ brings these three environments together. Live diagnostics collect real operating-system measurements; NS2 2.35 injects known faults into a six-node topology so that routing impact and recovery can be measured from the simulator's own trace; and real socket experiments compare TCP, UDP, TLS identity validation, and SHA-256 integrity \cite{sha}. Independent Python modules and a Streamlit console \cite{streamlit} connect these environments while ensuring that every displayed claim comes from stored backend evidence.
+RouteResQ brings these environments together. Live diagnostics collect real operating-system measurements; NS2 2.35 injects known faults into a six-node topology so that routing impact and recovery can be measured from the simulator's own trace; an isolated test network takes a real link down in the middle of a real TCP file upload; and real socket experiments compare TCP, UDP, TLS identity validation, and SHA-256 integrity \cite{sha}. Independent Python modules and a Streamlit console \cite{streamlit} connect these environments while ensuring that every displayed claim comes from stored backend evidence.
 
 \section{Problem Statement}
 When a network service fails, the operational questions are: \emph{what failed, why did it fail, what happened to the traffic, did the service recover, and how certain is each answer?} Existing laboratory exercises answer these questions in isolation, and diagnostic tools report symptoms rather than causes. A user therefore either guesses one cause or cannot connect the measurement to the mechanism, and confident-sounding conclusions are often unsupported by the evidence. This matters both for teaching, where students learn to over-claim, and for operations, where a wrong cause wastes repair effort.
@@ -188,6 +196,7 @@ RouteResQ addresses this gap. Its objectives are to:
   \item run authorised DNS, gateway, ping, path and TCP checks and classify the symptoms with traceable, deterministic rules;
   \item state the root cause of every detected failure together with an explicit certainty status rather than an invented confidence percentage;
   \item compare healthy, link-failure and congestion scenarios in NS2 and reconstruct packet paths, delay, throughput, loss, queues and recovery;
+  \item determine, for a real file upload, whether a mid-transfer link failure makes the upload continue on a backup route, stall until the link returns, or fail and need a retry, with receiver-confirmed progress, path evidence and SHA-256 verification;
   \item compare real TCP and UDP behaviour, validate TLS certificates, host names and SHA-256 integrity, and demonstrate controlled transport failures with restoration; and
   \item export reports that remain linked to their JSON, CSV, Markdown and trace evidence.
 \end{itemize}
@@ -205,10 +214,11 @@ The project covers:
   \item live DNS, gateway, ping, traceroute/tracert and TCP-connect diagnostics against loopback, private or explicitly authorised destinations, on Windows and Linux;
   \item a deterministic root-cause engine with baselines, route comparison, rule traces and a cross-source root-cause register;
   \item four NS2 2.35 scenarios with packet-level trace analysis, phase metrics and recovery observation;
+  \item a file upload under link failure in an isolated Linux test network with a primary link and a backup path, compared across a healthy baseline, a backup route and static forwarding;
   \item TCP and UDP sockets, TLS 1.2+ with a local lab PKI, SHA-256 integrity and six controlled failure drills; and
   \item a Streamlit interface with a guided demonstration, Markdown reports and evidence export.
 \end{itemize}
-Its boundaries are equally explicit. RouteResQ does not capture packets, detect intrusions, use machine learning, repair live networks automatically, manage enterprise devices, or implement custom cryptography. NS2 results describe the configured model rather than any real network, and loopback measurements exclude realistic propagation delay and path loss. The public deployment further restricts probing to well-known public destinations.
+Its boundaries are equally explicit. RouteResQ does not capture packets, detect intrusions, use machine learning, repair live networks automatically, manage enterprise devices, or implement custom cryptography. NS2 results describe the configured model rather than any real network, and loopback measurements exclude realistic propagation delay and path loss. The upload experiment needs Linux network namespaces (root or a Docker container); the public deployment has neither, so it shows a clearly labelled recorded run, and it further restricts probing to well-known public destinations.
 
 % =============================================================================
 \chapter{System Design \& Methodology}
@@ -218,35 +228,34 @@ Its boundaries are equally explicit. RouteResQ does not capture packets, detect 
 RouteResQ follows a five-stage, evidence-first methodology: \textbf{Detect} (collect measurements), \textbf{Diagnose} (apply deterministic rules and state a cause with its certainty), \textbf{Analyse impact} (quantify what the failure did to traffic), \textbf{Observe recovery} (claim recovery only when evidence shows it), and \textbf{Report} (store and export every artefact). Each stage writes its evidence to disk before the next stage reads it, so every conclusion in the interface or in a report can be traced back to a measurement, a trace event, or a deliberately injected condition. The same five stages form the navigation rail of the Streamlit application and the steps of its guided demonstration. The following subsections describe the architecture, the workflow, the object-oriented design, and the method used in each evidence environment.
 
 \subsection{System Architecture}
-The implementation separates presentation, measurement, analysis and storage, as summarised in Figure~\ref{fig:architecture}. Streamlit pages call Python modules but contain no networking logic, so the same diagnostics, simulation analysis, socket experiments and report generation can be used from the command line and from the test suite. The principal backend packages are \texttt{diagnostics}, \texttt{failure\_analysis}, \texttt{simulation}, \texttt{analysis}, \texttt{communication}, \texttt{security} and \texttt{walkthrough}; the \texttt{app\_pages} and \texttt{ui} layers only present stored evidence.
+The implementation separates presentation, measurement, analysis and storage, as summarised in Figure~\ref{fig:architecture}. Streamlit pages call Python modules but contain no networking logic, so the same diagnostics, simulation analysis, socket experiments and report generation can be used from the command line and from the test suite. The principal backend packages are \texttt{diagnostics}, \texttt{failure\_analysis}, \texttt{simulation}, \texttt{analysis}, \texttt{communication}, \texttt{security}, \texttt{netlab} (the upload-under-link-failure experiment) and \texttt{walkthrough}; the \texttt{app\_pages} and \texttt{ui} layers only present stored evidence.
 
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
   node distance=6mm and 10mm,
-  box/.style={draw=RouteInk,rounded corners=3pt,align=center,minimum height=10mm,text width=33mm,fill=RoutePale,font=\small},
-  data/.style={draw=RouteBlue,rounded corners=3pt,align=center,minimum height=10mm,text width=33mm,fill=blue!5,font=\small},
+  box/.style={draw=RouteInk,rounded corners=3pt,align=center,minimum height=10mm,text width=34mm,fill=RoutePale,font=\small},
+  data/.style={draw=RouteBlue,rounded corners=3pt,align=center,minimum height=10mm,text width=34mm,fill=blue!5,font=\small},
   arrow/.style={-{Latex[length=2.2mm]},thick,draw=RouteInk}
 ]
-\node[box,fill=RouteCyan!12] (ui) {Streamlit interface, workflow rail and guided demo};
-\node[box,below left=of ui] (diag) {Live diagnostics\\DNS, ping, trace, TCP};
-\node[box,below=of ui] (sim) {NS2 experiments\\and trace parser};
-\node[box,below right=of ui] (comm) {TCP, UDP and TLS\\socket experiments};
-\node[box,below=of diag] (rules) {Deterministic\\root-cause rules};
-\node[box,below=of sim] (analysis) {Packet, path, queue\\and recovery analysis};
-\node[box,below=of comm] (security) {Certificate and\\SHA-256 verification};
-\node[data,below=10mm of analysis] (store) {JSON, CSV, traces,\\history and Markdown};
+\node[box,fill=RouteCyan!12,text width=62mm] (ui) at (0,0) {Streamlit interface,\\ workflow rail and guided demo};
+\node[box] (diag) at (-6.15,-1.9) {Live diagnostics\\DNS, ping, trace, TCP};
+\node[box] (sim) at (-2.05,-1.9) {NS2 experiments\\and trace parser};
+\node[box] (net) at (2.05,-1.9) {Isolated test network\\upload under link failure};
+\node[box] (comm) at (6.15,-1.9) {TCP, UDP and TLS\\socket experiments};
+\node[box] (rules) at (-6.15,-3.75) {Deterministic\\root-cause rules};
+\node[box] (analysis) at (-2.05,-3.75) {Packet, path, queue\\and recovery analysis};
+\node[box] (upan) at (2.05,-3.75) {Progress, stall, path\\and SHA-256 checks};
+\node[box] (security) at (6.15,-3.75) {Certificate and\\SHA-256 verification};
+\node[data] (store) at (0,-5.75) {JSON, CSV, traces,\\history and Markdown};
 \node[box,below=of store,fill=RouteAmber!15] (register) {Root-cause register\\(cause + status)};
 \node[box,below=of register,fill=RouteGreen!12] (report) {Reports, comparison\\and export};
-\draw[arrow] (ui) -- (diag);
-\draw[arrow] (ui) -- (sim);
-\draw[arrow] (ui) -- (comm);
+\foreach \n in {diag,sim,net,comm} \draw[arrow] (ui) -- (\n);
 \draw[arrow] (diag) -- (rules);
 \draw[arrow] (sim) -- (analysis);
+\draw[arrow] (net) -- (upan);
 \draw[arrow] (comm) -- (security);
-\draw[arrow] (rules) -- (store);
-\draw[arrow] (analysis) -- (store);
-\draw[arrow] (security) -- (store);
+\foreach \n in {rules,analysis,upan,security} \draw[arrow] (\n) -- (store);
 \draw[arrow] (store) -- (register);
 \draw[arrow] (register) -- (report);
 \end{tikzpicture}
@@ -270,7 +279,7 @@ The user begins with a live diagnostic or a stored experiment. RouteResQ validat
 \node[decision,below=5mm of detect] (kind) {Evidence environment?};
 \node[stage,below left=6mm and 24mm of kind] (live) {Live network: evaluate deterministic diagnostic rules};
 \node[stage,below=6mm of kind] (ns2) {NS2: reconstruct packet paths, fates, queues and events};
-\node[stage,below right=6mm and 24mm of kind] (sock) {Sockets: verify delivery, TLS identity, integrity and errors};
+\node[stage,below right=6mm and 24mm of kind] (sock) {Sockets and test network: verify delivery, path, TLS identity, integrity and errors};
 \node[stage,below=16mm of ns2,fill=RouteAmber!15] (cause) {Diagnose: state the cause and its status (confirmed, likely, not confirmed)};
 \node[stage,below=of cause,fill=RouteGreen!12] (recovery) {Observe impact and recovery; preserve uncertainty and limitations};
 \node[stage,below=of recovery,fill=RouteBlue!10] (report) {Store evidence; generate register, reports and exports};
@@ -278,7 +287,7 @@ The user begins with a live diagnostic or a stored experiment. RouteResQ validat
 \draw[arrow] (detect) -- (kind);
 \draw[arrow] (kind) -- node[above left,font=\scriptsize]{live} (live);
 \draw[arrow] (kind) -- node[right,font=\scriptsize]{simulation} (ns2);
-\draw[arrow] (kind) -- node[above right,font=\scriptsize]{transport} (sock);
+\draw[arrow] (kind) -- node[above right,font=\scriptsize]{transport / upload} (sock);
 \draw[arrow] (live) |- (cause);
 \draw[arrow] (ns2) -- (cause);
 \draw[arrow] (sock) |- (cause);
@@ -290,7 +299,7 @@ The user begins with a live diagnostic or a stored experiment. RouteResQ validat
 \end{figure}
 
 \subsection{Object-Oriented Design}
-The backend is modelled as small classes with one responsibility each. Figure~\ref{fig:uml} is a UML class diagram of the principal classes. Measurement results are immutable-style data classes composed into a \texttt{DiagnosticRun}; the rule engine turns a run into an \texttt{AnalysisReport}; an NS2 \texttt{Scenario} is executed by an \texttt{NS2Backend} into a \texttt{SimulationRun} whose trace is reconstructed into \texttt{PacketRecord} objects; and the transport layer is built from a reusable \texttt{TCPTransferServer}, a \texttt{TransferResult} returned by the client, and a \texttt{LabPKI} used by the TLS demonstration. Command execution is abstracted behind the \texttt{CommandRunner} protocol, so the tests substitute a fake runner that replays captured Windows and Linux output.
+The backend is modelled as small classes with one responsibility each. Figure~\ref{fig:uml} is a UML class diagram of the principal classes. Measurement results are immutable-style data classes composed into a \texttt{DiagnosticRun}; the rule engine turns a run into an \texttt{AnalysisReport}; an NS2 \texttt{Scenario} is executed by an \texttt{NS2Backend} into a \texttt{SimulationRun} whose trace is reconstructed into \texttt{PacketRecord} objects; and the transport layer is built from a reusable \texttt{TCPTransferServer}, a \texttt{TransferResult} returned by the client, and a \texttt{LabPKI} used by the TLS demonstration. The upload experiment adds a \texttt{LabConfig} with hard bounds, a \texttt{Topology} that builds and removes the test network, and \texttt{LabServer}, \texttt{LabClient} and \texttt{Sampler} threads that share one \texttt{Recorder} clock (Section~\ref{sec:uploadmethod}). Command execution is abstracted behind the \texttt{CommandRunner} protocol, so the tests substitute a fake runner that replays captured Windows and Linux output.
 
 \begin{figure}[htbp]
 \centering
@@ -348,7 +357,7 @@ The backend is modelled as small classes with one responsibility each. Figure~\r
 \node[cls,text width=60mm,below=12mm of pkt,rectangle split part fill={RouteAmber!20,white,white}] (reg)
   {\textit{\guillemotleft utility\guillemotright}\\\textbf{cause\_report}
   \nodepart{two} statuses: Confirmed (injected), Likely,\\Not confirmed, No failure detected
-  \nodepart{three} + live\_cause()  + sim\_cause()  + transport\_cause()\\+ collect()  + cause\_report\_markdown()};
+  \nodepart{three} + live\_cause()  + sim\_cause()  + transport\_cause()\\+ upload\_cause()  + collect()  + cause\_report\_markdown()};
 % ---- relations ----
 \draw[real] (sub) -- (runner);
 \draw[dep] (sub) -- node[lbl]{produces records for} (run);
@@ -464,6 +473,69 @@ and is reported only when the trace actually contains such a delivery. NS2 2.35 
 \subsection{Transport and Security Methodology}
 TCP uses length-prefixed frames with exact partial-read handling. Sequenced UDP datagrams expose gaps, duplicates, reordering and idle timeout without adding retransmission. TLS uses Python's \texttt{ssl} module \cite{python_ssl} with TLS 1.2 or later \cite{tls13}, mandatory certificate and host-name validation, and a locally generated lab PKI. The client and server SHA-256 digests \cite{sha} of every payload must match. Six drills inject a known transport fault (no listener, silent server, mid-transfer reset, skipped UDP sequence numbers, untrusted issuer, wrong host name), record the resulting error, and then repeat the operation under restored conditions to verify recovery.
 
+\subsection{File Upload under Link Failure Methodology}\label{sec:uploadmethod}
+This experiment answers one question: \emph{if a network link goes down halfway through a file upload, does the upload continue on a backup route, stall until the link returns, or fail and need a retry?} It uses real file bytes, a real TCP connection and a real link failure, so it is run in an isolated test network rather than on the loopback interface, where no link could fail.
+
+\paragraph{Test network.} Inside the lab container, three Linux network namespaces (client, router, server) are joined by virtual Ethernet (veth) links (Figure~\ref{fig:uploadtopo}). The client and the server are joined directly by the \emph{primary link}; the \emph{backup path} runs through the router in two hops. Each link end has an emulated one-way delay (5 ms on the primary link, 10 ms per backup hop). The client and the server each own a service address on their loopback interface (\texttt{10.98.0.1} and \texttt{10.99.0.1}), and the TCP connection runs between these two addresses, so its four-tuple does not change if the packets change path. The host's own interfaces and routes are never modified, and all namespaces are removed after every run, whether it succeeded, failed or was stopped.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  host/.style={circle,draw=RouteInk,fill=RouteCyan!14,minimum size=15mm,align=center,font=\small\bfseries},
+  rtr/.style={circle,draw=RouteInk,fill=RoutePale,minimum size=12mm,font=\small\bfseries},
+  primary/.style={very thick,draw=RouteBlue},
+  backup/.style={very thick,draw=RouteAmber},
+]
+\node[host] (c) at (0,0) {client};
+\node[host] (s) at (9,0) {server};
+\node[rtr] (r) at (4.5,-2.2) {router};
+\draw[primary] (c) -- node[above,font=\scriptsize]{primary link: \texttt{cp0}--\texttt{sp0}, metric 10, 5 ms each end} node[below,font=\scriptsize,text=RouteClay]{taken down at \upFaultPct\% received, for \upOutage{} s} (s);
+\draw[backup] (c) -- node[below left,font=\scriptsize]{\texttt{cb0}--\texttt{rc0}, 10 ms} (r);
+\draw[backup] (r) -- node[below right,font=\scriptsize]{\texttt{rs0}--\texttt{sb0}, 10 ms} (s);
+\node[above=1mm of c,font=\scriptsize]{\texttt{10.98.0.1}};
+\node[above=1mm of s,font=\scriptsize]{\texttt{10.99.0.1}};
+\node[below=1mm of r,font=\scriptsize,text=RouteAmber]{backup path (metric 100 route, failover run only)};
+\end{tikzpicture}
+\caption{Isolated test network for the upload under link failure}
+\label{fig:uploadtopo}
+\end{figure}
+
+\paragraph{How the fault reaches the upload.} While the primary link is up, the route with metric 10 sends every upload packet over it, so it is the link that carries the transfer. The fault is applied by administratively taking down both ends of that link inside the namespaces; the kernel then removes the routes that used it. Restoration brings both ends up again and re-installs the primary route.
+
+\paragraph{Three runs.} The same file, pacing, chunk size, socket timeout, retry limit and topology are used in all three runs (Table~\ref{tab:uploadruns}). Only the forwarding behaviour differs: in the failover run a backup route through the router is installed in advance with metric 100 (a floating static route), so forwarding can fall back to it as soon as the primary routes disappear; in the static run the backup path is still connected and the router still forwards, but no route points to it. No routing protocol runs in the test network, so the failover is a controlled failover, not distance-vector routing.
+
+\begin{table}[H]
+\centering
+\caption{The three upload runs}
+\label{tab:uploadruns}
+\tighttable
+\begin{tabularx}{\textwidth}{>{\bfseries\raggedright\arraybackslash}p{0.27\textwidth}X}
+\toprule
+Run & What differs\\
+\midrule
+Healthy baseline & The primary link stays up for the whole upload.\\
+Link failure, backup route & The primary link goes down mid-upload; a backup route with a higher metric is pre-installed, so forwarding can switch to it.\\
+Link failure, static forwarding & The same link goes down at the same progress point; the backup path is connected and forwarding, but there is no route to it.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Upload and progress.} The client sends the real file bytes with RouteResQ's framing (\texttt{FILE\_META}, then \texttt{FILE\_CHUNK} frames of 8 KiB, then \texttt{FILE\_END}), paced at \upRate{} KiB/s so that the upload is still running when the fault is injected, with a 64 KiB socket send buffer and a \upTimeout{} s socket timeout. The server replies with an acknowledgement containing its own SHA-256 digest. Progress is measured at the \emph{receiver}: every time the server reads file bytes it records $(t, b)$, the time and the total received on that connection. Bytes the client has handed to its socket are not used, because they may still be buffered. The server, the client, the fault controller and the counter samplers run as threads of one process and share one clock, $t=0$ at the start of the upload. The controller takes the link down once $b \ge p\,S$, where $S$ is the file size and $p$ the configured fraction (\upFaultPct\%).
+
+\paragraph{Stall, path and integrity.} If $t_1 < t_2 < \dots$ are the times at which the server's received byte count increased, and $t_{\mathrm{down}}$ is the time the link went down, the stall duration is the longest pause caused by the fault:
+\begin{equation}
+t_{\mathrm{stall}} = \max_{k\,:\,t_{k+1} > t_{\mathrm{down}}} \left(t_{k+1} - t_k\right),
+\label{eq:stall}
+\end{equation}
+taken over the whole transfer in the baseline. If the connection never received another byte, the pause runs until the client gave the connection up. Path use is shown directly by the byte counters of the client's primary and backup interfaces, sampled every 50 ms; the backup path counts as used when at least 16 KiB more left the backup interface while the primary link was down:
+\begin{equation}
+B_{\mathrm{backup}} = c_{\mathrm{cb0}}(t_{\mathrm{up}}) - c_{\mathrm{cb0}}(t^{+}_{\mathrm{down}}) \ge 16\ \mathrm{KiB},
+\label{eq:backup}
+\end{equation}
+where $t^{+}_{\mathrm{down}}$ is the first sample after the link-down commands completed, so bytes sent before the fault never enter the window. The kernel's forwarding decision (\texttt{ip route get}) is also recorded before, during and after the outage. A completed upload alone is never taken as evidence of the path it used.
+
+\paragraph{Outcome classification.} A run \emph{continued on the backup path} if it completed on its first TCP connection, the backup path was used, and receiver progress resumed before the link came back; it \emph{stalled until the link returned} if it completed on its first connection but progress resumed only after restoration. If the first connection fails (timeout or reset), the client may open a new connection, which re-sends the file from byte 0; such a run is classified as \emph{failed, then completed on a retry}. Resuming from a byte offset is not implemented and is never claimed. A completed upload must also have equal client and server SHA-256 digests.
+
 % =============================================================================
 \chapter{Implementation \& Testing}
 % =============================================================================
@@ -487,24 +559,25 @@ Application framework & Streamlit multipage application with a workflow rail, Pl
 Simulation & NS2 2.35 in the Docker image \texttt{routeresq-ns2:2.35} locally and the Debian \texttt{ns2} package on the cloud host.\\
 Networking tools & Windows \texttt{ping}, \texttt{tracert}, \texttt{route}, \texttt{ipconfig}; Linux \texttt{ping}, \texttt{traceroute}, \texttt{ip}.\\
 Communication & Python TCP and UDP sockets, threaded local servers, length-prefixed framing, sequence-aware datagrams.\\
+Test network & Docker image \texttt{routeresq-netlab:1} (Python 3.12, \texttt{iproute2}); Linux network namespaces, veth links and \texttt{netem} delay, created inside the container with \texttt{NET\_ADMIN} and \texttt{SYS\_ADMIN}; Linux kernel \upKernel.\\
 Security & Python \texttt{ssl}/OpenSSL, lab PKI generated with the \texttt{cryptography} package, TLS 1.2 minimum, SHA-256 digests.\\
 Evidence storage & JSON, JSONL, CSV, Markdown, NS2 trace and event-log files under \texttt{results/} and \texttt{reports/}.\\
-Testing & Pytest suite of 159 tests with markers \texttt{ns2}, \texttt{network} and \texttt{ui}; Streamlit AppTest for pages.\\
+Testing & Pytest suite of \testCount{} tests with markers \texttt{ns2}, \texttt{network}, \texttt{ui} and \texttt{netlab}; Streamlit AppTest for pages.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Implementation and Configuration}
-The interface follows the operational sequence Overview, Detect, Diagnose, Analyse impact, Observe recovery, Transport lab and Report, shown as a navigation rail in which each stage displays a live headline from stored results. A guided demonstration page executes the whole sequence and marks each stage as succeeded, partial or failed only after checking its stored evidence. Every page carries a source label such as live measurement, NS2 simulation or real sockets on loopback, and follows the same structure: a short explanation, key measurements, charts or tables, an interpretation, the method, and the artefacts consumed and produced.
+The interface follows the operational sequence Overview, Detect, Diagnose, Analyse impact, Observe recovery, the upload-under-link-failure lab, the transport lab and Report, shown as a navigation rail in which each stage displays a live headline from stored results. The top bar also links to a short \emph{Problem \& solution} page for first-time visitors and to the embedded presentation. A guided demonstration page executes the whole sequence and marks each stage as succeeded, partial or failed only after checking its stored evidence. Every page carries a source label such as live measurement, NS2 simulation or real sockets on loopback, and follows the same structure: a short explanation, key measurements, charts or tables, an interpretation, the method, and the artefacts consumed and produced.
 
-The backend is independent of Streamlit. Diagnostics can be launched from the command line, simulation traces can be re-analysed without re-running NS2, communication experiments can use loopback or two laboratory computers, and reports such as the root-cause register (\texttt{python -m analysis.cause\_report}) are generated directly from stored results. Rule thresholds are kept in \texttt{config/thresholds.json} and authorised destinations in a separate policy file, so the analysis can be tuned without changing code.
+The backend is independent of Streamlit. Diagnostics can be launched from the command line, simulation traces can be re-analysed without re-running NS2, communication experiments can use loopback or two laboratory computers, the upload experiment is run with \texttt{python -m netlab.runner}, and reports such as the root-cause register (\texttt{python -m analysis.cause\_report}) are generated directly from stored results. Rule thresholds are kept in \texttt{config/thresholds.json} and authorised destinations in a separate policy file, so the analysis can be tuned without changing code.
 
 \subsection{Testing Strategy}
-Testing covers deterministic units and real integrations. Captured command fixtures from Windows and Linux verify parser behaviour for reachable hosts, DNS errors, timeouts, partial and complete loss, sub-millisecond RTTs, unreachable responses, truncated output and different traceroute formats. Mocked measurements drive each root-cause rule and contradiction. Real sockets verify framing, TCP and UDP transfers, TLS identity and integrity, and recovery after injected failures. NS2 integration tests check the expected behaviour of all four scenarios when the simulator is available, and Streamlit AppTest exercises every page and the guided workflow. All 159 tests pass on the development machine.
+Testing covers deterministic units and real integrations. Captured command fixtures from Windows and Linux verify parser behaviour for reachable hosts, DNS errors, timeouts, partial and complete loss, sub-millisecond RTTs, unreachable responses, truncated output and different traceroute formats. Mocked measurements drive each root-cause rule and contradiction. Real sockets verify framing, TCP and UDP transfers, TLS identity and integrity, and recovery after injected failures. NS2 integration tests check the expected behaviour of all four scenarios when the simulator is available. The upload experiment is covered by unit tests of the stall, counter-window and classification functions, by checks that the stored run is internally consistent (the fault occurred during the transfer at the configured progress point, and the saved progress, events and outcomes agree), by tests of the recorded-run fallback, and by a real end-to-end run in the test network. Streamlit AppTest exercises every page and the guided workflow. All \testCount{} tests pass on the development machine.
 
 \section{Results (Test Cases / Screenshots / Output)}
 \subsection{Test Cases}
-Representative validation cases and their verified outcomes are listed in Table~\ref{tab:testcases}. TC1 to TC3 exercise the live pipeline on destinations reserved for testing \cite{rfc5737,rfc6761}; TC4 to TC7 use the NS2 scenarios; TC8 to TC11 use real sockets and the cause register.
+Representative validation cases and their verified outcomes are listed in Table~\ref{tab:testcases}. TC1 to TC3 exercise the live pipeline on destinations reserved for testing \cite{rfc5737,rfc6761}; TC4 to TC7 use the NS2 scenarios; TC8 to TC11 use real sockets and the cause register; TC12 to TC14 use the isolated test network.
 
 \begin{table}[H]
 \centering
@@ -525,7 +598,10 @@ TC7 & Congestion & Queue reaches 20 packets; delay and loss rise during excess o
 TC8 & TCP and UDP comparison & Real sockets complete; TCP integrity matches and UDP sequence gaps are detectable.\\
 TC9 & TLS secure transfer & Certificate chain, host name, protocol, cipher and SHA-256 digest verified.\\
 TC10 & Failure drills & Refusal, timeout, reset, missing datagrams and certificate errors detected; recovery checked.\\
-TC11 & Root-cause register & 11 of 13 subjects carry a stated cause; 2 healthy subjects are marked \emph{No failure detected}.\\
+TC11 & Root-cause register & 13 of 16 subjects carry a stated cause; 3 healthy subjects are marked \emph{No failure detected}.\\
+TC12 & Upload, healthy baseline & Completed in \upBaseTotal{} s on the primary link; longest pause \upBaseStall{} s; SHA-256 match.\\
+TC13 & Upload, link failure with backup route & Link down at \upFaultPct\%; backup interface carries \upFailBackupMiB{} MiB; stall \upFailStall{} s; same TCP connection; SHA-256 match.\\
+TC14 & Upload, link failure with static forwarding & No backup traffic; stall \upStatStall{} s; same connection resumes \upStatResume{} s after link-up; SHA-256 match.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -560,7 +636,7 @@ The root-cause page evaluated all rules for the same run. Only the healthy-state
 \end{figure}
 
 \subsection{Root-Cause Register}
-The root-cause register is the output that answers the project's main question: \emph{what caused each failure, and how sure are we?} It joins the latest live run per destination, the four NS2 scenarios and the transport drills, and applies the decision procedure of Figure~\ref{fig:causeflow}. Table~\ref{tab:register} summarises the generated register, and Figure~\ref{fig:reports} shows the report page on which it is displayed.
+The root-cause register is the output that answers the project's main question: \emph{what caused each failure, and how sure are we?} It joins the latest live run per destination, the four NS2 scenarios, the transport drills and the three upload runs, and applies the decision procedure of Figure~\ref{fig:causeflow}. Table~\ref{tab:register} summarises the generated register, and Figure~\ref{fig:reports} shows the report page on which it is displayed.
 
 \begin{longtable}{>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}}
 \caption{Root-cause register generated from stored results}\label{tab:register}\\
@@ -585,10 +661,13 @@ Transport drill & TLS host-name mismatch & Confirmed (injected) & Certificate is
 Transport drill & TLS untrusted issuer & Confirmed (injected) & Certificate signed by a CA the client does not trust.\\
 Transport drill & Missing UDP datagrams & Confirmed (injected) & Sender skipped sequence numbers 50--54, 120 and 199.\\
 Transport drill & Server unavailable & Confirmed (injected) & No process listening on the selected loopback port.\\
+Upload under link failure & Link failure, backup route: continued on the backup path & Confirmed (injected) & Primary link taken down after \upFaultPct\% of the upload had reached the server, for \upOutage{} s; a backup route was installed.\\
+Upload under link failure & Link failure, static forwarding: stalled, then resumed & Confirmed (injected) & The same fault; no route to the backup path.\\
+Upload under link failure & Healthy baseline: none (control) & No failure detected & No fault introduced.\\
 \bottomrule
 \end{longtable}
 
-Eleven failures were explained out of thirteen subjects. The two live failures show the certainty model at work: a DNS failure with a working gateway has exactly one consistent explanation and is reported as \emph{Likely}, whereas an unreachable documentation address is consistent with three explanations and is honestly reported as \emph{Not confirmed}, together with the checks that would separate them.
+Thirteen failures were explained out of sixteen subjects. The two live failures show the certainty model at work: a DNS failure with a working gateway has exactly one consistent explanation and is reported as \emph{Likely}, whereas an unreachable documentation address is consistent with three explanations and is honestly reported as \emph{Not confirmed}, together with the checks that would separate them.
 
 \begin{figure}[htbp]
 \centering
@@ -697,15 +776,62 @@ Host-name mismatch & Lab-CA certificate issued for a different host & Host-name 
 \bottomrule
 \end{longtable}
 
+\subsection{File Upload under Link Failure Results}
+The three runs were captured on \upDate{} with the Docker backend, uploading the bundled \upFileMiB{} MiB sample with the settings of Section~\ref{sec:uploadmethod}. Table~\ref{tab:upload} compares them, and Figure~\ref{fig:uploadprogress} plots the receiver-confirmed progress of each run against the shared clock.
+
+\begin{table}[H]
+\centering
+\caption{File upload under link failure: three-run comparison (recorded run)}
+\label{tab:upload}
+\small
+\tighttable
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}X r r p{0.05\textwidth} p{0.08\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} p{0.06\textwidth}}
+\toprule
+\textbf{Run} & \textbf{Outcome} & \textbf{Total (s)} & \textbf{Stall (s)} & \textbf{Retry} & \textbf{Same TCP conn.} & \textbf{Backup path used} & \textbf{SHA-256}\\
+\midrule
+\upTableRows
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.92\textwidth, height=6.6cm,
+  xlabel={time since the upload started (s)}, ylabel={\% of the file received by the server},
+  xmin=0, xmax=5.2, ymin=0, ymax=105, grid=major, grid style={gray!20},
+  legend style={at={(0.02,0.98)},anchor=north west,font=\scriptsize,draw=gray!40},
+  tick label style={font=\scriptsize}, label style={font=\small},
+]
+\fill[RouteClay!10] (axis cs:\upDownT,0) rectangle (axis cs:\upUpT,105);
+\addplot[RouteGreen,very thick,densely dotted,const plot] coordinates {\upCoordsBase};
+\addlegendentry{Healthy baseline}
+\addplot[RouteBlue,thick,const plot] coordinates {\upCoordsFail};
+\addlegendentry{Link failure, backup route}
+\addplot[RouteClay,thick,const plot] coordinates {\upCoordsStat};
+\addlegendentry{Link failure, static forwarding}
+\draw[RouteClay,dashed] (axis cs:\upDownT,0) -- (axis cs:\upDownT,105) node[pos=0.55,anchor=south,rotate=90,font=\scriptsize]{link down};
+\draw[RouteGreen,dashed] (axis cs:\upUpT,0) -- (axis cs:\upUpT,105) node[pos=0.55,anchor=south,rotate=90,font=\scriptsize]{link up};
+\end{axis}
+\end{tikzpicture}
+\caption{Receiver-confirmed upload progress in the three runs; the shaded band is the \upOutage{} s outage}
+\label{fig:uploadprogress}
+\end{figure}
+
+In the baseline the server received the whole file in \upBaseTotal{} s on the primary link, with no pause longer than \upBaseStall{} s; the backup interface carried only \upBaseBackupBytes{} bytes of background traffic. In the failover run the link went down after \upFaultPct\% of the file had arrived. The first upload bytes appeared on the client's backup interface \upFailFirstBackup{} s later, the server stopped receiving for \upFailStall{} s by Eq.~\eqref{eq:stall}, and the same TCP connection then continued over the backup path, which carried \upFailBackupMiB{} MiB (\upFailBackupBytes{} bytes, Eq.~\eqref{eq:backup}) during the outage. The forwarding decision recorded 0.3 s after the fault named the backup interface \texttt{cb0}, and after restoration it named the primary interface again. The total time, \upFailTotal{} s, is almost the same as the baseline.
+
+In the static run the same fault left the client with no route to the server: \texttt{ip route get} answered \emph{Network is unreachable} during the outage, and the backup interface carried only \upStatBackupBytes{} bytes. The server received nothing for \upStatStall{} s. The connection did not reach the \upTimeout{} s timeout, so TCP's retransmissions carried the same connection on, and receiver progress resumed \upStatResume{} s after the link came back; the delay after restoration is the wait for the next retransmission. Because the client is paced by the clock and its send buffer was full when the link returned, it then sent the rest of the file at link speed, so the total time (\upStatTotal{} s) grew by much less than the stall. In all three runs the server's SHA-256 digest equalled the client's, and no retry was needed. A retry occurs only when an outage outlasts the socket timeout; in a separate check with a 12 s outage and a 5 s timeout, the first connection timed out and the retry, started while the link was still down, timed out as well, so that run was classified as failed.
+
 \subsection{Guided Demonstration and Generated Reports}
-The guided demonstration runs a live diagnostic, the rule engine, the NS2 analysis, the recovery check, the transport experiments and report generation in order. A stage is marked as succeeded only when fresh evidence for it is found on disk; otherwise it is shown as partial, failed or not started, with the reason. The report page reads directly from stored results and lists the generated Markdown reports (healthy baseline, both link-failure scenarios, congestion, scenario comparison, live diagnostics, communication and the root-cause report), the diagnostic history, NS2 runs, communication results and raw evidence files, all of which can be downloaded. Every summary therefore remains traceable to its originating artefact.
+The guided demonstration runs a live diagnostic, the rule engine, the NS2 analysis, the recovery check, the transport experiments, the upload under link failure and report generation in order. Where the server cannot build a test network, as on the public deployment, the upload stage shows the recorded run and marks the stage as \emph{stored} rather than fresh. A stage is marked as succeeded only when fresh evidence for it is found on disk; otherwise it is shown as partial, failed or not started, with the reason. The report page reads directly from stored results and lists the generated Markdown reports (healthy baseline, both link-failure scenarios, congestion, scenario comparison, live diagnostics, communication, the upload under link failure and the root-cause report), the diagnostic history, NS2 runs, communication results and raw evidence files, all of which can be downloaded. Every summary therefore remains traceable to its originating artefact.
 
 % =============================================================================
 \chapter{Conclusion \& Future Scope}
 % =============================================================================
 
 \section{Summary of Work and Achievements}
-RouteResQ integrates live network diagnostics, deterministic root-cause reasoning, NS2 failure analysis, recovery observation, real TCP and UDP communication, TLS identity validation, payload integrity, controlled failure drills and evidence-driven reporting in one deployed application. It answers not only whether communication succeeded, but what failed, what caused it, how certain that cause is, which rule or trace event supports it, what alternatives remain, and what cannot be concluded. The root-cause register states a cause for 11 of the 13 recorded subjects, the NS2 experiments quantify rerouting in 43.6 ms against a 3.024 s outage under static routing, and the transport drills show six different failures and their recovery.
+RouteResQ integrates live network diagnostics, deterministic root-cause reasoning, NS2 failure analysis, recovery observation, real TCP and UDP communication, TLS identity validation, payload integrity, controlled failure drills and evidence-driven reporting in one deployed application. It answers not only whether communication succeeded, but what failed, what caused it, how certain that cause is, which rule or trace event supports it, what alternatives remain, and what cannot be concluded. The root-cause register states a cause for 13 of the 16 recorded subjects, the NS2 experiments quantify rerouting in 43.6 ms against a 3.024 s outage under static routing, the upload experiment shows on a real TCP connection that a backup route limits a mid-upload link failure to a \upFailStall{} s pause whereas static forwarding stalls the upload for \upStatStall{} s until the link returns, and the transport drills show six different failures and their recovery.
 
 The strongest achievement is the separation of evidence environments. A live network result is never assigned a simulated cause; a trace-backed injected cause is labelled \emph{Confirmed (injected)} because the scenario configuration and the trace agree; and loopback transport results are reported as host-specific.
 
@@ -716,7 +842,7 @@ Object-oriented programming contributes directly to solving the problem:
   \item \textbf{Abstraction and polymorphism.} The \texttt{CommandRunner} protocol hides how commands are executed. \texttt{SubprocessRunner} runs real allow-listed tools, while the tests pass a fake runner that replays captured output, so the same rule engine is verified on Windows and Linux output without network access.
   \item \textbf{Inheritance.} Domain errors such as \texttt{TargetNotAllowed}, \texttt{ScenarioError}, \texttt{NS2UnavailableError}, \texttt{ConnectionClosed} and \texttt{ProtocolError} specialise built-in exception classes, so callers can handle a category of failure precisely.
   \item \textbf{Validation inside objects.} A \texttt{Scenario} validates its identifier, category and parameters in its constructor, and \texttt{TCPTransferServer} is a context manager that always releases its socket, preventing invalid experiments and leaked resources.
-  \item \textbf{Single responsibility.} Parsers, rules, scenario execution, trace analysis, socket transfer, PKI and reporting are separate classes and modules, which made 159 targeted tests possible and lets the interface consume stored results instead of duplicating calculations.
+  \item \textbf{Single responsibility.} Parsers, rules, scenario execution, trace analysis, socket transfer, PKI and reporting are separate classes and modules, which made \testCount{} targeted tests possible and lets the interface consume stored results instead of duplicating calculations.
 \end{itemize}
 \end{sloppypar}
 
@@ -727,9 +853,9 @@ Object-oriented programming contributes directly to solving the problem:
 
 \noindent\textbf{Ethical issues and compliance.} Active probes are restricted to allow-listed, loopback, private or explicitly permitted destinations, and the public deployment restricts them further. Input is validated and commands are never executed through a shell. RouteResQ does not capture third-party traffic or store personal content. TLS relies on established libraries and a clearly labelled local lab PKI rather than custom cryptography, and every result is labelled as live, simulated or loopback so that no claim overstates its evidence.
 \section{Limitations of the Work and Future Scope}
-\noindent\textbf{Limitations.} Live accuracy depends on whether devices answer ICMP and path probes, and four ping samples give only coarse loss resolution. Live causes can be \emph{Likely} or \emph{Not confirmed} but never confirmed, because the true cause of a live failure is not known to the tool. The NS2 distance-vector model reacts faster than many real routing protocols, and its CBR/UDP congestion case does not model TCP congestion control. Loopback throughput excludes propagation delay and realistic path loss; the lab PKI is not a production authority; and RouteResQ explains recovery rather than repairing arbitrary live networks.
+\noindent\textbf{Limitations.} Live accuracy depends on whether devices answer ICMP and path probes, and four ping samples give only coarse loss resolution. Live causes can be \emph{Likely} or \emph{Not confirmed} but never confirmed, because the true cause of a live failure is not known to the tool. The NS2 distance-vector model reacts faster than many real routing protocols, and its CBR/UDP congestion case does not model TCP congestion control. Loopback throughput excludes propagation delay and realistic path loss. The upload test network runs on one Linux kernel with emulated delays, its failover is a pre-installed floating static route rather than a routing protocol with its own detection and convergence time, and a retry re-sends the file from the beginning because the client cannot resume from a byte offset; the hosted deployment can only show a recorded upload run. The lab PKI is not a production authority; and RouteResQ explains recovery rather than repairing arbitrary live networks.
 
-\noindent\textbf{Future scope.} Future work can add larger topologies, link-state routing with configurable convergence timers, two-computer laboratory experiments, trend analysis of repeated live runs, DNS and MTU drills, controlled bandwidth limits, and signed experiment manifests. Each extension should keep every conclusion linked to its evidence.
+\noindent\textbf{Future scope.} Future work can add larger topologies, link-state routing with configurable convergence timers (including a routing daemon inside the upload test network), resumable uploads from a byte offset, two-computer laboratory experiments, trend analysis of repeated live runs, DNS and MTU drills, controlled bandwidth limits, and signed experiment manifests. Each extension should keep every conclusion linked to its evidence.
 
 % =============================================================================
 \clearpage
