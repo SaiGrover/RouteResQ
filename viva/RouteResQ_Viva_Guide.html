@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RouteResQ Viva Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+@page {
+  size: A4;
+  margin: 15mm 17mm 17mm;
+  @bottom-center { content: "RouteResQ Viva Guide · " counter(page) " / " counter(pages); font: 7.5pt Inter, sans-serif; color: #8a8a8a; }
+}
+:root {
+  --ink: #1d2226; --body: #4a4f55; --mut: #6b7177; --line: #e3e5e7; --soft: #f1f4f5;
+  --acc: #1f8aa3; --acc-soft: #e9f5f8; --acc-line: #bfe1ea;
+  --clay: #d0543f; --green: #3f9f74; --amber: #c48a2c; --steel: #4f78c9; --sand: #b18c55;
+  --head: 'Outfit', 'Segoe UI', sans-serif; --sans: 'Inter', 'Segoe UI', sans-serif; --mono: 'JetBrains Mono', Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: var(--sans); color: var(--ink); font-size: 10.6pt; line-height: 1.55; background: #fff; }
+.page { max-width: 176mm; margin: 0 auto; }
+
+/* brand + title */
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--head); font-weight: 700; font-size: 15pt; margin: 4mm 0 9mm; }
+.brand b { color: var(--acc); font-weight: 700; }
+h1 { font-family: var(--head); font-weight: 700; font-size: 27pt; line-height: 1.12; letter-spacing: -.02em; }
+.lead { font-size: 12.5pt; color: var(--mut); margin-top: 3mm; line-height: 1.5; max-width: 165mm; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 5mm 0 8mm; }
+.chip { border: 1px solid #d6dadd; border-radius: 999px; padding: 4px 11px; font-size: 8.8pt; color: var(--body); }
+.chip b { color: var(--ink); font-weight: 700; }
+
+/* section headings */
+h2 { font-family: var(--head); font-weight: 700; font-size: 20pt; letter-spacing: -.015em; margin: 9mm 0 1.5mm;
+     break-after: avoid; display: flex; align-items: baseline; gap: 10px; }
+h2 .n { font-family: var(--mono); font-size: 9pt; color: var(--acc); font-weight: 600; }
+.sub { color: var(--mut); font-size: 9.8pt; margin-bottom: 4mm; max-width: 150mm; break-after: avoid; }
+h2 + .sub + table, h2 + .sub + .steps, h2 + .sub + .cards, h2 + .sub + .nums, h3 + table, h3 + .steps { break-before: avoid; }
+h3 { font-family: var(--head); font-weight: 600; font-size: 13pt; margin: 5mm 0 2mm; break-after: avoid; }
+p { margin: 0 0 2.5mm; }
+.newpage { break-before: page; }
+strong { font-weight: 700; color: var(--ink); }
+code { font-family: var(--mono); font-size: 8.6pt; background: #eef1f2; border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+
+/* lists */
+ul.dot { list-style: none; margin: 1mm 0 3mm; }
+ul.dot li { position: relative; padding-left: 15px; margin-bottom: 1.6mm; }
+ul.dot li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--acc); }
+ol.num { margin: 1mm 0 3mm 5mm; }
+ol.num li { margin-bottom: 1.6mm; padding-left: 2px; }
+
+/* say-this card + callouts */
+.say { border: 1px solid #d6dadd; border-radius: 12px; padding: 5mm 6mm; font-size: 11.4pt; line-height: 1.62; break-inside: avoid; }
+.say .lbl { font-size: 7.8pt; letter-spacing: .14em; font-weight: 700; color: var(--acc); margin-bottom: 2mm; }
+.callout { display: flex; gap: 14px; background: var(--acc-soft); border: 1px solid var(--acc-line); border-radius: 10px;
+           padding: 3.5mm 5mm; margin: 4mm 0; break-inside: avoid; }
+.callout .k { font-weight: 700; color: var(--acc); white-space: nowrap; }
+
+/* tables */
+table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+        margin: 2mm 0 4mm; font-size: 9.6pt; }
+thead { display: table-header-group; }
+th { background: #eef1f2; text-align: left; font-size: 7.8pt; letter-spacing: .08em; text-transform: uppercase; color: var(--mut);
+     font-weight: 600; padding: 3mm 3.5mm; }
+td { padding: 2.6mm 3.5mm; border-top: 1px solid var(--line); vertical-align: top; color: var(--body); }
+td:first-child { color: var(--ink); font-weight: 600; }
+tr { break-inside: avoid; }
+td.r, th.r { text-align: right; font-family: var(--mono); font-size: 8.8pt; }
+td.mono { font-family: var(--mono); font-size: 8.6pt; font-weight: 600; }
+
+/* status pills */
+.pill { display: inline-block; border-radius: 999px; padding: 0 7px; font-size: 8.2pt; font-weight: 600; white-space: nowrap;
+        border: 1px solid; }
+.p-conf { color: var(--green); border-color: #b9dfcb; background: #eef8f2; }
+.p-like { color: var(--acc); border-color: var(--acc-line); background: var(--acc-soft); }
+.p-not { color: var(--amber); border-color: #ecd4a8; background: #fbf4e6; }
+.p-none { color: #6b7177; border-color: #d6dadd; background: #f4f5f6; }
+
+/* steps */
+.steps { border-top: 1px solid var(--line); margin: 3mm 0 4mm; }
+.step { display: grid; grid-template-columns: 11mm 1fr; padding: 3mm 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.step .c { width: 7.4mm; height: 7.4mm; border-radius: 50%; background: #e9ecee; color: var(--ink); font-family: var(--mono); font-size: 8.5pt;
+           font-weight: 600; display: grid; place-items: center; margin-top: 1px; }
+.step .c.hi { background: var(--acc); color: #fff; }
+.step h4 { font-family: var(--head); font-weight: 600; font-size: 11.6pt; margin-bottom: 1mm; }
+.step h4 .tag { font-family: var(--mono); font-size: 8.4pt; color: var(--mut); letter-spacing: .06em; margin-left: 6px; font-weight: 600; }
+.step p { color: var(--body); margin: 0; }
+
+/* cards grid */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; margin: 3mm 0 4mm; }
+.card { border: 1px solid #d6dadd; border-radius: 10px; padding: 4mm 4.5mm; break-inside: avoid; }
+.card .lbl { font-family: var(--mono); font-size: 7.6pt; letter-spacing: .1em; color: var(--acc); font-weight: 600; text-transform: uppercase; }
+.card h4 { font-family: var(--head); font-weight: 600; font-size: 11.6pt; margin: 1mm 0 1.5mm; }
+.card p { color: var(--body); font-size: 9.6pt; margin: 0; }
+
+/* formula + bars */
+.formula { border: 1px solid var(--line); border-left: 3px solid var(--acc); border-radius: 8px; padding: 3.5mm 4.5mm; margin: 3mm 0;
+           font-family: var(--mono); font-size: 9.4pt; color: var(--ink); break-inside: avoid; line-height: 1.7; }
+.bars { margin: 3mm 0; break-inside: avoid; }
+.bar { display: grid; grid-template-columns: 52mm 1fr 18mm; gap: 4mm; align-items: center; margin-bottom: 2.4mm; font-size: 9.6pt; }
+.bar .t { height: 9px; background: #eef1f2; border-radius: 6px; overflow: hidden; }
+.bar .t div { height: 100%; background: var(--acc); border-radius: 6px; }
+.bar .v { text-align: right; font-family: var(--mono); font-size: 9pt; font-weight: 600; }
+.bar.alt .t div { background: var(--sand); }
+.bar.bad .t div { background: var(--clay); }
+
+/* figure box */
+.fig { border: 1px solid var(--line); border-radius: 12px; padding: 5mm; margin: 3mm 0 4mm; break-inside: avoid; text-align: center; }
+.fig .cap { font-size: 8.8pt; color: var(--mut); margin-top: 2mm; }
+
+/* numbers */
+.nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 3mm 0; }
+.num { border: 1px solid #d6dadd; border-radius: 10px; padding: 3mm 3.5mm; break-inside: avoid; }
+.num b { display: block; font-family: var(--head); font-size: 17pt; font-weight: 700; line-height: 1.15; }
+.num span { font-size: 8.6pt; color: var(--mut); line-height: 1.35; display: block; margin-top: 1mm; }
+
+/* Q&A */
+.qa-group { margin-top: 5mm; }
+.qa { border-top: 1px solid var(--line); padding: 3mm 0; break-inside: avoid; }
+.qa:last-child { border-bottom: 1px solid var(--line); }
+.qa .q { font-weight: 700; font-size: 10pt; display: flex; gap: 8px; }
+.qa .q::before { content: "Q"; font-family: var(--mono); color: var(--acc); font-size: 9pt; }
+.qa .a { color: var(--body); margin: 1.5mm 0 0 17px; }
+
+.foot-note { border-top: 1px solid var(--line); margin-top: 8mm; padding-top: 4mm; color: var(--mut); font-size: 9pt; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ============================================================ cover -->
+<div class="brand">
+  <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true">
+    <circle cx="10" cy="24" r="4.5" fill="#1f8aa3"/><circle cx="38" cy="24" r="4.5" fill="#1f8aa3"/>
+    <circle cx="24" cy="12" r="3.4" fill="none" stroke="#8a9199" stroke-width="1.8"/>
+    <circle cx="24" cy="36" r="3.4" fill="none" stroke="#8a9199" stroke-width="1.8"/>
+    <path d="M13.5 22.2 L21 13.6 M27 13.6 L34.5 22.2" stroke="#d0543f" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="2.5 2.5"/>
+    <path d="M13.5 25.8 L21 34.4 M27 34.4 L34.5 25.8" stroke="#3f9f74" stroke-width="2.6" stroke-linecap="round"/>
+  </svg>
+  <span>Route<b>ResQ</b></span>
+</div>
+
+<h1>Everything you need to<br>explain RouteResQ in your viva</h1>
+<p class="lead">A plain-language walkthrough of what the project does, how one network failure travels from "the site is timing out" to "here is the cause, and here is how sure we are", the technology behind each step, and the questions examiners are likely to ask.</p>
+
+<div class="chips">
+  <span class="chip">Computer Networks Lab <b>24B15CS313</b></span>
+  <span class="chip">Python <b>3.13</b> · Streamlit · <b>NS2 2.35</b></span>
+  <span class="chip"><b>17</b> diagnostic rules</span>
+  <span class="chip"><b>159</b> automated tests</span>
+  <span class="chip">Live at <b>routeresq.streamlit.app</b></span>
+</div>
+
+<h2><span class="n">01</span>The 1-minute pitch</h2>
+<p class="sub">Memorise this. It is your opening answer to "Tell us about your project".</p>
+<div class="say">
+  <div class="lbl">SAY THIS</div>
+  RouteResQ is a network failure lab. When a connection fails, normal tools like ping only show the symptom. RouteResQ finds the <em>cause</em>. It runs real DNS, ping, traceroute and TCP checks, and seventeen rules turn the output into possible causes, each marked confirmed, likely, possible or not enough evidence. We also run the real NS2 simulator: we break a link or overload it on purpose and measure, packet by packet, what happened to the traffic and whether it recovered. And we test real TCP, UDP and TLS connections, breaking them in six controlled ways. A root-cause register brings it all together: one row per failure, with its cause and an honest status. It is built in Python with a Streamlit interface, it is deployed online, and it has 159 automated tests.
+</div>
+<div class="callout"><span class="k">Key idea</span><span>If you remember one sentence: <em>we never guess the cause, we show the evidence and say how sure we are.</em> A live cause can be <strong>Likely</strong> at best; only a fault we injected ourselves is <strong>Confirmed</strong>.</span></div>
+
+<!-- ============================================================ problem -->
+<h2 class="newpage"><span class="n">02</span>The problem and our idea</h2>
+<h3>What is wrong today</h3>
+<ul class="dot">
+  <li><strong>One symptom, many causes:</strong> "the site is timing out" can be a DNS failure, a host that is down, a broken path, congestion, a closed port or a bad certificate.</li>
+  <li><strong>Tools show symptoms, not causes:</strong> <code>ping</code>, <code>tracert</code> and <code>nslookup</code> each see one piece, and you read the raw output by hand.</li>
+  <li><strong>Tools can mislead:</strong> routers ignore ping, firewalls block traceroute, and a TCP connection can work while ping fails.</li>
+  <li><strong>False confidence:</strong> people pick one cause and state it as fact, with nothing to back it up.</li>
+  <li><strong>Learnt in pieces:</strong> diagnostics, routing simulation and socket programming are separate lab exercises, so nobody connects "what failed" to "what happened to the traffic".</li>
+</ul>
+<h3>Our solution in three parts</h3>
+<ul class="dot">
+  <li><strong>Diagnose live failures</strong> with real commands and a rule engine that lists causes with evidence for and against.</li>
+  <li><strong>Measure the impact</strong> of failures we inject in NS2: loss, delay, throughput, route changes and recovery, from the simulator's own trace.</li>
+  <li><strong>Prove it</strong> with a root-cause register and reports, where every number links back to the measurement that produced it.</li>
+</ul>
+
+<h2><span class="n">03</span>The three kinds of evidence</h2>
+<p class="sub">The most important design idea. The three are kept apart and labelled on every page, so a simulated cause is never presented as the cause of a live problem.</p>
+<table>
+  <thead><tr><th style="width:24%">Environment</th><th>What it is</th><th style="width:27%">Best possible status</th></tr></thead>
+  <tbody>
+    <tr><td>Live network</td><td>Real ping, traceroute, DNS and TCP on the machine running RouteResQ. We did not cause the failure, so we can only infer it.</td><td><span class="pill p-like">Likely</span></td></tr>
+    <tr><td>NS2 simulation</td><td>The real ns-2.35 simulator. We take a link down or add traffic at an exact time, so we know the cause.</td><td><span class="pill p-conf">Confirmed (injected)</span></td></tr>
+    <tr><td>Real sockets</td><td>TCP, UDP and TLS between two programs on this computer (loopback). We create each fault ourselves.</td><td><span class="pill p-conf">Confirmed (injected)</span></td></tr>
+  </tbody>
+</table>
+<ul class="dot">
+  <li>There are <strong>no confidence percentages</strong>. Nobody can honestly say "73 % sure" about a network fault, so we use words.</li>
+  <li><strong>No machine learning, no packet capture, no made-up data.</strong> Every chart is drawn from a stored result.</li>
+</ul>
+
+<!-- ============================================================ flow -->
+<h2><span class="n">04</span>The full flow, step by step</h2>
+<p class="sub">Follow one real run of our guided demo. The five stages are also the navigation bar at the top of the app: Detect → Diagnose → Analyse impact → Observe recovery → Report.</p>
+<div class="steps">
+  <div class="step"><div class="c hi">1</div><div><h4>Pick the destinations <span class="tag">USER</span></h4>
+    <p>We choose three: <code>8.8.8.8</code> (Google DNS, should work), <code>nonexistent.invalid</code> (a name that can never exist) and <code>192.0.2.1</code> (an address reserved for documentation, with no real computer behind it). Each is first checked against the <strong>allowed list</strong>.</p></div></div>
+  <div class="step"><div class="c">2</div><div><h4>Detect: run real checks <span class="tag">LIVE</span></h4>
+    <p>For each destination: find the default gateway, look up the name in DNS, ping the gateway, ping the destination, run traceroute, and optionally try a TCP connection. Every command and its raw output is saved.</p></div></div>
+  <div class="step"><div class="c">3</div><div><h4>Diagnose: apply the 17 rules <span class="tag">RULES</span></h4>
+    <p>The output is turned into facts ("0 of 4 replies", "last hop that answered was hop 2"). Each rule checks one condition and records whether it fired and why. The result: findings, candidate causes with evidence for and against, and the checks that would confirm them.</p></div></div>
+  <div class="step"><div class="c">4</div><div><h4>State the cause and how sure we are <span class="tag">REGISTER</span></h4>
+    <p><code>nonexistent.invalid</code>: DNS says "no such name" and the gateway works, so only one explanation fits → <span class="pill p-like">Likely</span>. <code>192.0.2.1</code>: no replies, path goes silent after hop 2, three explanations still fit → <span class="pill p-not">Not confirmed</span>, with the checks that would decide.</p></div></div>
+  <div class="step"><div class="c hi">5</div><div><h4>Analyse impact: run NS2 <span class="tag">NS2</span></h4>
+    <p>We run the same six-node network four ways: healthy, a link failure with distance-vector routing (B1), the same failure with static routing (B2), and congestion (C). Each run writes a trace file with every packet event.</p></div></div>
+  <div class="step"><div class="c">6</div><div><h4>Rebuild every packet <span class="tag">ANALYSIS</span></h4>
+    <p>Each of the 1,001 packets is followed by its unique id: when it left, which routers it crossed, and whether it arrived, was dropped, or silently vanished. From that we compute loss, delay, throughput, route changes and gaps.</p></div></div>
+  <div class="step"><div class="c">7</div><div><h4>Observe recovery <span class="tag">NS2</span></h4>
+    <p>B1 <strong>rerouted</strong>: the first packet over the backup path arrived 43.6 ms after the failure. B2 was <strong>interrupted</strong> for 3.024 s until the link came back. C <strong>recovered</strong> once the queue drained. Recovery is only claimed when the trace shows it.</p></div></div>
+  <div class="step"><div class="c">8</div><div><h4>Transport lab <span class="tag">SOCKETS</span></h4>
+    <p>Send real data over TCP and UDP, send a file over TLS and check its SHA-256 on both ends, then run six failure drills: no server, silent server, reset mid-transfer, missing UDP packets, untrusted certificate, wrong host name. Each drill is then fixed and re-tested.</p></div></div>
+  <div class="step"><div class="c hi">9</div><div><h4>Report <span class="tag">REPORT</span></h4>
+    <p>The root-cause register lists all 13 subjects; 11 have a stated cause. The demo report says exactly which results are fresh, which came from stored runs, and which failed.</p></div></div>
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 560 350" width="100%" style="max-width:150mm" font-family="Inter, sans-serif" font-size="11">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6b7177"/></marker></defs>
+  <g stroke="#6b7177" stroke-width="1.4" fill="none" marker-end="url(#a)">
+    <path d="M150 42 L150 62"/><path d="M200 92 L330 92"/><path d="M150 122 L150 150"/><path d="M200 180 L330 180"/>
+    <path d="M150 210 L150 238"/><path d="M200 268 L330 268"/><path d="M150 298 L150 312"/>
+  </g>
+  <g text-anchor="middle">
+    <rect x="70" y="12" width="160" height="30" rx="6" fill="#e9f5f8" stroke="#1f8aa3"/><text x="150" y="31" fill="#1d2226">A failure is detected</text>
+    <polygon points="150,62 210,92 150,122 90,92" fill="#fbf4e6" stroke="#c48a2c"/><text x="150" y="89">Any failure</text><text x="150" y="102">at all?</text>
+    <rect x="332" y="77" width="190" height="30" rx="6" fill="#f4f5f6" stroke="#b9bec2"/><text x="427" y="96" font-weight="700" fill="#6b7177">No failure detected</text>
+    <polygon points="150,150 210,180 150,210 90,180" fill="#fbf4e6" stroke="#c48a2c"/><text x="150" y="177">Did we inject</text><text x="150" y="190">the cause?</text>
+    <rect x="332" y="165" width="190" height="30" rx="6" fill="#eef8f2" stroke="#3f9f74"/><text x="427" y="184" font-weight="700" fill="#3f9f74">Confirmed (injected)</text>
+    <polygon points="150,238 210,268 150,298 90,268" fill="#fbf4e6" stroke="#c48a2c"/><text x="150" y="265">Exactly one</text><text x="150" y="278">cause fits?</text>
+    <rect x="332" y="253" width="190" height="30" rx="6" fill="#e9f5f8" stroke="#1f8aa3"/><text x="427" y="272" font-weight="700" fill="#1f8aa3">Likely</text>
+  </g>
+  <g font-size="10" fill="#6b7177"><text x="262" y="87">no</text><text x="262" y="175">yes (NS2, drill)</text><text x="262" y="263">yes</text>
+    <text x="158" y="138">yes</text><text x="158" y="226">no (live)</text></g>
+  <text x="158" y="308" font-size="10" fill="#6b7177">no</text>
+  <rect x="20" y="314" width="260" height="32" rx="6" fill="#fbf4e6" stroke="#c48a2c"/>
+  <text x="150" y="334" text-anchor="middle" font-weight="700" fill="#c48a2c">Not confirmed (list causes + next checks)</text>
+</svg>
+<div class="cap">How every failure gets its cause status in the root-cause register</div>
+</div>
+
+<h3>The four statuses, in one line each</h3>
+<ul class="dot">
+  <li><span class="pill p-conf">Confirmed (injected)</span> we caused it on purpose (NS2 or a drill) and the trace or error shows its effect.</li>
+  <li><span class="pill p-like">Likely</span> live network: exactly one explanation fits all the evidence.</li>
+  <li><span class="pill p-not">Not confirmed</span> live network: several explanations fit; we list them and the checks that would separate them.</li>
+  <li><span class="pill p-none">No failure detected</span> nothing to explain.</li>
+</ul>
+
+<!-- ============================================================ stack -->
+<h2><span class="n">05</span>The tech stack, explained simply</h2>
+<p class="sub">For each tool: what it is and why we picked it. Examiners like the "why".</p>
+<div class="cards">
+  <div class="card"><div class="lbl">Language</div><h4>Python 3.13</h4><p>Easy to read, has sockets, SSL, subprocess and data tools built in, so measurements, analysis and the website live in one language.</p></div>
+  <div class="card"><div class="lbl">Interface</div><h4>Streamlit</h4><p>Turns Python scripts into a web app with charts and forms, with no separate frontend. Free hosting on Streamlit Community Cloud.</p></div>
+  <div class="card"><div class="lbl">Simulator</div><h4>NS2 2.35 + Tcl</h4><p>The standard network simulator in networking courses. A Tcl script describes nodes, links, traffic and failures; NS2 writes a trace of every packet.</p></div>
+  <div class="card"><div class="lbl">Running NS2</div><h4>Docker / Debian package</h4><p>On Windows we run NS2 inside a small Ubuntu container. On the cloud and on Linux it is installed with <code>apt install ns2</code>.</p></div>
+  <div class="card"><div class="lbl">Live checks</div><h4>ping, tracert, DNS, TCP</h4><p>The operating system's own tools, run safely from an allow-list. DNS and TCP use Python's <code>socket</code> module.</p></div>
+  <div class="card"><div class="lbl">Transport</div><h4>Python sockets</h4><p>Our own TCP server and client, and a UDP sender and receiver with sequence numbers, so loss and reordering can be measured.</p></div>
+  <div class="card"><div class="lbl">Security</div><h4>ssl + cryptography</h4><p>Python's standard TLS (OpenSSL) for encryption, and the <code>cryptography</code> library to create our lab certificates. No home-made crypto.</p></div>
+  <div class="card"><div class="lbl">Charts</div><h4>Plotly + pandas</h4><p>Interactive charts for throughput, delay, queues and RTT; pandas for tables. Every chart reads a stored result.</p></div>
+  <div class="card"><div class="lbl">Storage</div><h4>JSON, CSV, Markdown</h4><p>No database. Every result is a file anyone can open and check, which suits a lab project where evidence matters.</p></div>
+  <div class="card"><div class="lbl">Testing</div><h4>pytest + AppTest</h4><p>159 automated tests: parsers, rules, real NS2 runs, real sockets, real commands and every page of the app.</p></div>
+</div>
+
+<h3>How a request travels</h3>
+<p>The most important rule of the code: <strong>the web pages contain no networking logic.</strong> Think of a lab:</p>
+<ul class="dot">
+  <li><strong>Page</strong> = the lab bench where you press the button and read the result.</li>
+  <li><strong>Backend module</strong> = the instrument: it runs the real command, simulator or socket.</li>
+  <li><strong>Results folder</strong> = the lab notebook: every measurement is written down before anyone draws a conclusion.</li>
+  <li><strong>Report</strong> = the write-up, built only from what is in the notebook.</li>
+</ul>
+<p>Because of this, the same backend runs from the website, from the command line and from the tests, and gives identical numbers.</p>
+
+<h2><span class="n">06</span>How the code is organised</h2>
+<p class="sub">Each folder has one job. About 9,900 lines of Python in total.</p>
+<table>
+  <thead><tr><th style="width:24%">Folder</th><th>Job, in plain words</th><th class="r" style="width:13%">Lines</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">diagnostics</td><td>Live checks: allowed destinations, safe command runner, DNS/ping/traceroute/TCP, parsers, history and baselines.</td><td class="r">1,045</td></tr>
+    <tr><td class="mono">failure_analysis</td><td>The 17-rule root-cause engine and the report for one live run.</td><td class="r">613</td></tr>
+    <tr><td class="mono">simulation</td><td>The NS2 Tcl script, the four scenarios, the runner and the trace parser.</td><td class="r">818</td></tr>
+    <tr><td class="mono">analysis</td><td>Rebuilds every packet; computes loss, delay, throughput, routes, recovery; builds the root-cause register.</td><td class="r">1,505</td></tr>
+    <tr><td class="mono">communication</td><td>TCP server and client, UDP, the TCP vs UDP experiment and the six failure drills.</td><td class="r">1,133</td></tr>
+    <tr><td class="mono">security</td><td>Lab certificates, TLS settings, SHA-256 checks.</td><td class="r">195</td></tr>
+    <tr><td class="mono">walkthrough</td><td>The guided demo: runs each stage and verifies it.</td><td class="r">316</td></tr>
+    <tr><td class="mono">app_pages, ui</td><td>The eight pages, the theme, charts and the navigation bar. Presentation only.</td><td class="r">2,434</td></tr>
+    <tr><td class="mono">tests</td><td>159 tests, with real captured Windows and Linux command output.</td><td class="r">1,596</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">07</span>The data</h2>
+<p class="sub">No database. Every result is a file, so an examiner can open it and check it.</p>
+<table>
+  <thead><tr><th style="width:36%">File</th><th>What it stores</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">diagnostics/history.jsonl</td><td>One line per live run: every command, its raw output, the parsed numbers and the analysis.</td></tr>
+    <tr><td class="mono">diagnostics/baselines.json</td><td>Which healthy run is the "normal" reference for each destination.</td></tr>
+    <tr><td class="mono">simulation/&lt;scenario&gt;/&lt;run&gt;/out.tr</td><td>The raw NS2 trace: one line per packet event.</td></tr>
+    <tr><td class="mono">… /results.json</td><td>The full analysis of that run: metrics, paths, timeline, findings, recovery.</td></tr>
+    <tr><td class="mono">… /timeseries.csv, timeline.csv</td><td>Throughput and delay every 0.1 s; every configured and observed event.</td></tr>
+    <tr><td class="mono">communication/*.json</td><td>TCP vs UDP trials and the failure-drill records.</td></tr>
+    <tr><td class="mono">reports/*.md</td><td>Readable reports, including the root-cause register.</td></tr>
+  </tbody>
+</table>
+<div class="callout"><span class="k">Good to mention</span><span>The NS2 runs are saved together with the exact Tcl script and command that produced them, so any result can be reproduced. NS2 is deterministic: the same run gives the same numbers.</span></div>
+
+<!-- ============================================================ rules -->
+<h2><span class="n">08</span>Diagnosing a live failure: the rule engine</h2>
+<p class="sub">Expect many questions here. Learn the evidence levels, a few key rules and the worked example.</p>
+
+<h3>The safety check before anything runs</h3>
+<ul class="dot">
+  <li>Only <strong>allowed destinations</strong>: a fixed list (8.8.8.8, 1.1.1.1, example.com…), the two reserved test targets, your own computer (loopback) and, locally only, your own network.</li>
+  <li>Input starting with <code>-</code> is refused (it would be read as a command option), and so is anything that is not a valid name or address.</li>
+  <li>Only seven programs can ever run (<code>ping</code>, <code>tracert</code>, <code>traceroute</code>, <code>tracepath</code>, <code>route</code>, <code>ip</code>, <code>ipconfig</code>), always <strong>without a shell</strong>, always with a timeout.</li>
+</ul>
+
+<h3>Four evidence levels</h3>
+<table>
+  <thead><tr><th style="width:26%">Level</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>confirmed</td><td>Directly seen in the output, e.g. "0 of 4 replies". An observation, not a cause.</td></tr>
+    <tr><td>likely</td><td>The one explanation that fits all the evidence.</td></tr>
+    <tr><td>possible</td><td>Fits the evidence, but other explanations cannot be ruled out.</td></tr>
+    <tr><td>insufficient evidence</td><td>Not enough data, e.g. fewer than 3 replies to judge latency.</td></tr>
+  </tbody>
+</table>
+
+<h3>The rules you should know</h3>
+<table>
+  <thead><tr><th style="width:18%">Rule</th><th>Fires when</th><th style="width:27%">Result</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">R-DNS-01</td><td>The name cannot be looked up</td><td>DNS failure</td></tr>
+    <tr><td class="mono">R-REACH-01</td><td>0 ping replies (unless TCP or traceroute show the host is up)</td><td>Unreachable</td></tr>
+    <tr><td class="mono">R-REACH-02</td><td>A router or the OS says "unreachable" / "no route"</td><td>Unreachable</td></tr>
+    <tr><td class="mono">R-TCP-01</td><td>The TCP connection times out</td><td>Unreachable</td></tr>
+    <tr><td class="mono">R-LOSS-01 / 02</td><td>Loss of 5 % or more / 100 % loss</td><td>Packet loss</td></tr>
+    <tr><td class="mono">R-LAT-01 / 02</td><td>Average RTT over 150 ms / RTT spread over 30 ms, with 3+ samples</td><td>High latency</td></tr>
+    <tr><td class="mono">R-BASE-01…04</td><td>RTT, loss, spread or throughput clearly worse than this destination's normal</td><td>Compared with baseline</td></tr>
+    <tr><td class="mono">R-CONG-01</td><td><strong>Two or more</strong> congestion signs together</td><td>Possible congestion</td></tr>
+    <tr><td class="mono">R-ROUTE-01</td><td>Traceroute stops early <strong>and</strong> ping fails <strong>and</strong> TCP does not answer</td><td>Possible routing issue</td></tr>
+    <tr><td class="mono">R-ROUTE-02</td><td>A hop answers from a different address than last time</td><td>Route changed</td></tr>
+    <tr><td class="mono">R-OK-01</td><td>Name resolves and the host answers</td><td>Healthy</td></tr>
+  </tbody>
+</table>
+<ul class="dot">
+  <li><strong>Why two signs for congestion?</strong> One slow ping has many explanations (distance, a slow router, a busy server). Two independent signs together are needed.</li>
+  <li><strong>Every rule is listed in the rule trace</strong>, with the reason it fired or did not. That is how an examiner can audit any conclusion.</li>
+  <li><strong>Contradictions are shown, not hidden:</strong> "ping failed but TCP connected" means the host is up and ping is being blocked.</li>
+</ul>
+
+<h3>Worked example: 192.0.2.1 (Not confirmed)</h3>
+<div class="steps">
+  <div class="step"><div class="c">1</div><div><h4>Symptom</h4><p>The destination did not answer any ping (0 of 4), and the TCP connection timed out.</p></div></div>
+  <div class="step"><div class="c">2</div><div><h4>Measurements</h4><p>The gateway 192.168.1.1 answered 4 of 4, so our own network works. Traceroute: the last hop that answered was hop 2 (10.240.12.49), then 8 silent hops.</p></div></div>
+  <div class="step"><div class="c">3</div><div><h4>Possible explanations</h4><p>The host is down; part of the path after hop 2 is broken; or a firewall blocks ping and traceroute. All three fit the evidence.</p></div></div>
+  <div class="step"><div class="c">4</div><div><h4>Limits and next checks</h4><p>No router sent an explicit error, so we cannot pick one. Next: try a TCP port the host should serve, re-run traceroute later, ask the owner. Status: <span class="pill p-not">Not confirmed</span>.</p></div></div>
+</div>
+<div class="callout"><span class="k">Why not just guess?</span><span>A "timed out" result looks identical whether the host is off or a firewall drops our probes. Saying "Not confirmed, and here is how to find out" is the honest and useful answer.</span></div>
+
+<!-- ============================================================ ns2 -->
+<h2><span class="n">09</span>NS2: breaking the network on purpose</h2>
+<p class="sub">The second big area of questions. Learn the topology, the four scenarios, how packets are counted and the headline numbers.</p>
+
+<div class="fig">
+<svg viewBox="0 0 560 230" width="100%" style="max-width:150mm" font-family="Inter, sans-serif">
+  <g stroke-width="3" fill="none">
+    <line x1="50" y1="115" x2="180" y2="115" stroke="#3f9f74"/>
+    <line x1="180" y1="115" x2="280" y2="40" stroke="#d0543f" stroke-dasharray="7 6"/>
+    <line x1="280" y1="40" x2="380" y2="115" stroke="#4f78c9"/>
+    <line x1="180" y1="115" x2="280" y2="190" stroke="#b18c55"/>
+    <line x1="280" y1="190" x2="380" y2="115" stroke="#b18c55"/>
+    <line x1="380" y1="115" x2="510" y2="115" stroke="#3f9f74"/>
+  </g>
+  <g font-family="JetBrains Mono, monospace" font-size="10" fill="#6b7177">
+    <text x="115" y="90" text-anchor="middle">10 Mb/s · 2 ms</text><text x="445" y="90" text-anchor="middle">10 Mb/s · 2 ms</text>
+    <text x="222" y="68" text-anchor="end">2 Mb/s · 10 ms</text><text x="338" y="68">2 Mb/s · 10 ms</text>
+    <text x="222" y="170" text-anchor="end">2 Mb/s · 15 ms</text><text x="338" y="170">2 Mb/s · 15 ms</text>
+    <text x="280" y="12" text-anchor="middle" fill="#d0543f">B1/B2: link n1–n2 down from 3 s to 6 s</text>
+    <text x="280" y="225" text-anchor="middle" fill="#b18c55">backup path (cost 3 per link)</text>
+  </g>
+  <g font-family="Outfit, sans-serif" font-weight="700" font-size="14" text-anchor="middle">
+    <circle cx="50" cy="115" r="21" fill="#e9f5f8" stroke="#1f8aa3" stroke-width="2"/><text x="50" y="120">n0</text>
+    <circle cx="180" cy="115" r="21" fill="#fff" stroke="#8a9199" stroke-width="2"/><text x="180" y="120">n1</text>
+    <circle cx="280" cy="40" r="21" fill="#fff" stroke="#8a9199" stroke-width="2"/><text x="280" y="45">n2</text>
+    <circle cx="280" cy="190" r="21" fill="#fff" stroke="#8a9199" stroke-width="2"/><text x="280" y="195">n3</text>
+    <circle cx="380" cy="115" r="21" fill="#fff" stroke="#8a9199" stroke-width="2"/><text x="380" y="120">n4</text>
+    <circle cx="510" cy="115" r="21" fill="#eef8f2" stroke="#3f9f74" stroke-width="2"/><text x="510" y="120">n5</text>
+  </g>
+  <g font-size="10" fill="#6b7177" text-anchor="middle"><text x="50" y="152">source</text><text x="510" y="152">destination</text></g>
+</svg>
+<div class="cap">Six nodes. Traffic normally takes n0–n1–n2–n4–n5. The backup path through n3 is longer and costs more, so it is only used when needed.</div>
+</div>
+
+<h3>The four experiments</h3>
+<table>
+  <thead><tr><th style="width:12%">Label</th><th style="width:20%">Routing</th><th>What we inject</th></tr></thead>
+  <tbody>
+    <tr><td>A</td><td>Distance-vector</td><td>Nothing. The healthy baseline every other run is compared with.</td></tr>
+    <tr><td>B1</td><td>Distance-vector</td><td>Link n1–n2 goes down at 3 s and comes back at 6 s.</td></tr>
+    <tr><td>B2</td><td>Static</td><td>Exactly the same failure, but routes never change.</td></tr>
+    <tr><td>C</td><td>Distance-vector</td><td>An extra 1.5 Mb/s flow from 3 s to 6 s: 2.5 Mb/s pushed into a 2 Mb/s link.</td></tr>
+  </tbody>
+</table>
+<ul class="dot">
+  <li><strong>Traffic:</strong> 1000-byte packets at 1 Mb/s, one every 8 ms, from 1 s to 9 s: <strong>1,001 packets</strong>.</li>
+  <li><strong>Phases:</strong> before = 1–3 s, during = 3–6 s, after = 6–9 s, the same in every scenario.</li>
+  <li><strong>Distance-vector (DV)</strong> routers tell their neighbours how far each destination is and react when a link changes. <strong>Static</strong> routes are worked out once and never updated.</li>
+</ul>
+
+<h3>Counting packets correctly</h3>
+<ul class="dot">
+  <li>NS2 gives every packet a <strong>unique id</strong>. We follow it across routers instead of counting lines, so a packet that crosses four links is still one packet.</li>
+  <li><strong>Sent</strong> = first seen at the source. <strong>Received</strong> = arrived at the destination. Router events only add to its path.</li>
+  <li>Every packet ends with one <strong>fate</strong>: delivered, dropped at a full queue, dropped on a dead link, lost at a router without a trace line, lost on a link, or still in flight at the end.</li>
+</ul>
+<div class="formula">loss % = lost ÷ (sent − still in flight) × 100<br>delay = arrival time − send time (average over delivered packets)<br>throughput = bits that arrived in the window ÷ length of the window</div>
+
+<h3>Worked example: why the healthy delay is exactly 33.6 ms</h3>
+<p>Each part of the path adds a fixed amount. Propagation is the link's delay; transmission is 8,000 bits ÷ link speed.</p>
+<div class="bars">
+  <div class="bar"><span>n0→n1: 2 ms + 0.8 ms</span><div class="t"><div style="width:8.3%"></div></div><span class="v">2.8 ms</span></div>
+  <div class="bar"><span>n1→n2: 10 ms + 4 ms</span><div class="t"><div style="width:41.7%"></div></div><span class="v">14.0 ms</span></div>
+  <div class="bar"><span>n2→n4: 10 ms + 4 ms</span><div class="t"><div style="width:41.7%"></div></div><span class="v">14.0 ms</span></div>
+  <div class="bar"><span>n4→n5: 2 ms + 0.8 ms</span><div class="t"><div style="width:8.3%"></div></div><span class="v">2.8 ms</span></div>
+</div>
+<p>Total <strong>33.6 ms</strong>, exactly what the trace measured for all 1,001 packets. The backup path has two 15 ms links instead of 10 ms, so it takes 34 + 9.6 = <strong>43.6 ms</strong>. That is exactly the delay seen in B1 during the failure.</p>
+
+<h3>The results</h3>
+<table>
+  <thead><tr><th>Scenario</th><th class="r">Delivered</th><th class="r">Loss</th><th class="r">Avg delay</th><th>Outcome</th></tr></thead>
+  <tbody>
+    <tr><td>A healthy</td><td class="r">1001/1001</td><td class="r">0.00 %</td><td class="r">33.60 ms</td><td>baseline</td></tr>
+    <tr><td>B1 link fails, DV</td><td class="r">999/1001</td><td class="r">0.20 %</td><td class="r">37.36 ms</td><td>rerouted in 43.6 ms</td></tr>
+    <tr><td>B2 link fails, static</td><td class="r">624/1001</td><td class="r">37.66 %</td><td class="r">33.60 ms</td><td>3.024 s outage until the link returned</td></tr>
+    <tr><td>C congestion</td><td class="r">884/1001</td><td class="r">11.69 %</td><td class="r">54.55 ms</td><td>recovered once the queue drained</td></tr>
+  </tbody>
+</table>
+<div class="bars">
+  <div class="bar"><span>B1 packets lost</span><div class="t"><div style="width:0.6%"></div></div><span class="v">2</span></div>
+  <div class="bar bad"><span>B2 packets lost</span><div class="t"><div style="width:100%"></div></div><span class="v">377</span></div>
+  <div class="bar alt"><span>C packets lost (queue full)</span><div class="t"><div style="width:31%"></div></div><span class="v">117</span></div>
+</div>
+<ul class="dot">
+  <li><strong>B1:</strong> the routers sent 14 routing updates in the half second after the failure (normally about 2.4) and switched to n1–n3–n4 at once. Only the 2 packets already on the broken link were lost; all 375 sent during the outage arrived.</li>
+  <li><strong>B2:</strong> n1 kept sending into the dead link, so all 375 packets sent during the outage were lost, plus the same 2 already on the link.</li>
+  <li><strong>C:</strong> the n1→n2 queue filled to its 20-packet limit, delay rose from 33.6 to 102.75 ms, and 170 packets overflowed (117 of ours). The queue emptied 0.14 s after the extra traffic stopped.</li>
+</ul>
+
+<h3>The finding we are proudest of</h3>
+<p>In B2, NS2 2.35 <strong>does not write a drop line</strong> for packets that reach a router with no working route. A simple "count the <code>d</code> lines" approach would report almost no loss. Because we follow each packet's id, we see 375 packets arrive at n1 and never appear again while the link is down, so we classify them as <strong>lost at node n1</strong> and say where and why.</p>
+<div class="callout"><span class="k">Why not trust the simulator blindly?</span><span>The trace only records what NS2 chooses to log. Rebuilding every packet from its own events is what lets us account for every one of the 1,001 packets.</span></div>
+
+<!-- ============================================================ transport -->
+<h2><span class="n">10</span>The transport lab: TCP, UDP and TLS</h2>
+<ul class="dot">
+  <li><strong>TCP sends a stream, not messages,</strong> so we wrap each message in a frame: 1 byte type + 4 bytes length + the data. The receiver keeps reading until the whole frame has arrived (this handles "partial reads").</li>
+  <li><strong>UDP</strong> datagrams carry a sequence number. The receiver reports exactly which numbers are missing, duplicated or out of order. We never resend anything: UDP loss is measured, not repaired.</li>
+  <li><strong>TLS:</strong> the client trusts only our lab certificate authority and checks the server's name. The file's SHA-256 fingerprint must be equal on both ends. Our run used <strong>TLS 1.3 with AES-256-GCM</strong>.</li>
+  <li><strong>TCP vs UDP on this computer:</strong> TCP 3,067 Mb/s, UDP 840 Mb/s, both delivered everything. We say clearly this is one machine's loopback result, not a rule that TCP is faster.</li>
+</ul>
+<h3>The six failure drills</h3>
+<table>
+  <thead><tr><th style="width:23%">Drill</th><th>How we cause it</th><th style="width:26%">What the client sees</th></tr></thead>
+  <tbody>
+    <tr><td>Server unavailable</td><td>Connect to a port where nothing is listening</td><td>Connection refused</td></tr>
+    <tr><td>Connection timeout</td><td>A server that accepts but never replies</td><td>Timeout after 1.5 s</td></tr>
+    <tr><td>Interrupted transfer</td><td>Server resets after ~300 kB of a 2 MB file</td><td>Connection reset</td></tr>
+    <tr><td>Missing UDP datagrams</td><td>Sender skips numbers 50–54, 120 and 199</td><td>Exactly those numbers reported missing</td></tr>
+    <tr><td>Untrusted certificate</td><td>Server uses a certificate from a "rogue" authority</td><td>Certificate verify failed</td></tr>
+    <tr><td>Wrong host name</td><td>Valid certificate, but for wrong-host.example</td><td>Host name mismatch</td></tr>
+  </tbody>
+</table>
+<p>After each fault we fix the condition and try again. All six recovered, so the register shows them as <span class="pill p-conf">Confirmed (injected)</span>.</p>
+
+<h2><span class="n">11</span>Security and safety</h2>
+<table>
+  <thead><tr><th style="width:36%">Risk</th><th>What we did</th></tr></thead>
+  <tbody>
+    <tr><td>Using the tool to probe other people's networks</td><td>Only allowed destinations can be probed; the public website also refuses private addresses and new destinations.</td></tr>
+    <tr><td>Command injection (<code>; rm …</code>)</td><td>Commands are lists of arguments, never run through a shell, from a list of seven allowed programs.</td></tr>
+    <tr><td>Option injection (<code>-n 1000 host</code>)</td><td>Destinations starting with <code>-</code> or not matching a valid name/address are refused.</td></tr>
+    <tr><td>Tcl injection into NS2</td><td>Every scenario value is checked against a strict pattern; no spaces, brackets, <code>;</code> or <code>$</code> get through.</td></tr>
+    <tr><td>Fake server (impersonation)</td><td>TLS checks both the certificate chain and the host name; the drills prove both checks work.</td></tr>
+    <tr><td>Data changed in transit</td><td>SHA-256 compared on both ends of every file transfer.</td></tr>
+    <tr><td>Weak or home-made crypto</td><td>Only Python's standard <code>ssl</code> and the <code>cryptography</code> library; TLS 1.2 minimum.</td></tr>
+    <tr><td>Overclaiming results</td><td>Source labels on every page; stored results marked as stored; no percentages.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">12</span>Pitfalls we found and handled</h2>
+<p class="sub">Real traps in network data and in our own code, and what we did about each. Showing you understood these impresses examiners.</p>
+<table>
+  <thead><tr><th style="width:6%">#</th><th style="width:47%">The trap</th><th>What we did</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Windows <code>ping</code> counts "Destination host unreachable" as a reply.</td><td>We count only real echo replies and note the difference.</td></tr>
+    <tr><td>2</td><td>B2's losses were invisible: NS2 writes no drop line for them.</td><td>We follow each packet's id and classify them as lost at the router.</td></tr>
+    <tr><td>3</td><td>A different traceroute hop limit could look like a route change.</td><td>We compare hop by hop, only where both runs got an answer.</td></tr>
+    <tr><td>4</td><td>Old analyses were shown after we improved a rule.</td><td>The register re-analyses stored runs with the current rules.</td></tr>
+    <tr><td>5</td><td>Stored NS2 runs carried Windows file paths that broke the online demo.</td><td>Runs are located on disk, not by the saved path.</td></tr>
+    <tr><td>6</td><td>NS2 runs from different computers sorted wrongly by folder name.</td><td>They are sorted by the UTC start time saved inside each run.</td></tr>
+    <tr><td>7</td><td>The online app kept running old code after an update.</td><td>It reloads changed modules automatically.</td></tr>
+    <tr><td>8</td><td>Congestion recovery could be judged while the queue was still emptying.</td><td>We judge it on packets sent after the queue drained.</td></tr>
+    <tr><td>9</td><td>The top navigation bar felt laggy.</td><td>It navigates in the browser without re-running the page.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ testing etc -->
+<h2><span class="n">13</span>Testing</h2>
+<ul class="dot">
+  <li><strong>Unit tests with real output:</strong> ping and traceroute output captured from Windows 11 and Ubuntu, plus broken and truncated output, so parsers are tested without a network (27 parser tests).</li>
+  <li><strong>Rule tests:</strong> fake measurements drive every rule, contradiction and baseline comparison (25 tests).</li>
+  <li><strong>Trace tests:</strong> small hand-written NS2 traces with known answers check counting, every fate, delay, throughput, queues and route changes.</li>
+  <li><strong>Real NS2:</strong> all four scenarios run in the actual simulator and must behave as expected.</li>
+  <li><strong>Real sockets:</strong> TCP, UDP, TLS, certificate rejection and every drill.</li>
+  <li><strong>Real commands:</strong> loopback, the reserved DNS name and the documentation address.</li>
+  <li><strong>Interface tests:</strong> every page and the full guided demo, through Streamlit's AppTest.</li>
+</ul>
+<p><strong>Result:</strong> 159 tests. NS2 tests skip themselves automatically on a computer without NS2.</p>
+
+<h2><span class="n">14</span>Limitations and future scope</h2>
+<p class="sub">Be honest here. Admitting limits clearly is a strength in a viva.</p>
+<h3>Limitations</h3>
+<ul class="dot">
+  <li><strong>Live tools only see what devices answer.</strong> Blocked ping or traceroute hides part of the path, so live causes are Likely at best.</li>
+  <li>With 4 pings, one lost reply is 25 % loss. Use more probes for real loss studies.</li>
+  <li>NS2's distance-vector reacts almost instantly; real protocols like RIP take longer to converge.</li>
+  <li>Both NS2 flows are UDP, so scenario C does not show TCP slowing down under congestion.</li>
+  <li>Loopback has no real distance or loss; throughput depends on the computer.</li>
+  <li>Command output is read in English only, and RouteResQ explains failures but does not repair them.</li>
+</ul>
+<h3>Future scope</h3>
+<ul class="dot">
+  <li>Larger topologies and link-state routing with realistic timers.</li>
+  <li>Experiments between two real lab computers over a switch.</li>
+  <li>Trend analysis of repeated live runs; DNS and MTU failure drills; bandwidth limits.</li>
+</ul>
+
+<h2><span class="n">15</span>Numbers to remember</h2>
+<div class="nums">
+  <div class="num"><b>3</b><span>evidence environments</span></div>
+  <div class="num"><b>5</b><span>stages: detect → report</span></div>
+  <div class="num"><b>17</b><span>diagnostic rules</span></div>
+  <div class="num"><b>4</b><span>cause statuses</span></div>
+  <div class="num"><b>6</b><span>nodes in the NS2 network</span></div>
+  <div class="num"><b>4</b><span>NS2 scenarios</span></div>
+  <div class="num"><b>1,001</b><span>packets per run</span></div>
+  <div class="num"><b>33.6 ms</b><span>healthy delay</span></div>
+  <div class="num"><b>43.6 ms</b><span>DV reroute time</span></div>
+  <div class="num"><b>3.024 s</b><span>static-route outage</span></div>
+  <div class="num"><b>375</b><span>silent losses found in B2</span></div>
+  <div class="num"><b>20</b><span>packet queue limit</span></div>
+  <div class="num"><b>6</b><span>transport failure drills</span></div>
+  <div class="num"><b>11 / 13</b><span>failures with a stated cause</span></div>
+  <div class="num"><b>159</b><span>automated tests</span></div>
+  <div class="num"><b>TLS 1.3</b><span>AES-256-GCM negotiated</span></div>
+</div>
+
+<h2><span class="n">16</span>Live demo script</h2>
+<p class="sub">Five minutes, in this order. Open <code>routeresq.streamlit.app</code>, or run <code>streamlit run streamlit_app.py</code> locally.</p>
+<div class="steps">
+  <div class="step"><div class="c">1</div><div><h4>Overview</h4><p>Point at the navigation bar (the five stages) and the key numbers: 43.6 ms reroute, 3.02 s outage. Show the root-cause register.</p></div></div>
+  <div class="step"><div class="c">2</div><div><h4>Diagnostics</h4><p>Run <code>localhost</code>: 4/4 replies, Healthy. Then <code>nonexistent.invalid</code>: DNS failure.</p></div></div>
+  <div class="step"><div class="c">3</div><div><h4>Root cause</h4><p>Walk through the evidence ladder and open the rule trace. Point out the status is a word, never a percentage.</p></div></div>
+  <div class="step"><div class="c">4</div><div><h4>NS2 simulation</h4><p>Pick B1, switch the topology to "during" to show traffic on the backup path. Then B2: the throughput drops to zero for 3 s.</p></div></div>
+  <div class="step"><div class="c">5</div><div><h4>Recovery</h4><p>Show the verdict and the timeline of configured and observed events.</p></div></div>
+  <div class="step"><div class="c">6</div><div><h4>TCP · UDP · TLS</h4><p>Run the secure transfer (matching SHA-256), then one failure drill.</p></div></div>
+  <div class="step"><div class="c">7</div><div><h4>Reports</h4><p>Open the root-cause report and show a downloadable file. If short on time, press <strong>Guided demo</strong> instead: it runs every stage and verifies it.</p></div></div>
+</div>
+
+<!-- ============================================================ Q&A -->
+<h2 class="newpage"><span class="n">17</span>Likely viva questions</h2>
+
+<div class="qa-group"><h3>Basics</h3>
+<div class="qa"><div class="q">What problem does RouteResQ solve?</div><div class="a">Network tools show symptoms, not causes, and people guess. RouteResQ collects evidence from real checks, simulations and socket tests, states the cause of each failure, and says honestly how sure it is.</div></div>
+<div class="qa"><div class="q">What makes it different from just running ping?</div><div class="a">It combines DNS, gateway, ping, traceroute and TCP checks, applies traceable rules, reports contradictions, measures failure impact in NS2, and keeps every result as evidence in a report.</div></div>
+<div class="qa"><div class="q">Why three separate environments?</div><div class="a">Only when we create the fault (NS2 and the drills) do we know the true cause. Live failures can only be inferred. Keeping them apart stops a simulated cause being passed off as a live diagnosis.</div></div>
+<div class="qa"><div class="q">Why no confidence percentages?</div><div class="a">There is no honest way to calculate a probability for these guesses. A number like "73 %" would be made up, so we use clear words: confirmed, likely, possible, insufficient evidence.</div></div>
+</div>
+
+<div class="qa-group"><h3>Live diagnosis</h3>
+<div class="qa"><div class="q">How do you decide the cause of a live failure?</div><div class="a">Seventeen rules turn the measurements into findings and candidate causes, each with evidence for and against. If exactly one cause fits all the evidence it is Likely; if several fit it is Not confirmed, with the checks that would decide.</div></div>
+<div class="qa"><div class="q">Why can a live cause never be Confirmed?</div><div class="a">We did not cause it, and our tools only see what devices choose to answer. Only an injected fault is Confirmed.</div></div>
+<div class="qa"><div class="q">Ping fails but TCP connects. What do you conclude?</div><div class="a">The host is up and ping (ICMP) is being blocked. We report it as a contradiction and mark the host reachable, instead of calling it down.</div></div>
+<div class="qa"><div class="q">Why does congestion need two signs?</div><div class="a">A single high RTT can come from distance, a slow router or a busy server. Two independent signs together, such as higher delay and some loss, are needed before we suggest congestion.</div></div>
+<div class="qa"><div class="q">What is a baseline?</div><div class="a">A healthy run you mark as "normal" for a destination. Later runs are compared with it, e.g. RTT more than 1.5 times and at least 20 ms higher.</div></div>
+<div class="qa"><div class="q">How do you stop misuse?</div><div class="a">An allow-list of destinations, refusing inputs that look like options, seven allowed programs, no shell, timeouts, and a stricter public mode on the website.</div></div>
+</div>
+
+<div class="qa-group"><h3>NS2 and routing</h3>
+<div class="qa"><div class="q">Why NS2?</div><div class="a">It is the standard simulator in our course, it lets us inject a failure at an exact time so the cause is known, and its trace lets us measure every packet. We run the real simulator, not a mock.</div></div>
+<div class="qa"><div class="q">Why do B1 and B2 behave so differently for the same failure?</div><div class="a">With distance-vector routing the routers notice the failure and switch to the backup path within 43.6 ms, losing 2 packets. With static routing the route never changes, so everything sent during the 3 s outage is lost.</div></div>
+<div class="qa"><div class="q">Why is the healthy delay exactly 33.6 ms?</div><div class="a">24 ms of propagation (2 + 10 + 10 + 2) plus 9.6 ms to put an 8,000-bit packet on each link (0.8 + 4 + 4 + 0.8), with no queueing.</div></div>
+<div class="qa"><div class="q">How do you avoid counting a packet several times?</div><div class="a">We follow NS2's unique packet id. A packet is sent only when first seen at the source and received only at the destination; router events just extend its path.</div></div>
+<div class="qa"><div class="q">How did you find losses NS2 didn't record?</div><div class="a">375 packets arrived at n1 while its link was down and were never seen again. With no drop line, we still classify them as lost at n1 because we track every packet.</div></div>
+<div class="qa"><div class="q">How do you prove congestion in scenario C?</div><div class="a">2.5 Mb/s offered to a 2 Mb/s link; the queue reaches its 20-packet limit; 170 drops on a working link; delay rises from 33.6 to 102.75 ms. After the queue drains, loss is 0 and delay is back to normal, so we call it recovered.</div></div>
+<div class="qa"><div class="q">What is a route change, in your analysis?</div><div class="a">When delivered packets switch to a different path and at least 3 in a row stay on it, so one stray packet is never called a route change.</div></div>
+</div>
+
+<div class="qa-group"><h3>Transport and security</h3>
+<div class="qa"><div class="q">Why frame TCP messages?</div><div class="a">TCP is a byte stream: one send can arrive in pieces and two sends can arrive together. A type and length header tells the receiver exactly where each message ends.</div></div>
+<div class="qa"><div class="q">How do you detect UDP loss without adding reliability?</div><div class="a">Each datagram carries a sequence number. The receiver lists the missing numbers, duplicates and out-of-order arrivals, and an idle timeout ends the run. Nothing is resent.</div></div>
+<div class="qa"><div class="q">What does the TLS test prove?</div><div class="a">The certificate chains to our trusted lab authority, its name matches localhost, TLS 1.3 with AES-256-GCM was used, and the file's SHA-256 is the same on both ends, so it was not altered.</div></div>
+<div class="qa"><div class="q">Is TCP faster than UDP?</div><div class="a">Not in general. On our machine TCP measured 3,067 Mb/s and UDP 840 Mb/s on loopback, but that depends on packet size, pacing and buffers. The app says so itself.</div></div>
+<div class="qa"><div class="q">Why not use ML for diagnosis?</div><div class="a">We have no labelled dataset of real network failures, and the brief excludes it. Rules are explainable: every conclusion points to a rule and its evidence.</div></div>
+</div>
+
+<div class="qa-group"><h3>Code, testing and process</h3>
+<div class="qa"><div class="q">How is object-oriented design used?</div><div class="a">Measurements are data classes combined into one DiagnosticRun; a CommandRunner interface lets tests swap in a fake runner; custom exceptions extend Python's built-in ones; a Scenario checks itself when created; the TCP server is a context manager that always closes its socket.</div></div>
+<div class="qa"><div class="q">How did you test it?</div><div class="a">159 automated tests: parsers with real captured output, rules with fake measurements, traces with known answers, real NS2 runs, real sockets, real commands and every page of the app.</div></div>
+<div class="qa"><div class="q">What happens if NS2 is not installed?</div><div class="a">The guided demo uses the newest saved NS2 runs, marks them as stored, and the final report says so. It never claims fresh results it did not produce.</div></div>
+<div class="qa"><div class="q">What would you do with more time?</div><div class="a">Bigger networks, link-state routing with realistic timers, experiments between two real lab computers, trend analysis of repeated live runs, and DNS and MTU failure drills.</div></div>
+</div>
+
+<!-- ============================================================ glossary -->
+<h2><span class="n">18</span>Glossary</h2>
+<table>
+  <thead><tr><th style="width:26%">Term</th><th>Meaning in one line</th></tr></thead>
+  <tbody>
+    <tr><td>RTT</td><td>Round-trip time: how long a ping takes to come back.</td></tr>
+    <tr><td>TTL / hop</td><td>Traceroute's step counter; each router that answers is one hop.</td></tr>
+    <tr><td>Gateway</td><td>The first router your computer sends traffic to.</td></tr>
+    <tr><td>NXDOMAIN</td><td>The DNS answer "this name does not exist".</td></tr>
+    <tr><td>ICMP</td><td>The protocol ping and many error messages use; often blocked by firewalls.</td></tr>
+    <tr><td>Loopback</td><td>127.0.0.1: traffic that never leaves your computer.</td></tr>
+    <tr><td>CBR</td><td>Constant bit rate: packets sent at a fixed pace.</td></tr>
+    <tr><td>DropTail</td><td>A queue that drops new packets when it is full.</td></tr>
+    <tr><td>Distance-vector</td><td>Routing where neighbours share distances and react to link changes.</td></tr>
+    <tr><td>Static routing</td><td>Routes set once that never change.</td></tr>
+    <tr><td>Trace file</td><td>NS2's log of every packet event: queued, sent, received, dropped.</td></tr>
+    <tr><td>Fate</td><td>What finally happened to a packet: delivered, dropped or lost.</td></tr>
+    <tr><td>Jitter</td><td>How much the delay varies from packet to packet.</td></tr>
+    <tr><td>Throughput</td><td>How many bits per second actually arrive.</td></tr>
+    <tr><td>Three-way handshake</td><td>SYN, SYN-ACK, ACK: how TCP opens a connection.</td></tr>
+    <tr><td>RST</td><td>A TCP reset: the other side refuses or aborts the connection.</td></tr>
+    <tr><td>Certificate authority</td><td>The trusted issuer that vouches for a server's identity.</td></tr>
+    <tr><td>SHA-256</td><td>A fingerprint of data; if it matches on both ends, nothing changed.</td></tr>
+    <tr><td>Rule trace</td><td>The list of every rule, whether it fired and why.</td></tr>
+    <tr><td>Root-cause register</td><td>The table of every failure, its cause and how sure we are.</td></tr>
+  </tbody>
+</table>
+
+<div class="foot-note">Facts in this guide match the RouteResQ repository (commit 133bc57), its stored results and the project report. For every module and formula in full detail, see PROJECT_GUIDE.md. Good luck in the viva.</div>
+
+</div>
+</body>
+</html>
