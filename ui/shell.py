@@ -21,7 +21,6 @@ _SVG = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
 MARK = '<img alt="" width="30" height="30" src="data:image/svg+xml;base64,' + base64.b64encode(_SVG.encode()).decode() + '">'
 
 LAB = "CN Lab · JIIT Noida"
-TEAM = "Saanvi Grover & Aditya Sharma"
 REPO = "SaiGrover/RouteResQ"
 _GH = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="{T.MUT}" d="M8 0C3.58 0 0 3.58 0 8c0 '
        '3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82'
@@ -53,7 +52,6 @@ def brand_bar(demo_page=None) -> None:
                 with st.container(key="demo_link"):
                     st.page_link(demo_page, label="Guided demo", icon=":material/play_circle:")
         right.html(f"""<div class="rr-who"><div class="rr-lab">{e(LAB)}</div>
-          <div class="rr-team">{e(TEAM)}</div>
           <a class="rr-repo" href="https://github.com/{REPO}" target="_blank" rel="noopener noreferrer">{GH_ICON}<span>{e(REPO)}</span></a>
           </div>""")
 
